@@ -1,6 +1,6 @@
-// Offline support: stale-while-revalidate for this site's files and the Google Fonts.
+// Offline support: network first (so a new version shows on the next reload), cache as fallback.
 // The page sends the list of files it loaded (see app.js), so there is no precache list to maintain.
-const CACHE = "nb-v1";
+const CACHE = "nb-v2";
 const FONTS = /^https:\/\/fonts\.(googleapis|gstatic)\.com\//;
 
 self.addEventListener("install", e => {
@@ -25,9 +25,15 @@ self.addEventListener("fetch", e => {
   if (url.origin !== self.location.origin && !FONTS.test(req.url)) return;   // dictionary/translation APIs go straight to the network
   e.respondWith(caches.open(CACHE).then(async c => {
     const key = req.mode === "navigate" ? "./" : req;
-    const hit = await c.match(key, {ignoreSearch: req.mode === "navigate"});
-    const net = fetch(req).then(res => { if (res.ok || res.type === "opaque") c.put(key, res.clone()); return res; }).catch(() => hit);
-    if (hit){ e.waitUntil(net); return hit; }
-    return net;
+    try {
+      // no-cache: revalidate with the server instead of trusting the HTTP cache (navigations can't take options)
+      const res = await (req.mode === "navigate" ? fetch(req) : fetch(req, {cache: "no-cache"}));
+      if (res.ok || res.type === "opaque") c.put(key, res.clone());
+      return res;
+    } catch (err){
+      const hit = await c.match(key, {ignoreSearch: req.mode === "navigate"});
+      if (hit) return hit;
+      throw err;
+    }
   }));
 });

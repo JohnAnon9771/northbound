@@ -40,12 +40,13 @@ function resolve(){
 }
 function go(){
   const next = resolve();
-  const changed = next !== view;
+  const changed = next !== view, first = !view;
   if (changed && view && view.leave) view.leave();
   view = next;
   if (changed && view.enter) view.enter();
   render();
-  if (changed){ window.scrollTo(0, 0); root.focus({preventScroll: true}); }
+  // move focus to the new screen for screen readers, but not on page load (nothing to announce yet)
+  if (changed && !first){ window.scrollTo(0, 0); root.focus({preventScroll: true}); }
 }
 
 function render(){

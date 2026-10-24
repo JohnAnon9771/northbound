@@ -24,7 +24,7 @@ npm test
 2. No repositório: Settings → Pages → Source: *Deploy from a branch* → `main` / `(root)`.
 3. Abra `https://<usuario>.github.io/northbound/`. No celular, “Adicionar à tela de início” instala como app (funciona offline e o Safari não apaga os dados após 7 dias sem uso).
 
-O service worker só é registrado em HTTPS, então em `localhost` você sempre vê os arquivos mais novos. No site publicado, uma mudança aparece no segundo carregamento (stale-while-revalidate). Ao mudar algo grande, troque `CACHE` em `sw.js` (`nb-v1` → `nb-v2`).
+O service worker só é registrado em HTTPS, então em `localhost` ele não interfere. No site publicado ele busca sempre a versão mais nova na rede e usa o cache só quando você está offline, então uma mudança aparece no próximo carregamento (o GitHub Pages pode levar alguns minutos para publicar).
 
 ## Seus dados
 
