@@ -11,6 +11,7 @@ import { minutesByDate, streak } from "../domain/stats.js";
 import { planDay, nextOpen } from "../domain/daily.js";
 import { deckToday, phraseOfDay } from "../flashcards/deck.js";
 import { studyStatus } from "../ui/study.js";
+import { dailyWordsHint } from "../ui/daily-words.js";
 import { taskHTML, logLi, isOpen } from "../ui/tasks.js";
 import { highlight, speakBtn } from "../ui/words.js";
 
@@ -52,6 +53,8 @@ function nextStep(deck, list){
     if (run && run.task === open.k) return {eyebrow: "Em andamento", title: open.t, sub: "O cronômetro está rodando. Quando terminar, toque em Parar lá embaixo.", btn: null};
     return {eyebrow: "Próximo passo", title: open.t, sub: sk(open.s).n + (open.m ? " · cerca de " + open.m + " min" : ""), btn: icon("play", 16) + "Começar agora", act: "task-start", task: open.k};
   }
+  const dw = dailyWordsHint();
+  if (dw) return {eyebrow: "Próximo passo", title: "Palavras do dia (" + dw.level + "): " + plural(dw.n, "pronta", "prontas") + " para adicionar", sub: "As mais usadas do seu nível que você ainda não tem. Marque as que já sabe e adicione o resto.", btn: icon("plus", 18) + "Ver palavras", href: "#palavras"};
   if (!S.cards.length) return {eyebrow: "Primeiro passo", title: "Adicione suas primeiras palavras", sub: "Escreva uma palavra ou expressão e o site busca tradução e exemplos de uso.", btn: icon("plus", 18) + "Adicionar palavras", href: "#palavras"};
   return {eyebrow: "Dia completo", title: "Tudo feito por hoje. Muito bem!", sub: "Descanse, ou adiante uma tarefa da semana se estiver com energia.", btn: icon("plus", 18) + "Adiantar uma tarefa", act: "plan-more", tone: "sage"};
 }
@@ -68,6 +71,13 @@ function cardsRow(deck){
   const meta = done ? plural(deck.reviewedToday, "resposta hoje", "respostas hoje") + ". " + st.why : st.why;
   return '<li class="task task-cards' + (done ? " done" : "") + '"><input type="checkbox" class="chk" tabindex="-1" aria-hidden="true"' + (done ? " checked" : "") + '><div class="task-body"><a class="task-title" href="#estudo">' + esc(title) + '</a><div class="task-meta"><span class="tag c-base">Flashcards</span><span>' + esc(meta) + "</span></div></div>" +
     '<a class="btn btn-small ' + (st.ready ? "" : "btn-ghost ") + 'task-start" href="#estudo">' + icon("play", 14) + "Estudar</a></li>";
+}
+
+function dailyWordsRow(){
+  const dw = dailyWordsHint();
+  if (!dw) return "";
+  return '<li class="task task-cards"><input type="checkbox" class="chk" tabindex="-1" aria-hidden="true"><div class="task-body"><a class="task-title" href="#palavras">Palavras do dia (' + dw.level + "): " + plural(dw.n, "pronta", "prontas") + ' para adicionar</a><div class="task-meta"><span class="tag c-base">Flashcards</span><span>As mais usadas do nível, sem repetir.</span></div></div>' +
+    '<a class="btn btn-small btn-ghost task-start" href="#palavras">' + icon("plus", 14) + "Ver</a></li>";
 }
 
 function manualForm(){
@@ -107,7 +117,7 @@ export default {
     h += heroHTML(nextStep(deck, plan.list));
 
     h += '<section class="card" aria-labelledby="planT"><div class="section-head"><h2 id="planT">Plano de hoje</h2><span class="muted num">' + doneN + " de " + plan.list.length + (planMin ? " · ~" + planMin + " min" : "") + "</span></div>";
-    h += '<ul class="tasks">' + cardsRow(deck) + plan.list.map(x => taskHTML(x, {start: true, compact: true})).join("") + "</ul>";
+    h += '<ul class="tasks">' + cardsRow(deck) + dailyWordsRow() + plan.list.map(x => taskHTML(x, {start: true, compact: true})).join("") + "</ul>";
     if (!plan.list.length) h += '<p class="muted" style="margin:12px 0 0">Nenhuma tarefa da rota para hoje. As da semana já estão feitas.</p>';
     h += '<div class="row" style="margin-top:14px"><button class="btn btn-ghost btn-small" type="button" data-act="plan-more">' + icon("plus", 14) + 'Puxar mais uma tarefa</button><a class="btn btn-ghost btn-small" href="#rota">Ver a semana inteira' + icon("arrow", 14) + "</a></div></section>";
     h += manualForm();

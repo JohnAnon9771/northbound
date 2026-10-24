@@ -5,11 +5,13 @@ import { endOfDay } from "../core/date.js";
 import { toast } from "../core/toast.js";
 import { rerender } from "../core/rerender.js";
 import { enrich, enrichMessage, normalizeEnrichment } from "../flashcards/enrich.js";
+import { importTerms, providerOpts } from "../flashcards/importer.js";
 import { addCard, updateCard, removeCard, restoreCards, findByTerm, deckToday, twinOf, setReverse } from "../flashcards/deck.js";
 import { phaseNow } from "../domain/route.js";
 import { KNOWN_IVL } from "../domain/stats.js";
 import { highlight, speakBtn } from "../ui/words.js";
 import { studyStatus } from "../ui/study.js";
+import { dailyWordsHTML } from "../ui/daily-words.js";
 
 const ui = {
   term: "", context: "", status: "idle", draft: null, reverse: false, warning: "", source: "",
@@ -17,7 +19,6 @@ const ui = {
   bulk: "", bulkEnrich: true, bulkRun: null
 };
 
-const providerOpts = () => ({apiKey: S.secrets.claudeKey || "", model: S.state.settings.claudeModel, level: phaseNow().cefr === "ponto de partida" ? "A2" : phaseNow().cefr, email: S.state.settings.mmEmail});
 
 /* ---------- editor (preview of a new card, or editing an existing one) ---------- */
 function editorHTML(d, mode){
@@ -93,7 +94,7 @@ function deckHTML(){
 function bulkHTML(){
   const r = ui.bulkRun;
   let h = '<details class="disc"' + (r || ui.bulk ? " open" : "") + '><summary>' + icon("book", 18) + 'Importar uma lista</summary><div class="disc-body">';
-  h += '<p class="muted" style="font-size:14px">Uma palavra ou expressão por linha. Para já informar a tradução, use <code>palavra ; tradução</code>. Serve para trazer palavras do DuoCards, do Oxford 3000 ou de um texto.</p>';
+  h += '<p class="muted" style="font-size:14px">Uma palavra ou expressão por linha. Para já informar a tradução, use <code>palavra ; tradução</code>. Serve para trazer palavras do DuoCards, de outra lista ou de um texto.</p>';
   h += '<form data-submit="bulk-run"><div class="field"><textarea name="bulk" data-input="bulk-text" data-fk="bulk" rows="6" placeholder="look forward to\nget over ; superar\nbank"' + (r ? " disabled" : "") + ">" + esc(ui.bulk) + "</textarea></div>";
   h += '<label class="check" style="margin-bottom:12px"><input type="checkbox" data-change="bulk-enrich"' + (ui.bulkEnrich ? " checked" : "") + "> Buscar tradução e exemplos para cada uma (cerca de 2 s por palavra)</label>";
   if (r) h += '<div class="loading"><span class="spin"></span>Importando ' + r.done + " de " + r.total + (r.skipped ? " · " + r.skipped + " já estavam no deck" : "") + '…</div><button class="btn btn-ghost btn-small" type="button" data-act="bulk-stop">Parar</button>';
@@ -111,6 +112,7 @@ export default {
       '<a class="btn' + (st.ready ? "" : " btn-soft") + '" href="#estudo">' + icon("play", 16) + "Estudar" + (st.ready ? " (" + (d.due + d.fresh) + ")" : "") + "</a></div>";
     h += '<section class="card card-hero section"><h2 style="margin:0">' + (st.ready ? "Hoje: " + esc(st.title) : d.total ? "Tudo em dia por hoje" : "Seu deck está vazio") + '</h2><p class="sub" style="margin:4px 0 0">' + esc(st.ready ? st.why + ". Limite da fase: " + d.limit + " novas por dia, revisões sempre primeiro." : st.why) + "</p>";
     h += '<div class="stat-strip"><div><b class="num">' + d.due + '</b><span>para revisar</span></div><div><b class="num">' + d.newWaiting + '</b><span>novas na fila</span></div><div><b class="num">' + d.total + '</b><span>no deck</span></div><div><b class="num">' + d.known + "</b><span>sabidas (21+ dias)</span></div></div></section>";
+    h += dailyWordsHTML();
 
     h += '<section class="card section" aria-labelledby="addT"><h2 id="addT">Adicionar palavra</h2><form data-submit="add-search"><div class="add-row"><div class="field"><label for="addTerm">Palavra ou expressão</label><input type="text" id="addTerm" name="term" data-input="add-term" data-fk="add-term" value="' + esc(ui.term) + '" placeholder="Ex.: look forward to" autocomplete="off" autocapitalize="off" spellcheck="false"></div><button class="btn" type="submit"' + (ui.status === "loading" ? " disabled" : "") + ">" + icon("search", 18) + 'Buscar</button></div><div class="field" style="margin-top:12px"><label for="addCtx">Frase onde você viu (opcional)</label><input type="text" id="addCtx" name="context" data-input="add-ctx" data-fk="add-ctx" value="' + esc(ui.context) + '" placeholder="Ex.: I\'m really looking forward to the trip."></div></form>';
     const dup = ui.term.trim() && findByTerm(ui.term);
@@ -186,31 +188,19 @@ export default {
     "bulk-enrich"(el){ ui.bulkEnrich = el.checked; },
     "bulk-stop"(){ if (ui.bulkRun) ui.bulkRun.stop = true; },
     async "bulk-run"(){
-      const lines = ui.bulk.split(/\n/).map(l => l.trim()).filter(Boolean).map(l => { const p = l.split(/\s*[;\t]\s*/); return {term: p[0], tr: p[1] || ""}; }).filter(x => x.term);
-      if (!lines.length){ toast("Cole pelo menos uma palavra."); return; }
-      const run = ui.bulkRun = {done: 0, total: lines.length, skipped: 0, added: 0, stop: false};
+      const items = ui.bulk.split(/\n/).map(l => l.trim()).filter(Boolean).map(l => { const p = l.split(/\s*[;\t]\s*/); return {term: p[0], translation: p[1] || ""}; }).filter(x => x.term);
+      if (!items.length){ toast("Cole pelo menos uma palavra."); return; }
+      const run = ui.bulkRun = {done: 0, total: items.length, skipped: 0, stop: false, enrich: ui.bulkEnrich};
       rerender();
-      for (const x of lines){
-        if (run.stop) break;
-        if (findByTerm(x.term)){ run.skipped++; run.done++; rerender(); continue; }
-        let data = normalizeEnrichment({term: x.term, translation: x.tr}, x.term), source = "import";
-        if (ui.bulkEnrich){
-          try {
-            const r = await enrich(x.term, "", providerOpts());
-            data = Object.assign(r.data, x.tr ? {translation: x.tr} : {});
-            source = r.source;
-          } catch (e){
-            if (e && e.message === "quota"){ toast(enrichMessage("quota")); ui.bulkEnrich = false; }
-          }
-          await new Promise(r => setTimeout(r, 600));
-        }
-        addCard(data, {source});
-        run.added++; run.done++;
+      const res = await importTerms(items, run, step => {
+        run.done++;
+        if (step.skipped) run.skipped++;
+        if (step.quota){ toast(enrichMessage("quota")); ui.bulkEnrich = false; }
         rerender();
-      }
+      });
       ui.bulkRun = null;
       if (!run.stop) ui.bulk = "";
-      toast(plural(run.added, "palavra importada", "palavras importadas") + (run.skipped ? ", " + run.skipped + " já estavam no deck" : "") + ".");
+      toast(plural(res.added, "palavra importada", "palavras importadas") + (res.skipped ? ", " + res.skipped + " já estavam no deck" : "") + ".");
       rerender();
     }
   }

@@ -285,6 +285,22 @@ ol.plain li,ul.plain li{margin:0 0 6px}
 /* ---------- words ---------- */
 .add-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:end}
 .add-row .field{margin:0}
+/* palavras do dia */
+.wl-list{list-style:none;margin:12px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:6px 18px}
+.wl-list li{display:flex;align-items:baseline;gap:8px;padding:8px 0;border-bottom:1px solid var(--rule);min-width:0}
+.wl-term{font-weight:800;font-size:16px;overflow-wrap:anywhere}
+.wl-pos{font-size:13px;color:var(--muted);flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wl-list .link-btn{margin-left:auto;font-size:13.5px;white-space:nowrap}
+.wl-list .pill{padding:1px 7px;font-size:11px}
+.wl-foot{display:flex;flex-wrap:wrap;gap:12px 18px;align-items:flex-end;margin-top:16px}
+.wl-prog{flex:1 1 240px;min-width:0}
+.wl-prog .progress{display:block}
+.wl-level{display:flex;align-items:center;gap:8px}
+.wl-level .hint{margin:0}
+.wl-level select{width:auto;min-height:36px;padding:4px 10px}
+.wl-levels{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:8px}
+.wl-levels li{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:10px;align-items:center}
+.wl-levels .hint{margin:0;white-space:nowrap}
 @media (max-width:560px){.add-row{grid-template-columns:1fr}}
 .editor{display:grid;gap:12px;margin-top:16px;padding-top:16px;border-top:1px solid var(--rule)}
 .editor-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}

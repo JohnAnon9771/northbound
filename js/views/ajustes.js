@@ -7,6 +7,7 @@ import { PH, phaseNow } from "../domain/route.js";
 import { CLAUDE_MODELS } from "../flashcards/providers/claude.js";
 import { enrichMessage } from "../flashcards/enrich.js";
 import { downloadBackup, restoreBackup, daysSinceBackup } from "../ui/backup.js";
+import { dailyWordsSettingsHTML } from "../ui/daily-words.js";
 
 const ui = {resetArmed: false, testing: false, keyDraft: "", persisted: null};
 let resetTimer = null;
@@ -31,6 +32,7 @@ function cardsHTML(st){
   const p = phaseNow();
   return '<section class="card section" aria-labelledby="hFc"><h2 id="hFc">Flashcards</h2>' +
     '<div class="field"><label for="sNew">Palavras novas por dia</label><select id="sNew" data-change="set-new">' + opt("", "Automático pela fase (agora " + p.newPerDay + ")", st.newPerDay == null ? "" : "x") + [5, 8, 10, 12, 15, 20, 25].map(n => opt(n, n + " por dia", st.newPerDay)).join("") + '</select><p class="hint">Fases: ' + PH.map(x => x.newPerDay).join(" / ") + ". Mesmo assim, se as revisões do dia passarem de 15 min, as novas ficam para amanhã.</p></div>" +
+    dailyWordsSettingsHTML() +
     '<div class="field"><label for="sAccent">Sotaque da pronúncia</label><select id="sAccent" data-change="set-accent">' + opt("en-GB", "Britânico (en-GB)", st.accent) + opt("en-US", "Americano (en-US)", st.accent) + "</select></div>" +
     '<div class="field"><label for="sMail">E-mail para a tradução gratuita (opcional)</label><input type="email" id="sMail" data-change="set-mail" value="' + esc(st.mmEmail) + '" placeholder="voce@exemplo.com" autocomplete="email"><p class="hint">A MyMemory traduz cerca de 5 mil caracteres por dia sem cadastro; com um e-mail o limite sobe para 50 mil. Ele é enviado só para a MyMemory.</p></div></section>';
 }

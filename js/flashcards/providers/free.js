@@ -10,11 +10,12 @@ const TATO = t => "https://api.tatoeba.org/unstable/sentences?lang=eng&q=" + enc
 const MM = (q, email) => "https://api.mymemory.translated.net/get?q=" + enc(q) + "&langpair=en|pt-BR" + (email ? "&de=" + enc(email) : "");
 
 const POS_PT = {verb: "verbo", noun: "substantivo", adjective: "adjetivo", adverb: "advérbio", phrase: "expressão", idiom: "expressão idiomática",
-  preposition: "preposição", conjunction: "conjunção", interjection: "interjeição", pronoun: "pronome", determiner: "determinante", "prepositional phrase": "locução prepositiva", proverb: "provérbio"};
+  preposition: "preposição", conjunction: "conjunção", interjection: "interjeição", pronoun: "pronome", determiner: "determinante", "prepositional phrase": "locução prepositiva", proverb: "provérbio",
+  "modal auxiliary": "verbo modal", "be-verb": "verbo", "do-verb": "verbo", "have-verb": "verbo", number: "numeral", "infinitive-to": "partícula"};
 export const posPt = p => POS_PT[String(p || "").toLowerCase()] || String(p || "").toLowerCase();
 
 export function stripHtml(s){
-  return String(s || "").replace(/<[^>]*>/g, "").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/\s+/g, " ").trim();
+  return String(s || "").replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "").replace(/<[^>]*>/g, "").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/\s+/g, " ").trim();
 }
 
 export function parseWiktionary(json){
@@ -47,6 +48,7 @@ export function parseTatoeba(json, term){
 
 // MyMemory's top answer can be a fuzzy memory match for a *different* sentence ("…the ball" for "…the trip"),
 // so prefer entries whose source is exactly the query, then its machine translation.
+const fold = s => String(s).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 const normQ = s => String(s || "").toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
 export function parseMyMemory(json, term){
   if (!json || json.quotaFinished) throw new Error("quota");
@@ -61,8 +63,9 @@ export function parseMyMemory(json, term){
     let t = stripHtml(s).replace(/^["“]|[.!\s]+$/g, "");
     // short glosses read better in lower case ("Supere Isso" → "supere isso"); keep acronyms
     if (t.split(/\s+/).length <= 4 && !/\b[A-ZÀ-Ý]{2,}\b/.test(t)) t = t.toLowerCase();
-    if (!t || t.length > 60 || t.toLowerCase() === term.toLowerCase()) return;
-    if (!alts.some(a => a.toLowerCase() === t.toLowerCase())) alts.push(t);
+    // translation memories carry junk: broken encodings ("prﾃｳximo"), questions, the English word itself
+    if (!t || t.length > 60 || t.toLowerCase() === term.toLowerCase() || /[\uFF61-\uFF9F\uFFFD?]|Ã[\u00A0-\u00BF]/.test(t)) return;
+    if (!alts.some(a => fold(a) === fold(t))) alts.push(t);
   };
   add(main);
   same.forEach(m => add(m.translation));
@@ -96,7 +99,14 @@ export async function enrichFree(term, context, opts){
     translate(t, o.email),
     getJSON(DICT(lower), 5000).then(parseDictionary)
   ]);
-  const senses = wk.status === "fulfilled" ? wk.value : [];
+  let senses = wk.status === "fulfilled" ? wk.value : [];
+  // a part-of-speech hint ("verb/noun", from the word list) puts the matching senses first
+  if (o.pos){
+    // the list says "modal auxiliary", "be-verb"…; Wiktionary calls all of those verbs
+    const want = String(o.pos).toLowerCase().split("/").map(w => /verb|auxiliary/.test(w) && w !== "adverb" ? "verb" : w);
+    const match = s => want.some(w => String(s.pos).toLowerCase().indexOf(w) === 0);
+    senses = senses.filter(match).concat(senses.filter(s => !match(s)));
+  }
   const tato = tt.status === "fulfilled" ? tt.value : [];
   const trans = tr.status === "fulfilled" ? tr.value : null;
   const dict = dc.status === "fulfilled" ? dc.value : {};

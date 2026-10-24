@@ -37,7 +37,7 @@ export async function enrichClaude(term, context, opts){
   const Anthropic = await sdk();
   const client = new Anthropic({apiKey: opts.apiKey, dangerouslyAllowBrowser: true, maxRetries: 1});
   const model = opts.model || "claude-haiku-5-5";
-  const user = "Learner level: " + (opts.level || "B1") + "\nTerm: " + term + (context ? "\nSentence where I found it: " + context : "");
+  const user = "Learner level: " + (opts.level || "B1") + "\nTerm: " + term + (opts.pos ? "\nPart of speech: " + opts.pos : "") + (context ? "\nSentence where I found it: " + context : "");
   const params = {
     model, max_tokens: 4000,
     system: SYSTEM,

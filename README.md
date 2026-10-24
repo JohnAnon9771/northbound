@@ -47,10 +47,29 @@ Com uma chave da Claude API em Ajustes, o Claude gera tradução por sentido, ex
 
 Revisão espaçada no estilo Anki (SM-2, `js/flashcards/srs.js`): revisões antes das novas, limite de novas por dia vindo da fase da rota, e novas bloqueadas no dia em que as revisões passam de 15 minutos. Cada resposta fica no store `reviews`, o que permite trocar o algoritmo (por exemplo, FSRS) sem perder histórico.
 
+### Palavras do dia
+
+O cartão "Palavras do dia" em Palavras sugere, a cada dia, as palavras mais usadas do nível da fase que ainda não estão no deck: A2 nas fases 0 e 1, B1 na 2, B2 na 3 e 4, C1 na 5 (dá para fixar o nível em Ajustes). Você marca "já sei" nas que conhece e adiciona o resto, com tradução e exemplos. O lote completa o limite de novas do dia e só aparece quando as novas anteriores já foram estudadas, então nada se acumula nem se repete.
+
+A lista fica em `assets/data/words.tsv` e é gerada por:
+
+```bash
+python3 scripts/build-wordlist.py
+```
+
+Fontes (o Oxford 3000/5000 não pode ser redistribuído, então o site usa equivalentes abertos):
+
+- níveis A1 a B2: [CEFR-J Wordlist 1.5](http://www.cefr-j.org/download.html) (Tono Lab, TUFS), via [olp-en-cefrj](https://github.com/openlanguageprofiles/olp-en-cefrj);
+- C1: [Octanove Vocabulary Profile](https://github.com/openlanguageprofiles/olp-en-cefrj) (CC BY-SA 4.0);
+- ordem por frequência: [NGSL 1.2](https://www.newgeneralservicelist.com/) (Browne, Culligan e Phillips, CC BY-SA 4.0).
+
+`assets/data/words.tsv` é distribuído sob CC BY-SA 4.0.
+
 ## Estrutura
 
 ```
 index.html              shell: header, navegação, <main id="app">
+assets/data/words.tsv   lista das Palavras do dia (gerada por scripts/build-wordlist.py)
 sw.js  manifest.webmanifest  .nojekyll
 assets/css/tokens.css   cores, fontes, raios, sombras (claro e “luz de vela”)
 assets/css/base.css     reset, tipografia, layout
@@ -59,7 +78,7 @@ js/app.js               boot, rotas (#hoje, #palavras…), delegação de evento
 js/core/                db (IndexedDB), store (estado em memória + persistência), migrate, date, dom, toast, timer
 js/data/                só conteúdo: lições, fases, plano das 52 semanas, can-do, prompts, habilidades
 js/domain/              regras: rota e ritmo, estatísticas, plano do dia, conquistas
-js/flashcards/          srs, deck, enrich + providers (free, claude)
+js/flashcards/          srs, deck, enrich + providers (free, claude), importer, wordlist (Palavras do dia)
 js/ui/                  pedaços de interface compartilhados (tarefas, palavras, backup, celebração)
 js/views/               uma tela por arquivo
 tests/                  node --test

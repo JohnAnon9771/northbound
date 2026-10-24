@@ -31,6 +31,19 @@ test("MyMemory: prefers the exact source over a fuzzy match for another sentence
   assert.equal(r.text, "Estou realmente ansioso pela viagem");
 });
 
+test("MyMemory: drops broken encodings, questions and accent-only duplicates", () => {
+  const r = parseMyMemory({responseData: {translatedText: "próxima", match: 1}, matches: [
+    {segment: "next", translation: "próxima", match: 1}, {segment: "next", translation: "prﾃｳximo", match: 0.99},
+    {segment: "next", translation: "Prﾃ³ximo", match: 0.99}, {segment: "next", translation: "do laboratório?", match: 0.99},
+    {segment: "next", translation: "proxima", match: 0.99}, {segment: "next", translation: "próximo", match: 0.99}
+  ]}, "next");
+  assert.deepEqual(r.alts, ["próxima", "próximo"]);
+});
+
+test("stripHtml drops inline styles from Wiktionary", () => {
+  assert.equal(stripHtml('A nation. <style data-mw-deduplicate="x">.mw-parser-output .defdate{font-size:smaller}</style><span class="defdate">'), "A nation.");
+});
+
 test("MyMemory: quota error is reported", () => {
   assert.throws(() => parseMyMemory({quotaFinished: true}, "x"), /quota/);
 });

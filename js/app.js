@@ -8,6 +8,7 @@ import { setRenderer } from "./core/rerender.js";
 import * as timer from "./core/timer.js";
 import { taskActions, resetTasks, trackDetails, stopTimer } from "./ui/tasks.js";
 import { wordActions } from "./ui/words.js";
+import { dailyWordsActions } from "./ui/daily-words.js";
 import { checkAchievements } from "./ui/achieve.js";
 import { downloadBackup, daysSinceBackup } from "./ui/backup.js";
 import { currentRoadmapWeek, hasContent } from "./domain/route.js";
@@ -28,7 +29,7 @@ const NAV = [["hoje", "Hoje", "home"], ["palavras", "Palavras", "cards"], ["rota
 // old links from the single-page version and task links
 const ALIAS = {"": "hoje", semana: "rota", roteiro: "rota", flashcards: "palavras"};
 const PARENT = {niveis: "mais", rotinas: "mais", ajustes: "mais", estudo: "palavras"};
-const SHARED = Object.assign({}, taskActions, wordActions);
+const SHARED = Object.assign({}, taskActions, wordActions, dailyWordsActions);
 
 const root = $("#app");
 let view = null;

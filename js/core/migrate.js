@@ -1,5 +1,6 @@
 // State shape and backup import. Pure functions (no DOM, no IndexedDB) so they run under node --test.
 import { mondayOf } from "./date.js";
+import { WL_LEVELS, blankWl } from "../flashcards/wordlist.js";
 
 export const STATE_VERSION = 2;
 const ISO = /^\d{4}-\d{2}-\d{2}$/;
@@ -9,7 +10,7 @@ export function blankState(){
     v: STATE_VERSION,
     settings: {start: mondayOf(new Date()), goalH: 18, targetWeeks: 52, accent: "en-GB", newPerDay: null, mmEmail: "", claudeModel: "claude-haiku-5-5"},
     done: {}, skip: {}, cando: {}, errors: [], tests: [], scores: {}, revFrom: null,
-    achievements: {}, lastBackup: null, dayPlan: null
+    achievements: {}, lastBackup: null, dayPlan: null, wl: blankWl()
   };
 }
 
@@ -39,7 +40,20 @@ export function normalizeState(o){
     scores, revFrom: o.revFrom != null && rf >= 1 && rf < 1000 ? Math.floor(rf) : null,
     achievements: Object.assign({}, o.achievements || {}),
     lastBackup: typeof o.lastBackup === "string" ? o.lastBackup : null,
-    dayPlan: plan
+    dayPlan: plan,
+    wl: normalizeWl(o.wl)
+  };
+}
+
+function normalizeWl(w){
+  const b = blankWl();
+  if (!w || typeof w !== "object") return b;
+  const cur = {};
+  WL_LEVELS.forEach(l => { const n = Math.floor(Number(w.cur && w.cur[l])); cur[l] = n > 0 ? n : 0; });
+  return {
+    level: w.level === "auto" || WL_LEVELS.indexOf(w.level) > -1 ? w.level : "auto",
+    cur,
+    known: Array.isArray(w.known) ? w.known.filter(t => typeof t === "string" && t).slice(0, 20000) : []
   };
 }
 

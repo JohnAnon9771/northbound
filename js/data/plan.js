@@ -31,7 +31,7 @@ W(1,[
   T("w1-ef","test","EF SET 50 min: seu ponto de partida",60,LK.efset,"Se der 38 ou mais, use “Pular semana” no Roteiro para as semanas 2 a 7.",{ms:true}),
   T("w1-wi","writ","Write & Improve: 1 texto curto sobre você",40,LK.wi,"",{ms:true}),
   T("w1-cd","test","Autoavaliação das listas “can-do” A2 e B1",20,"#niveis","",{ms:true}),
-  T("w1-duo","cards","Flashcards: adicionar as palavras do Oxford 3000 A2 que você não sabe",30,"#palavras","Use a lista do Oxford 3000 por nível como fonte e adicione em Palavras."),
+  T("w1-duo","cards","Flashcards: adicionar as Palavras do dia (A2)",30,"#palavras","Em Palavras, o cartão Palavras do dia traz as mais usadas do A2. Marque as que já sabe e adicione o resto."),
   T("w1-gpt","conv","ChatGPT: prompt 1 (diagnóstico) e salvar os 10 erros em Rotinas",40,"#rotinas"),
   T("w1-gt1","gram","Fazer o “Grammar test 1” das 18 lições A1–A2 e anotar quais ficaram com 80% ou mais",120,IDX.ga[1],"Anote a nota de cada uma abaixo. Os tópicos com 80% ou mais viram revisão rápida e liberam tempo.",{sc:GA_IDS}),
   T("w1-pod","list","Podcasts do British Council: 1 episódio para sentir o nível",40,LK.podcasts)

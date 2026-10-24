@@ -41,7 +41,7 @@ function cardsHTML(){
     "<li>Confira a tradução sugerida e fique só com o sentido daquela frase. Um cartão por sentido da palavra.</li>" +
     "<li>Marque “também treinar ao contrário” para as palavras que você quer usar ao falar, não só reconhecer.</li>" +
     "<li>Seus erros recorrentes também viram cartão (botão abaixo): “I have 30 years” vira “I’m 30”.</li></ul>" +
-    '<p class="hint">Fontes: <a href="https://www.oxfordlearnersdictionaries.com/wordlists/oxford3000-5000" target="_blank" rel="noopener">Oxford 3000 e 5000 por nível CEFR</a>, as preparation tasks das lições, as transcrições dos podcasts e as leituras extras do <a href="https://english-e-reader.net/" target="_blank" rel="noopener">English e-Reader</a> e do <a href="https://www.newsinlevels.com/" target="_blank" rel="noopener">News in Levels</a> (no máximo 2 a 3 chunks por texto).</p>' +
+    '<p class="hint">Fontes: as Palavras do dia (em Palavras, já no nível da fase; o <a href="https://www.oxfordlearnersdictionaries.com/wordlists/oxford3000-5000" target="_blank" rel="noopener">Oxford 3000 e 5000</a> serve de referência), as preparation tasks das lições, as transcrições dos podcasts e as leituras extras do <a href="https://english-e-reader.net/" target="_blank" rel="noopener">English e-Reader</a> e do <a href="https://www.newsinlevels.com/" target="_blank" rel="noopener">News in Levels</a> (no máximo 2 a 3 chunks por texto).</p>' +
     '<p><a class="btn btn-soft" href="#palavras">' + icon("cards", 18) + "Abrir Palavras</a></p></section>";
 }
 
