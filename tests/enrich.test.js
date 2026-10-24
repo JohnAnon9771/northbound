@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { parseWiktionary, parseTatoeba, parseMyMemory, stripHtml } from "../js/flashcards/providers/free.js";
+import { parseWiktionary, parseTatoeba, parseMyMemory, parseDictionary, pickAudio, stripHtml } from "../js/flashcards/providers/free.js";
 import { normalizeEnrichment } from "../js/flashcards/enrich.js";
 
 test("Wiktionary: keeps real senses and short examples, skips 'plural of' entries", () => {
@@ -61,4 +61,15 @@ test("normalizeEnrichment trims, validates and caps fields", () => {
 
 test("stripHtml decodes entities", () => {
   assert.equal(stripHtml("<i>rock &amp; roll</i>&nbsp;&#39;n&#39;"), "rock & roll 'n'");
+});
+
+test("recordings follow the accent setting", () => {
+  const base = "https://api.dictionaryapi.dev/media/pronunciations/en/hello-";
+  const d = parseDictionary([{phonetic: "", phonetics: [{audio: base + "au.mp3"}, {audio: base + "uk.mp3", text: "/həˈləʊ/"}, {audio: "", text: "/həˈloʊ/"}, {audio: base + "us.mp3"}, {audio: "https://x.test/hello.mp3"}]}]);
+  assert.equal(d.audio, base + "uk.mp3 " + base + "us.mp3");   // Australian and untagged recordings are dropped
+  assert.equal(pickAudio(d.audio, "en-GB"), base + "uk.mp3");
+  assert.equal(pickAudio(d.audio, "en-US"), base + "us.mp3");
+  assert.equal(pickAudio(base + "au.mp3", "en-GB"), "");          // old cards: no match, the voice speaks
+  assert.equal(pickAudio("", "en-GB"), "");
+  assert.equal(normalizeEnrichment({audio: d.audio + " http://bad"}, "hello").audio, d.audio);
 });

@@ -12,7 +12,7 @@ export function normalizeEnrichment(o, term){
   return {
     term: str(o.term || term, 80),
     ipa: str(o.ipa, 60).replace(/^\/|\/$/g, ""),
-    audio: /^https:\/\//.test(o.audio || "") ? o.audio : "",
+    audio: String(o.audio || "").split(/\s+/).filter(a => /^https:\/\/\S+$/.test(a)).slice(0, 4).join(" "),
     pos: str(o.pos, 40),
     translation: str(o.translation, 160),
     definition: str(o.definition, 300),

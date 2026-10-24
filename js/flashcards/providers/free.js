@@ -72,11 +72,24 @@ export function parseMyMemory(json, term){
   return {text: main, alts: alts.slice(0, 3)};
 }
 
+// recordings are named by accent: hello-uk.mp3, hello-us.mp3, hello-au.mp3
+const ACCENT_TAG = {"en-GB": /[-_](uk|gb)[._\d]/i, "en-US": /[-_]us[._\d]/i};
+const tagged = url => Object.keys(ACCENT_TAG).some(k => ACCENT_TAG[k].test(url));
+
+// keeps every British and American recording (space-separated), so changing the accent later still finds one
 export function parseDictionary(json){
   const e = Array.isArray(json) ? json[0] : null;
   if (!e) return {};
-  const ph = (e.phonetics || []).find(p => p.audio) || (e.phonetics || []).find(p => p.text) || {};
-  return {ipa: e.phonetic || ph.text || "", audio: ph.audio || ""};
+  const phs = e.phonetics || [];
+  const ph = phs.find(p => p.text) || {};
+  const audio = phs.map(p => p.audio || "").filter(a => /^https:\/\//.test(a) && tagged(a));
+  return {ipa: e.phonetic || ph.text || "", audio: Array.from(new Set(audio)).join(" ")};
+}
+
+/* The recording in your accent, or "" so the synthesized voice (which follows the accent) speaks instead. */
+export function pickAudio(audio, accent){
+  const re = ACCENT_TAG[accent] || ACCENT_TAG["en-GB"];
+  return String(audio || "").split(/\s+/).find(a => re.test(a)) || "";
 }
 
 async function getJSON(url, ms){

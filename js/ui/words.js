@@ -1,6 +1,7 @@
 // Word helpers shared by Hoje, Palavras and the study screen: highlighting and pronunciation.
 import { S } from "../core/store.js";
 import { esc, icon } from "../core/dom.js";
+import { pickAudio } from "../flashcards/providers/free.js";
 
 const reEsc = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 /* Marks the term inside a sentence. Matches inflections loosely ("get over" → "got over", "getting over"). */
@@ -27,10 +28,12 @@ let voices = [];
 function loadVoices(){ try { voices = speechSynthesis.getVoices(); } catch (e){ voices = []; } }
 if (typeof speechSynthesis !== "undefined"){ loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
 
-export function speak(text, audioUrl){
-  if (audioUrl){ const a = new Audio(audioUrl); a.play().catch(() => speak(text)); return; }
-  if (typeof speechSynthesis === "undefined") return;
+// plays the card's recording only when it's in your accent; otherwise the synthesized voice speaks
+export function speak(text, audio){
   const lang = S.state.settings.accent || "en-GB";
+  const url = pickAudio(audio, lang);
+  if (url){ const a = new Audio(url); a.play().catch(() => speak(text)); return; }
+  if (typeof speechSynthesis === "undefined") return;
   const u = new SpeechSynthesisUtterance(text);
   u.lang = lang; u.rate = 0.92;
   const v = voices.find(x => x.lang === lang && /natural|premium|enhanced|google/i.test(x.name)) || voices.find(x => x.lang === lang) || voices.find(x => x.lang && x.lang.indexOf("en") === 0);
