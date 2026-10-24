@@ -10,6 +10,7 @@ import { PH, phaseOf, weekTasks, extraTasks, currentRoadmapWeek, calWeekOf, calW
 import { minutesByDate, streak } from "../domain/stats.js";
 import { planDay, nextOpen } from "../domain/daily.js";
 import { deckToday, phraseOfDay } from "../flashcards/deck.js";
+import { studyStatus } from "../ui/study.js";
 import { taskHTML, logLi, isOpen } from "../ui/tasks.js";
 import { highlight, speakBtn } from "../ui/words.js";
 
@@ -61,13 +62,12 @@ function heroHTML(n){
 }
 
 function cardsRow(deck){
-  const done = deck.due === 0 && deck.fresh === 0 && deck.reviewedToday > 0;
-  const parts = [];
-  if (deck.due) parts.push(plural(deck.due, "revisão", "revisões"));
-  if (deck.fresh) parts.push(plural(deck.fresh, "nova", "novas"));
-  const title = done ? "Flashcards em dia" : parts.length ? "Flashcards: " + parts.join(" + ") : "Flashcards: nada para hoje";
-  const meta = done ? plural(deck.reviewedToday, "resposta hoje", "respostas hoje") : deck.blocked ? "Revisões passaram de 15 min: sem palavras novas hoje" : parts.length ? "cerca de " + deck.minutes + " min" : "Adicione palavras para começar";
-  return '<li class="task task-cards' + (done ? " done" : "") + '"><input type="checkbox" class="chk" tabindex="-1" aria-hidden="true"' + (done ? " checked" : "") + '><div class="task-body"><a class="task-title" href="#estudo">' + esc(title) + '</a><div class="task-meta"><span class="tag c-base">Flashcards</span><span>' + esc(meta) + "</span></div></div>" + (parts.length ? '<a class="btn btn-small btn-ghost task-start" href="#estudo">' + icon("play", 14) + "Estudar</a>" : "") + "</li>";
+  const st = studyStatus(deck);
+  const done = !st.ready && deck.reviewedToday > 0;
+  const title = st.ready ? "Flashcards: " + st.title : done ? "Flashcards em dia" : deck.total ? "Flashcards: nada vence agora" : "Flashcards: deck vazio";
+  const meta = done ? plural(deck.reviewedToday, "resposta hoje", "respostas hoje") + ". " + st.why : st.why;
+  return '<li class="task task-cards' + (done ? " done" : "") + '"><input type="checkbox" class="chk" tabindex="-1" aria-hidden="true"' + (done ? " checked" : "") + '><div class="task-body"><a class="task-title" href="#estudo">' + esc(title) + '</a><div class="task-meta"><span class="tag c-base">Flashcards</span><span>' + esc(meta) + "</span></div></div>" +
+    '<a class="btn btn-small ' + (st.ready ? "" : "btn-ghost ") + 'task-start" href="#estudo">' + icon("play", 14) + "Estudar</a></li>";
 }
 
 function manualForm(){

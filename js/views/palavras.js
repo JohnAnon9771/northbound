@@ -9,6 +9,7 @@ import { addCard, updateCard, removeCard, restoreCards, findByTerm, deckToday, t
 import { phaseNow } from "../domain/route.js";
 import { KNOWN_IVL } from "../domain/stats.js";
 import { highlight, speakBtn } from "../ui/words.js";
+import { studyStatus } from "../ui/study.js";
 
 const ui = {
   term: "", context: "", status: "idle", draft: null, reverse: false, warning: "", source: "",
@@ -105,8 +106,10 @@ export default {
   title: "Palavras",
   render(){
     const d = deckToday();
-    let h = '<div class="page-head"><p class="eyebrow">Flashcards</p><h1>Palavras</h1><p class="lead">Escreva uma palavra ou expressão. O site busca a tradução e exemplos reais de uso, e você ajusta antes de salvar.</p></div>';
-    h += '<section class="card card-hero section"><div class="row" style="align-items:center"><div style="flex:1 1 260px"><h2 style="margin:0">' + (d.due + d.fresh ? "Hoje: " + plural(d.due, "revisão", "revisões") + " e " + plural(d.fresh, "nova", "novas") : "Tudo em dia por hoje") + '</h2><p class="sub" style="margin:4px 0 0">' + (d.blocked ? "As revisões de hoje passaram de 15 min, então palavras novas ficam para amanhã." : "Limite da fase: " + d.limit + " novas por dia. Revisões sempre primeiro.") + "</p></div>" + (d.due + d.fresh ? '<a class="btn" href="#estudo">' + icon("play", 16) + "Estudar agora</a>" : "") + "</div>";
+    const st = studyStatus(d);
+    let h = '<div class="hello"><div style="flex:1 1 280px"><p class="eyebrow">Flashcards</p><h1>Palavras</h1><p class="lead">Escreva uma palavra ou expressão. O site busca a tradução e exemplos reais de uso, e você ajusta antes de salvar.</p></div>' +
+      '<a class="btn' + (st.ready ? "" : " btn-soft") + '" href="#estudo">' + icon("play", 16) + "Estudar" + (st.ready ? " (" + (d.due + d.fresh) + ")" : "") + "</a></div>";
+    h += '<section class="card card-hero section"><h2 style="margin:0">' + (st.ready ? "Hoje: " + esc(st.title) : d.total ? "Tudo em dia por hoje" : "Seu deck está vazio") + '</h2><p class="sub" style="margin:4px 0 0">' + esc(st.ready ? st.why + ". Limite da fase: " + d.limit + " novas por dia, revisões sempre primeiro." : st.why) + "</p>";
     h += '<div class="stat-strip"><div><b class="num">' + d.due + '</b><span>para revisar</span></div><div><b class="num">' + d.newWaiting + '</b><span>novas na fila</span></div><div><b class="num">' + d.total + '</b><span>no deck</span></div><div><b class="num">' + d.known + "</b><span>sabidas (21+ dias)</span></div></div></section>";
 
     h += '<section class="card section" aria-labelledby="addT"><h2 id="addT">Adicionar palavra</h2><form data-submit="add-search"><div class="add-row"><div class="field"><label for="addTerm">Palavra ou expressão</label><input type="text" id="addTerm" name="term" data-input="add-term" data-fk="add-term" value="' + esc(ui.term) + '" placeholder="Ex.: look forward to" autocomplete="off" autocapitalize="off" spellcheck="false"></div><button class="btn" type="submit"' + (ui.status === "loading" ? " disabled" : "") + ">" + icon("search", 18) + 'Buscar</button></div><div class="field" style="margin-top:12px"><label for="addCtx">Frase onde você viu (opcional)</label><input type="text" id="addCtx" name="context" data-input="add-ctx" data-fk="add-ctx" value="' + esc(ui.context) + '" placeholder="Ex.: I\'m really looking forward to the trip."></div></form>';

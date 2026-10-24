@@ -8,6 +8,7 @@ import { buildQueue, preview } from "../flashcards/srs.js";
 import { answer, deckToday } from "../flashcards/deck.js";
 import { highlight, cloze, speak, speakBtn } from "../ui/words.js";
 import { confetti } from "../ui/celebrate.js";
+import { studyStatus } from "../ui/study.js";
 
 const MAX_CARD_MS = 60000;   // time on one card counted for stats/log
 const GRADE_UI = [[1, "De novo", "g1"], [2, "Difícil", "g2"], [3, "Bom", "g3"], [4, "Fácil", "g4"]];
@@ -92,9 +93,8 @@ function doneHTML(){
   let h = '<section class="card done-card">';
   if (!ses.done){
     h += icon("leaf", 40) + "<h2>Nada para estudar agora</h2>";
-    if (r.d.newWaiting && (r.d.blocked || r.d.introduced >= r.d.limit)) h += '<p class="lead">' + (r.d.blocked ? "As revisões de hoje passaram de 15 minutos, então as novas ficam para amanhã." : "Você já viu as " + r.d.limit + " palavras novas de hoje.") + " Se quiser, dá para puxar mais algumas.</p>" + '<p><button class="btn btn-soft" type="button" data-act="extra">Estudar 5 novas extras</button></p>';
-    else if (!S.cards.length) h += '<p class="lead">Adicione suas primeiras palavras e elas aparecem aqui.</p>';
-    else h += '<p class="lead">Tudo revisado. Volte amanhã: ' + plural(tomorrow, "cartão espera", "cartões esperam") + " por você.</p>";
+    h += '<p class="lead">' + esc(studyStatus(r.d).why) + "</p>";
+    if (r.d.newWaiting) h += '<p><button class="btn btn-soft" type="button" data-act="extra">Estudar 5 novas extras</button></p>';
   } else {
     h += icon("star", 40) + "<h2>" + (ses.good / ses.done >= 0.85 ? "Que sessão boa!" : "Sessão concluída") + "</h2>";
     h += '<p class="lead">Cada revisão de hoje deixa a palavra mais firme para a próxima conversa.</p>';
