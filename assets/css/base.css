@@ -25,7 +25,8 @@ p{margin:0 0 12px;max-width:68ch}
 a.eyebrow{display:inline-block;text-decoration:none}
 .muted{color:var(--muted)}
 .num{font-variant-numeric:tabular-nums}
-#app:focus{outline:none}
+/* main gets focus on route changes (for screen readers); no visible ring */
+#app:focus,#app:focus-visible{outline:none;box-shadow:none}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .hint{font-size:13.5px;color:var(--muted);margin:6px 0 0}
 hr{border:0;border-top:1px solid var(--rule);margin:28px 0}
