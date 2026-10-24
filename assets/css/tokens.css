@@ -1,0 +1,74 @@
+/* Design tokens: the only place with colors, fonts, radii and shadows.
+   A redesign starts (and usually ends) here. Components only use these variables. */
+:root{
+  color-scheme: light;
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-body: "Nunito", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --bg: #FBF6EE;          /* paper */
+  --bg-sunk: #F3EBDF;
+  --surface: #FFFDF9;
+  --surface-2: #F7F0E6;
+  --ink: #3A2E28;         /* warm charcoal */
+  --muted: #7A6B61;
+  --rule: #EADFCF;
+  --rule-strong: #D9CAB6;
+
+  --accent: #C2603A;      /* terracotta */
+  --accent-ink: #FFF8F1;
+  --accent-soft: #F7E3D7;
+  --sage: #6F8C69;
+  --sage-soft: #E4ECDD;
+  --honey: #C9922F;
+  --honey-soft: #F6E8C8;
+  --plum: #8C6A93;
+  --sky: #5B83A3;
+
+  --ok: var(--sage);
+  --warn: var(--honey);
+  --danger: #B4493C;
+
+  /* route phases 0–5 */
+  --p0: #A3968A; --p1: #7A9A74; --p2: #5B83A3; --p3: #8C6A93; --p4: #C2603A; --p5: #C9922F;
+  /* skill categories: base, input, output */
+  --c-base: #A08A78; --c-in: #5B83A3; --c-out: #C2603A;
+  /* heatmap scale */
+  --heat-0: #F1E8DB; --heat-1: #DCE6D3; --heat-2: #B5CBA9; --heat-3: #87A87D; --heat-4: #5E7F57;
+
+  --r-sm: 10px; --r: 16px; --r-lg: 22px; --r-pill: 999px;
+  --shadow-1: 0 1px 2px rgba(74,52,38,.05), 0 6px 18px rgba(74,52,38,.06);
+  --shadow-2: 0 2px 6px rgba(74,52,38,.07), 0 18px 40px rgba(74,52,38,.12);
+  --focus: 0 0 0 3px rgba(194,96,58,.35);
+  --nav-h: 64px;
+}
+
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --bg: #1E1916; --bg-sunk: #181412; --surface: #28211D; --surface-2: #312823;
+    --ink: #F1E6DA; --muted: #B5A595; --rule: #3B312B; --rule-strong: #4C4038;
+    --accent: #E58A62; --accent-ink: #24170F; --accent-soft: #48302A;
+    --sage: #9DB894; --sage-soft: #2F382C; --honey: #E8BE6A; --honey-soft: #423620; --plum: #C29CC9; --sky: #8FB4D2;
+    --danger: #E7826F;
+    --p0: #A89C90; --p1: #9DB894; --p2: #8FB4D2; --p3: #C29CC9; --p4: #E58A62; --p5: #E8BE6A;
+    --c-base: #C0AA96; --c-in: #8FB4D2; --c-out: #E58A62;
+    --heat-0: #2C2420; --heat-1: #3A4535; --heat-2: #55684D; --heat-3: #7C9772; --heat-4: #A8C49C;
+    --shadow-1: 0 1px 2px rgba(0,0,0,.3), 0 6px 18px rgba(0,0,0,.25);
+    --shadow-2: 0 2px 6px rgba(0,0,0,.35), 0 18px 40px rgba(0,0,0,.45);
+    --focus: 0 0 0 3px rgba(229,138,98,.45);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --bg: #1E1916; --bg-sunk: #181412; --surface: #28211D; --surface-2: #312823;
+  --ink: #F1E6DA; --muted: #B5A595; --rule: #3B312B; --rule-strong: #4C4038;
+  --accent: #E58A62; --accent-ink: #24170F; --accent-soft: #48302A;
+  --sage: #9DB894; --sage-soft: #2F382C; --honey: #E8BE6A; --honey-soft: #423620; --plum: #C29CC9; --sky: #8FB4D2;
+  --danger: #E7826F;
+  --p0: #A89C90; --p1: #9DB894; --p2: #8FB4D2; --p3: #C29CC9; --p4: #E58A62; --p5: #E8BE6A;
+  --c-base: #C0AA96; --c-in: #8FB4D2; --c-out: #E58A62;
+  --heat-0: #2C2420; --heat-1: #3A4535; --heat-2: #55684D; --heat-3: #7C9772; --heat-4: #A8C49C;
+  --shadow-1: 0 1px 2px rgba(0,0,0,.3), 0 6px 18px rgba(0,0,0,.25);
+  --shadow-2: 0 2px 6px rgba(0,0,0,.35), 0 18px 40px rgba(0,0,0,.45);
+  --focus: 0 0 0 3px rgba(229,138,98,.45);
+}

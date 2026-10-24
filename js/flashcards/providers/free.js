@@ -1,0 +1,126 @@
+/* Free sources, no key needed (all allow CORS):
+   - Wiktionary REST: part of speech, definitions and usage examples (works for phrasal verbs and idioms)
+   - Tatoeba: real sentences with human pt-BR translations
+   - MyMemory: translation of the term and of examples that have no translation
+   - Free Dictionary API: IPA and pronunciation audio, when it's up */
+const enc = encodeURIComponent;
+const WIKT = t => "https://en.wiktionary.org/api/rest_v1/page/definition/" + enc(t.replace(/ /g, "_"));
+const DICT = t => "https://api.dictionaryapi.dev/api/v2/entries/en/" + enc(t);
+const TATO = t => "https://api.tatoeba.org/unstable/sentences?lang=eng&q=" + enc('"' + t + '"') + "&trans:lang=por&sort=relevance&limit=20&showtrans=matching";
+const MM = (q, email) => "https://api.mymemory.translated.net/get?q=" + enc(q) + "&langpair=en|pt-BR" + (email ? "&de=" + enc(email) : "");
+
+const POS_PT = {verb: "verbo", noun: "substantivo", adjective: "adjetivo", adverb: "advérbio", phrase: "expressão", idiom: "expressão idiomática",
+  preposition: "preposição", conjunction: "conjunção", interjection: "interjeição", pronoun: "pronome", determiner: "determinante", "prepositional phrase": "locução prepositiva", proverb: "provérbio"};
+export const posPt = p => POS_PT[String(p || "").toLowerCase()] || String(p || "").toLowerCase();
+
+export function stripHtml(s){
+  return String(s || "").replace(/<[^>]*>/g, "").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/\s+/g, " ").trim();
+}
+
+export function parseWiktionary(json){
+  const senses = [];
+  ((json && json.en) || []).forEach(block => {
+    (block.definitions || []).forEach(d => {
+      const text = stripHtml(d.definition);
+      if (!text || /^(plural|alternative|obsolete|archaic) (of|form|spelling)/i.test(text)) return;
+      senses.push({pos: block.partOfSpeech || "", text, examples: (d.examples || []).map(stripHtml).filter(e => e.length > 8 && e.length < 160 && e.indexOf(";") < 0)});
+    });
+  });
+  return senses;
+}
+
+export function parseTatoeba(json, term){
+  const words = term.toLowerCase().split(/\s+/).map(w => w.replace(/[^a-z']/g, "").slice(0, Math.max(3, w.length - 2)));
+  const out = [];
+  ((json && json.data) || []).forEach(s => {
+    const en = String(s.text || "").trim();
+    if (en.length < 14 || en.length > 110) return;
+    const low = en.toLowerCase();
+    if (!words.every(w => low.indexOf(w) > -1)) return;
+    const trs = [].concat(...(s.translations || []).map(t => Array.isArray(t) ? t : [t])).filter(t => t && t.lang === "por" && !t.is_unapproved);
+    if (!trs.length) return;
+    const pt = (trs.find(t => t.is_direct) || trs[0]).text;
+    out.push({en, pt});
+  });
+  return out;
+}
+
+// MyMemory's top answer can be a fuzzy memory match for a *different* sentence ("…the ball" for "…the trip"),
+// so prefer entries whose source is exactly the query, then its machine translation.
+const normQ = s => String(s || "").toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+export function parseMyMemory(json, term){
+  if (!json || json.quotaFinished) throw new Error("quota");
+  const q = normQ(term);
+  const same = (json.matches || []).filter(m => normQ(m.segment) === q)
+    .sort((a, b) => (Number(b.match) || 0) - (Number(a.match) || 0) || (Number(b.quality) || 0) - (Number(a.quality) || 0));
+  const top = json.responseData || {};
+  const exactTop = Number(top.match) >= 1 || !(json.matches || []).length;
+  const main = stripHtml(exactTop ? top.translatedText : same.length ? same[0].translation : top.translatedText).replace(/^["“]|[.!\s]+$/g, "");
+  const alts = [];
+  const add = s => {
+    let t = stripHtml(s).replace(/^["“]|[.!\s]+$/g, "");
+    // short glosses read better in lower case ("Supere Isso" → "supere isso"); keep acronyms
+    if (t.split(/\s+/).length <= 4 && !/\b[A-ZÀ-Ý]{2,}\b/.test(t)) t = t.toLowerCase();
+    if (!t || t.length > 60 || t.toLowerCase() === term.toLowerCase()) return;
+    if (!alts.some(a => a.toLowerCase() === t.toLowerCase())) alts.push(t);
+  };
+  add(main);
+  same.forEach(m => add(m.translation));
+  return {text: main, alts: alts.slice(0, 3)};
+}
+
+export function parseDictionary(json){
+  const e = Array.isArray(json) ? json[0] : null;
+  if (!e) return {};
+  const ph = (e.phonetics || []).find(p => p.audio) || (e.phonetics || []).find(p => p.text) || {};
+  return {ipa: e.phonetic || ph.text || "", audio: ph.audio || ""};
+}
+
+async function getJSON(url, ms){
+  const ctl = typeof AbortController !== "undefined" ? new AbortController() : null;
+  const t = ctl ? setTimeout(() => ctl.abort(), ms || 9000) : null;
+  try {
+    const r = await fetch(url, ctl ? {signal: ctl.signal} : {});
+    if (!r.ok) throw new Error("http " + r.status);
+    return await r.json();
+  } finally { if (t) clearTimeout(t); }
+}
+export async function translate(text, email){ return parseMyMemory(await getJSON(MM(text, email)), text); }
+
+export async function enrichFree(term, context, opts){
+  const o = opts || {};
+  const t = term.trim(), lower = t.toLowerCase();
+  const [wk, tt, tr, dc] = await Promise.allSettled([
+    getJSON(WIKT(lower)).catch(() => getJSON(WIKT(t))).then(parseWiktionary),
+    getJSON(TATO(lower)).then(j => parseTatoeba(j, lower)),
+    translate(t, o.email),
+    getJSON(DICT(lower), 5000).then(parseDictionary)
+  ]);
+  const senses = wk.status === "fulfilled" ? wk.value : [];
+  const tato = tt.status === "fulfilled" ? tt.value : [];
+  const trans = tr.status === "fulfilled" ? tr.value : null;
+  const dict = dc.status === "fulfilled" ? dc.value : {};
+  if (!senses.length && !tato.length && !trans) throw new Error(tr.reason && tr.reason.message === "quota" ? "quota" : "offline");
+
+  // examples: your own sentence first, then real sentences with human translations, then dictionary examples
+  const examples = [];
+  const seen = new Set();
+  const push = (en, pt) => { const k = en.toLowerCase(); if (!seen.has(k) && examples.length < 3){ seen.add(k); examples.push({en, pt: pt || ""}); } };
+  if (context) push(context.trim(), "");
+  tato.slice(0, 2).forEach(x => push(x.en, x.pt));
+  senses.forEach(s => s.examples.forEach(e => push(e, "")));
+  tato.slice(2).forEach(x => push(x.en, x.pt));
+  // translate the ones still without pt (costs MyMemory quota, so only these)
+  await Promise.all(examples.map(async ex => {
+    if (ex.pt) return;
+    try { ex.pt = (await translate(ex.en, o.email)).text; } catch (e){ /* keep it untranslated */ }
+  }));
+
+  const first = senses[0] || {};
+  return {
+    term: t, ipa: dict.ipa || "", audio: dict.audio || "",
+    pos: posPt(first.pos), translation: trans ? (trans.alts.join(", ") || trans.text) : "",
+    definition: first.text || "", examples, collocations: [], cefr: "", notes: "",
+    senses: senses.slice(0, 4).map(s => ({pos: posPt(s.pos), text: s.text}))
+  };
+}
