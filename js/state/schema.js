@@ -1,6 +1,8 @@
-// State shape and backup import. Pure functions (no DOM, no IndexedDB) so they run under node --test.
-import { mondayOf } from "./date.js";
-import { WL_LEVELS, blankWl } from "../flashcards/wordlist.js";
+// State shape: the blank state and normalizers that clean whatever comes from IndexedDB or a backup.
+// Pure functions (no DOM, no IndexedDB) so they run under node --test.
+import { mondayOf } from "../core/date.js";
+import { uid } from "../core/id.js";
+import { blankWl, normalizeWl } from "../flashcards/wordlist.js";
 
 export const STATE_VERSION = 2;
 const ISO = /^\d{4}-\d{2}-\d{2}$/;
@@ -45,39 +47,9 @@ export function normalizeState(o){
   };
 }
 
-function normalizeWl(w){
-  const b = blankWl();
-  if (!w || typeof w !== "object") return b;
-  const cur = {};
-  WL_LEVELS.forEach(l => { const n = Math.floor(Number(w.cur && w.cur[l])); cur[l] = n > 0 ? n : 0; });
-  return {
-    level: w.level === "auto" || WL_LEVELS.indexOf(w.level) > -1 ? w.level : "auto",
-    cur,
-    known: Array.isArray(w.known) ? w.known.filter(t => typeof t === "string" && t).slice(0, 20000) : []
-  };
-}
-
 export function normalizeLog(e){
   if (!e || !ISO.test(e.date) || !(Number(e.min) > 0)) return null;
-  const out = {id: String(e.id || (Date.now().toString(36) + Math.random().toString(36).slice(2, 7))), date: e.date, min: Math.round(Number(e.min)), skill: e.skill === "duo" ? "cards" : String(e.skill || "gram"), note: e.note ? String(e.note) : "", ts: Number(e.ts) || 0};
+  const out = {id: String(e.id || uid()), date: e.date, min: Math.round(Number(e.min)), skill: e.skill === "duo" ? "cards" : String(e.skill || "gram"), note: e.note ? String(e.note) : "", ts: Number(e.ts) || 0};
   if (e.task) out.task = String(e.task);
   return out;
-}
-
-/* Accepts a backup from this site (app: "northbound") or from the old single-page version
-   (v1: {settings, done, logs: {"2025-01": [...]}, ...}). Returns {state, logs, cards, reviews}. */
-export function fromBackup(o){
-  if (!o || typeof o !== "object") throw new Error("invalid");
-  if (o.app === "northbound"){
-    return {
-      state: normalizeState(o.state),
-      logs: (o.logs || []).map(normalizeLog).filter(Boolean),
-      cards: Array.isArray(o.cards) ? o.cards.filter(c => c && c.id && c.term) : [],
-      reviews: Array.isArray(o.reviews) ? o.reviews.filter(r => r && r.cardId) : []
-    };
-  }
-  if (!o.settings) throw new Error("invalid");
-  const logs = [];
-  Object.keys(o.logs || {}).forEach(m => { (Array.isArray(o.logs[m]) ? o.logs[m] : []).forEach(e => { const n = normalizeLog(e); if (n) logs.push(n); }); });
-  return {state: normalizeState(o), logs, cards: [], reviews: []};
 }

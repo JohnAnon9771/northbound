@@ -1,5 +1,5 @@
 // Rota: the journey map, this week's tasks and hours, and the full 52-week route.
-import { S, update } from "../core/store.js";
+import { S, update } from "../state/store.js";
 import { esc } from "../core/dom.js";
 import { icon } from "../core/icons.js";
 import { formatHours } from "../core/format.js";

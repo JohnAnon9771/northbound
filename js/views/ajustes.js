@@ -1,5 +1,5 @@
 // Ajustes: plan, flashcards, Claude API, appearance and data.
-import { S, update, setSecret, resetAll, persistent } from "../core/store.js";
+import { S, update, setSecret, resetAll, persistent } from "../state/store.js";
 import { esc } from "../core/dom.js";
 import { icon } from "../core/icons.js";
 import { toast } from "../core/toast.js";

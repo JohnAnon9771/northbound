@@ -1,5 +1,5 @@
 // Deck operations on top of the store: create, edit, answer, and today's numbers.
-import { S, putCard, putCards, deleteCard, addReview, cardById } from "../core/store.js";
+import { S, putCard, putCards, deleteCard, addReview, cardById } from "../state/store.js";
 import { uid } from "../core/id.js";
 import { today } from "../core/date.js";
 import { newSrs, schedule, buildQueue } from "./srs.js";

@@ -1,5 +1,5 @@
 // Shared task, score and log rendering plus their actions (used by Hoje and Rota).
-import { S, update, addLog, deleteLog, restoreLog } from "../core/store.js";
+import { S, update, addLog, deleteLog, restoreLog } from "../state/store.js";
 import { esc } from "../core/dom.js";
 import { icon } from "../core/icons.js";
 import { today, shortDate } from "../core/date.js";

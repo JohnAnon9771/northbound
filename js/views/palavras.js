@@ -1,5 +1,5 @@
 // Palavras: add words (auto translation + examples), edit the deck, bulk import.
-import { S } from "../core/store.js";
+import { S } from "../state/store.js";
 import { esc } from "../core/dom.js";
 import { icon } from "../core/icons.js";
 import { plural } from "../core/format.js";

@@ -1,5 +1,5 @@
 // Hoje: one clear next step, today's short plan, progress ring, streak and the phrase of the day.
-import { S, addLog, updateQuiet } from "../core/store.js";
+import { S, addLog, updateQuiet } from "../state/store.js";
 import { esc } from "../core/dom.js";
 import { icon } from "../core/icons.js";
 import { plural } from "../core/format.js";

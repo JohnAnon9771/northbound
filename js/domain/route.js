@@ -1,5 +1,6 @@
 // Route logic: which tasks each week has, where you are, pace and the extras above the base route.
-import { S, version } from "../core/store.js";
+import { S } from "../state/store.js";
+import { cached } from "../state/memo.js";
 import { today, daysBetween, addDays } from "../core/date.js";
 import { formatHours } from "../core/format.js";
 import { LES, LK, EERL, IDX } from "../data/lessons.js";
@@ -10,14 +11,6 @@ import { weekClosed } from "./week-close.js";
 
 export { PH, phaseOf };
 
-// memo that resets whenever the store changes
-const memo = new Map();
-let memoV = -1;
-function cached(key, fn){
-  if (memoV !== version){ memo.clear(); memoV = version; }
-  if (!memo.has(key)) memo.set(key, fn());
-  return memo.get(key);
-}
 
 /* Weeks before revFrom keep the task list they had when the review upgrade arrived,
    so weeks already counted as done never lose that status. */
@@ -200,9 +193,5 @@ export function lowLessons(ids){
   return {low, none};
 }
 
-/* ---------- logs ---------- */
-export function allLogs(){ return cached("logs", () => S.logs.slice().sort((a, b) => a.date < b.date ? 1 : a.date > b.date ? -1 : (b.ts||0) - (a.ts||0))); }
-export function minutesBy(fn){ let t = 0; S.logs.forEach(e => { if (fn(e)) t += e.min; }); return t; }
-export function hasContent(){ const s = S.state; return Object.keys(s.done).length || S.logs.length || s.errors.length || s.tests.length || Object.keys(s.cando).length || Object.keys(s.skip).length || Object.keys(s.scores).length || S.cards.length; }
 export const goalLabel = () => formatHours(S.state.settings.goalH * 60) + " h";
 export const phaseNow = () => PH[phaseOf(currentRoadmapWeek())];

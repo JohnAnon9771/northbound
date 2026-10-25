@@ -1,12 +1,13 @@
 // Progresso: what you've built so far. Heatmap, known words, achievements, hours, skills, lessons, history.
-import { S } from "../core/store.js";
+import { S } from "../state/store.js";
 import { esc } from "../core/dom.js";
 import { icon } from "../core/icons.js";
 import { formatHours, pct, plural } from "../core/format.js";
 import { today, addDays, mondayOf, parse, MESES, shortDate } from "../core/date.js";
 import { sk, CATN } from "../data/skills.js";
 import { LES } from "../data/lessons.js";
-import { allLogs, minutesBy, calWeekOf, planSplit, latestScore, lowLessons } from "../domain/route.js";
+import { allLogs, minutesBy } from "../state/selectors.js";
+import { calWeekOf, planSplit, latestScore, lowLessons } from "../domain/route.js";
 import { minutesByDate, streak, heatmap, heatLevel, knownCount, learnedCount, knownTimeline, weekSummary } from "../domain/stats.js";
 import { ACHIEVEMENTS } from "../domain/achievements.js";
 import { logLi } from "../ui/tasks.js";

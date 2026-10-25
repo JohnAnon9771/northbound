@@ -1,9 +1,10 @@
 // In-memory app data, loaded once from IndexedDB at boot. Views read S synchronously;
 // every change goes through a mutation below, which persists it and notifies subscribers.
 import * as db from "./db.js";
-import { blankState, normalizeState, normalizeLog, fromBackup } from "./migrate.js";
-import { uid } from "./id.js";
-import { today } from "./date.js";
+import { blankState, normalizeState, normalizeLog } from "./schema.js";
+import { toBackup, fromBackup } from "./backup-format.js";
+import { uid } from "../core/id.js";
+import { today } from "../core/date.js";
 
 export const S = {state: blankState(), logs: [], cards: [], reviews: [], secrets: {}};
 export let persistent = true;
@@ -106,9 +107,7 @@ export function setSecret(key, value){
 }
 
 /* ---- backup ---- */
-export function exportAll(){
-  return {app: "northbound", v: 2, exported: new Date().toISOString(), state: S.state, logs: S.logs, cards: S.cards, reviews: S.reviews};
-}
+export const exportAll = () => toBackup(S);
 export async function importAll(json){
   const d = fromBackup(json);
   S.state = d.state; S.logs = d.logs; S.cards = d.cards; S.reviews = d.reviews;

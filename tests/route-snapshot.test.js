@@ -6,8 +6,8 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync, writeFileSync } from "node:fs";
 import { createHash } from "node:crypto";
-import { update } from "../js/core/store.js";
-import { normalizeState } from "../js/core/migrate.js";
+import { update } from "../js/state/store.js";
+import { normalizeState } from "../js/state/schema.js";
 import { weekTasks, extraTasks, weekLabel, weekMilestone, weekNote, planSplit, extraPlan } from "../js/domain/route.js";
 
 const FIXTURE = new URL("./fixtures/route-snapshot.json", import.meta.url);

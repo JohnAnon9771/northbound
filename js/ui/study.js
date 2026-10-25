@@ -1,5 +1,5 @@
 // "Can I study now, and if not, why?" Shared by Hoje, Palavras and the study screen.
-import { S } from "../core/store.js";
+import { S } from "../state/store.js";
 import { plural } from "../core/format.js";
 import { today, daysBetween, isoOf, shortDate } from "../core/date.js";
 

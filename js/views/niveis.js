@@ -1,5 +1,5 @@
 // Níveis e testes: test results (with the EF SET chart) and the "can-do" self-assessment.
-import { S, update } from "../core/store.js";
+import { S, update } from "../state/store.js";
 import { esc } from "../core/dom.js";
 import { pct } from "../core/format.js";
 import { uid } from "../core/id.js";

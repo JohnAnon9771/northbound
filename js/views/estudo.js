@@ -1,5 +1,5 @@
 // Estudo: focused flashcard session. Space flips, 1-4 answer, swipe left/right on phones.
-import { S, addLog } from "../core/store.js";
+import { S, addLog } from "../state/store.js";
 import { esc } from "../core/dom.js";
 import { icon } from "../core/icons.js";
 import { plural } from "../core/format.js";

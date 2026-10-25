@@ -1,5 +1,5 @@
 // Rotinas: how to use the flashcards, the week split, recurring errors and the ChatGPT prompts.
-import { S, update } from "../core/store.js";
+import { S, update } from "../state/store.js";
 import { esc } from "../core/dom.js";
 import { icon } from "../core/icons.js";
 import { formatHours } from "../core/format.js";

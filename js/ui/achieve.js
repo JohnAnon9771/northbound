@@ -1,5 +1,5 @@
 // Computes the achievement context from the store and unlocks what's new.
-import { S, update } from "../core/store.js";
+import { S, update } from "../state/store.js";
 import { today } from "../core/date.js";
 import { toast } from "../core/toast.js";
 import { ACHIEVEMENTS, newlyUnlocked } from "../domain/achievements.js";

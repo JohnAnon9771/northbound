@@ -1,5 +1,5 @@
 // Word helpers shared by Hoje, Palavras and the study screen: highlighting and pronunciation.
-import { S } from "../core/store.js";
+import { S } from "../state/store.js";
 import { esc } from "../core/dom.js";
 import { icon } from "../core/icons.js";
 import { pickAudio } from "../flashcards/providers/free.js";

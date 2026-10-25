@@ -1,6 +1,6 @@
 // Boot, hash router, event delegation and the global timer bar.
 // To add a section: create js/views/<name>.js exporting {id, title, render(), actions?} and add it to VIEWS.
-import { S, load, subscribe, onError, persistent, updateQuiet } from "./core/store.js";
+import { S, load, subscribe, onError, persistent, updateQuiet } from "./state/store.js";
 import { $, esc } from "./core/dom.js";
 import { icon } from "./core/icons.js";
 import { today } from "./core/date.js";
@@ -12,7 +12,8 @@ import { wordActions } from "./ui/words.js";
 import { dailyWordsActions } from "./ui/daily-words.js";
 import { checkAchievements } from "./ui/achieve.js";
 import { downloadBackup, daysSinceBackup } from "./ui/backup.js";
-import { currentRoadmapWeek, hasContent } from "./domain/route.js";
+import { currentRoadmapWeek } from "./domain/route.js";
+import { hasContent } from "./state/selectors.js";
 import { deckToday } from "./flashcards/deck.js";
 
 import hoje from "./views/hoje.js";

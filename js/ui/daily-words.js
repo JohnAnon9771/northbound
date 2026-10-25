@@ -1,5 +1,5 @@
 // "Palavras do dia" card (Palavras) and its one-line hint (Hoje).
-import { S, update } from "../core/store.js";
+import { S, update } from "../state/store.js";
 import { esc } from "../core/dom.js";
 import { icon } from "../core/icons.js";
 import { plural, pct } from "../core/format.js";

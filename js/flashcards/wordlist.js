@@ -4,6 +4,19 @@
 export const WL_LEVELS = ["A1", "A2", "B1", "B2", "C1"];
 export const blankWl = () => ({level: "auto", cur: {A1: 0, A2: 0, B1: 0, B2: 0, C1: 0}, known: []});
 
+// cleans S.state.wl as loaded from IndexedDB or a backup
+export function normalizeWl(w){
+  const b = blankWl();
+  if (!w || typeof w !== "object") return b;
+  const cur = {};
+  WL_LEVELS.forEach(l => { const n = Math.floor(Number(w.cur && w.cur[l])); cur[l] = n > 0 ? n : 0; });
+  return {
+    level: w.level === "auto" || WL_LEVELS.indexOf(w.level) > -1 ? w.level : "auto",
+    cur,
+    known: Array.isArray(w.known) ? w.known.filter(t => typeof t === "string" && t).slice(0, 20000) : []
+  };
+}
+
 // tsv lines: term, level, pos, British spelling. Returns {A1: [...], A2: [...], ...} in frequency order.
 export function parseList(text){
   const out = {}; WL_LEVELS.forEach(l => { out[l] = []; });
