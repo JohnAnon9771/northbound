@@ -2,6 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { streak, heatmap, weekSummary, knownCount } from "../js/domain/stats.js";
 import { planDay } from "../js/domain/daily.js";
+import { weekClosed } from "../js/domain/week-close.js";
 import { newlyUnlocked } from "../js/domain/achievements.js";
 
 const days = list => new Map(list.map(d => [d, 30]));
@@ -60,10 +61,25 @@ test("daily plan spreads open tasks over the days left with variety", () => {
   // Sunday: everything left goes to today
   const sun = planDay({tasks, done: {}, todayISO: "2026-10-25", mondayISO: "2026-10-19", dayMap: new Map(), prev: null});
   assert.equal(sun.keys.length, 6);
+  // a plan stored today for another week's tasks is made again for this week
+  const other = planDay({tasks, done: {c1: "2026-10-19"}, todayISO: "2026-10-19", mondayISO: "2026-10-19", dayMap: new Map(), prev: {date: "2026-10-19", keys: ["x9", "y9"]}});
+  assert.equal(other.fresh, true);
+  assert.ok(other.keys.includes("g1") && other.keys.includes("c1"));
 });
 
 test("achievements unlock once", () => {
   const ctx = {cards: 3, known: 0, streak: 8, hours: 2, weeksDone: 0, week: 1, efBest: 0, longestConv: 0, reviews: 10};
   assert.deepEqual(newlyUnlocked(ctx, {}).map(a => a.id), ["first-card", "streak-7"]);
   assert.deepEqual(newlyUnlocked(ctx, {"first-card": "x"}).map(a => a.id), ["streak-7"]);
+});
+
+test("a week closes when everything is done, or when its time is up and the core is done", () => {
+  const core = {k: "GA01"}, vol = {k: "w2-in", vol: true}, extra = {k: "x2-eer", x: true};
+  const tasks = [core, vol], extras = [extra];
+  const all = {GA01: "d", "w2-in": "d", "x2-eer": "d"};
+  assert.equal(weekClosed(tasks, extras, all, false), true);
+  assert.equal(weekClosed(tasks, extras, {GA01: "d"}, false), false);
+  assert.equal(weekClosed(tasks, extras, {GA01: "d"}, true), true);
+  assert.equal(weekClosed(tasks, extras, {"w2-in": "d", "x2-eer": "d"}, true), false);
+  assert.equal(weekClosed([], [], {}, true), false);
 });

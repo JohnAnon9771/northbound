@@ -6,6 +6,7 @@ import { LES, LK, EERL, IDX } from "../data/lessons.js";
 import { PH, phaseOf } from "../data/phases.js";
 import { T, lessonTask, PX, WD, NOTE, msT, wiT, efT, cdT } from "../data/plan.js";
 import { sk, SPLIT } from "../data/skills.js";
+import { weekClosed } from "./week-close.js";
 
 export { PH, phaseOf };
 
@@ -37,7 +38,7 @@ function buildWeek(n){
       T(k+"-w","writ","Writing C1: 1 texto argumentativo, corrigido",80,LK.c1w,NOTE.writ),
       T(k+"-me","speak","Mediação: resumir um artigo em voz alta para o ChatGPT",30,"#rotinas"),
       T(k+"-cv","conv","ChatGPT: debates de 45 min sobre temas abstratos",180,"#rotinas","Use o prompt 2 com nível C1."),
-      T(k+"-in","input","Input livre: série, podcast ou YouTube sem legenda em português",70)
+      T(k+"-in","input","Input livre: série, podcast ou YouTube sem legenda em português",70,null,"",{vol:true})
     ];
     if ((n - 52) % 12 === 0) tasks.push(T(k+"-ef","test","EF SET 50 min, meta 61 a 70 (C1)",60,LK.efset,"",{ms:true}));
     return tasks;
@@ -67,16 +68,16 @@ function buildWeek(n){
       if (!d.err) tasks.push(T("w"+n+"-er","gram","Drill dos seus erros recorrentes (prompt 7)",10,"#rotinas","Em Rotinas, use “Copiar com os meus erros”."));
     }
     if (px && !noExtras){
-      px.extras.forEach(e => tasks.push(T("w"+n+"-"+e[0], e[1], e[2], e[3], e[4])));
-      if (px.vocab) tasks.push(T("w"+n+"-vo","vocab",px.vocab[0],px.vocab[1],IDX[px.vocab[2]][1]));
+      px.extras.forEach(e => tasks.push(T("w"+n+"-"+e[0], e[1], e[2], e[3], e[4], "", {vol:true})));
+      if (px.vocab) tasks.push(T("w"+n+"-vo","vocab",px.vocab[0],px.vocab[1],IDX[px.vocab[2]][1],"",{vol:true}));
     }
     if (nv){
       // keep at least 4 h of input (listening + reading) per week, except in light weeks
       const otherIn = tasks.filter(t => sk(t.s).c === "in").reduce((a, t) => a + t.m, 0);
       const inMin = light ? 70 : Math.max(70, Math.ceil((240 - otherIn) / 10) * 10);
-      tasks.push(T("w"+n+"-in","input","Input livre: série, podcast ou YouTube com legenda em inglês",inMin,null,(inMin > 70 ? "Mais input nesta semana para manter 4 h de entrada. " : "")+"Vale fora da mesa: trajeto, academia, série à noite."));
+      tasks.push(T("w"+n+"-in","input","Input livre: série, podcast ou YouTube com legenda em inglês",inMin,null,(inMin > 70 ? "Mais input nesta semana para manter 4 h de entrada. " : "")+"Vale fora da mesa: trajeto, academia, série à noite.",{vol:true}));
     } else {
-      tasks.push(T("w"+n+"-in","input","Input livre: série ou YouTube com legenda em inglês",70));
+      tasks.push(T("w"+n+"-in","input","Input livre: série ou YouTube com legenda em inglês",70,null,"",{vol:true}));
     }
   }
   (d.ms || []).forEach(m => {
@@ -91,8 +92,8 @@ function buildWeek(n){
 /* ---------- extras above the base route ----------
    The base route fits 13.5 h a week (810 min). Hours above that become extra tasks:
    two thirds reading with audio (English e-Reader, plus News in Levels in phases 0 to 2),
-   logged half as Reading and half as Listening, and one third extra conversation. Extras never count toward closing a week,
-   so a short week doesn't hold the route back. */
+   logged half as Reading and half as Listening, and one third extra conversation. Like the route's volume tasks,
+   extras must be done to close a week early, but stay behind once the week's time is up. */
 export const BASE_MIN = 810;
 const r10 = v => Math.round(v / 10) * 10;
 export function extraPlan(){
@@ -161,9 +162,13 @@ export const weekNote = n => { const d = WD[n] || {}; return d.note && (!d.soft 
 export function calWeekOf(dateStr){ const d = daysBetween(S.state.settings.start, dateStr); return d < 0 ? 0 : Math.floor(d / 7) + 1; }
 export function calWeekStart(cw){ return addDays(S.state.settings.start, (Math.max(cw, 1) - 1) * 7); }
 export function weekStats(n){ return cached("s" + n, () => { const t = weekTasks(n); let d = 0; t.forEach(x => { if (S.state.done[x.k]) d++; }); return {done:d, total:t.length}; }); }
-export function weekComplete(n){ const s = weekStats(n); return s.total > 0 && s.done / s.total >= 0.8; }
+// done with everything, or out of time with the core done (see week-close.js)
+export const weekTimeUp = n => expectedWeek(calWeekOf(today())) > n;
+// first day the target pace expects you past week n
+export function weekTimeUpDate(n){ for (let cw = Math.max(1, calWeekOf(today())); ; cw++) if (expectedWeek(cw) > n) return calWeekStart(cw); }
+export function weekComplete(n){ return cached("c" + n + today(), () => weekClosed(weekTasks(n), extraTasks(n), S.state.done, weekTimeUp(n))); }
 export function currentRoadmapWeek(){
-  return cached("rw", () => {
+  return cached("rw" + today(), () => {
     for (let n = 1; n < 400; n++){ if (S.state.skip[n] || weekComplete(n)) continue; return n; }
     return 400;
   });
