@@ -6,6 +6,7 @@ const ICONS = {
   chart: '<path d="M5 19.5V11"/><path d="M10 19.5V6"/><path d="M15 19.5v-6"/><path d="M20 19.5V9"/>',
   more: '<circle cx="6" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="18" cy="12" r="1.4"/>',
   play: '<path d="M8 5.5v13l10.5-6.5z"/>',
+  pause: '<path d="M9 6v12M15 6v12"/>',
   stop: '<rect x="7" y="7" width="10" height="10" rx="2"/>',
   speak: '<path d="M5 9.5v5h3.5L13 18V6L8.5 9.5z"/><path d="M16 9a4 4 0 0 1 0 6"/><path d="M18.5 6.5a7.5 7.5 0 0 1 0 11"/>',
   flame: '<path d="M12 20.5c3.6 0 6-2.4 6-5.8 0-3.6-2.7-5.4-3.6-8.7-1.8 1.3-2.7 3-2.7 4.8-1-.7-1.6-1.8-1.7-3.1C8 9.4 6 11.7 6 14.7c0 3.4 2.4 5.8 6 5.8z"/>',
