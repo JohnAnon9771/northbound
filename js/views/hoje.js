@@ -50,7 +50,7 @@ function nextStep(deck, list){
   const open = list.find(t => !S.state.done[t.k]);
   if (open){
     const run = timer.running();
-    if (run && run.task === open.k) return {eyebrow: "Em andamento", title: open.t, sub: "O cronômetro está rodando. Quando terminar, toque em Parar lá embaixo.", btn: null};
+    if (run && run.task === open.k) return {eyebrow: run.paused ? "Em pausa" : "Em andamento", title: open.t, sub: run.paused ? "O cronômetro está pausado e a pausa não conta como estudo. Toque em ▶ lá embaixo para continuar." : "O cronômetro está rodando. Quando terminar, toque em Parar lá embaixo.", btn: null};
     return {eyebrow: "Próximo passo", title: open.t, sub: sk(open.s).n + (open.m ? " · cerca de " + open.m + " min" : ""), btn: icon("play", 16) + "Começar agora", act: "task-start", task: open.k};
   }
   const dw = dailyWordsHint();
