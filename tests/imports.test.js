@@ -52,3 +52,28 @@ test("index.html loads an existing entry module", () => {
   const src = html.match(/<script type="module" src="([^"]+)"/)[1];
   assert.ok(existsSync(join(ROOT, src)), src);
 });
+
+// which top-level folders of js/ each folder may import from (besides itself)
+const LAYERS = {
+  core: [],
+  data: [],
+  state: ["core", "flashcards"],
+  domain: ["core", "data", "state", "flashcards"],
+  flashcards: ["core", "data", "state", "domain"],
+  ui: ["core", "data", "state", "domain", "flashcards"],
+  views: ["core", "data", "state", "domain", "flashcards", "ui"],
+  app: ["core", "data", "state", "domain", "flashcards", "ui", "views"]
+};
+
+test("layers only import from the layers below them", () => {
+  const problems = [];
+  // js/main.js sits on top of everything, so only files inside a folder are checked
+  files.filter(f => /^[a-z-]+\//.test(relative(join(ROOT, "js"), f))).forEach(file => {
+    const from = relative(join(ROOT, "js"), file).split("/")[0];
+    for (const m of readFileSync(file, "utf8").matchAll(/from\s*"(\.[^"]+)"/g)){
+      const to = relative(join(ROOT, "js"), normalize(join(dirname(file), m[1]))).split("/")[0];
+      if (to !== from && !LAYERS[from].includes(to)) problems.push(relative(ROOT, file) + " imports " + m[1]);
+    }
+  });
+  assert.deepEqual(problems, []);
+});

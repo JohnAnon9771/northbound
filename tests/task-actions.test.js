@@ -3,7 +3,9 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 globalThis.document = {querySelector: () => null};
 globalThis.matchMedia = () => ({matches: true});   // reduced motion: no confetti
-const { splitMix, logTask, setDone } = await import("../js/ui/task-actions.js");
+const { splitMix, logTask, setDone, taskActions, stopTimer } = await import("../js/ui/task-actions.js");
+const { taskHTML } = await import("../js/ui/task-item.js");
+const timer = await import("../js/core/study-timer.js");
 const { S, update } = await import("../js/state/store.js");
 const { weekTasks } = await import("../js/domain/week-tasks.js");
 const { extraTasks } = await import("../js/domain/goal-extras.js");
@@ -35,4 +37,28 @@ test("marking tasks done, and closing the week with the last one", () => {
   assert.equal(S.state.done[keys[0]], undefined);
   keys.slice(1).forEach(k => setDone(k, true));
   assert.equal(setDone(keys[0], true), true);   // week 1 closes
+});
+
+test("score input: valid numbers are saved per lesson and task, others are refused", () => {
+  taskActions.score({value: " 85 ", dataset: {score: "GA01", sk: "w3-rt"}});
+  assert.equal(S.state.scores.GA01.find(e => e.k === "w3-rt").p, 85);
+  const bad = {value: "120", dataset: {score: "GA01", sk: "w3-rt"}};
+  taskActions.score(bad);
+  assert.equal(bad.value, 85);   // put back
+  taskActions.score({value: "", dataset: {score: "GA01", sk: "w3-rt"}});
+  assert.equal(S.state.scores.GA01, undefined);
+});
+
+test("timer: start on a task, stop logs the time on it", () => {
+  const task = {k: "w9-pod", s: "list", t: "Podcast", m: 40};
+  taskHTML(task);
+  taskActions["task-start"]({dataset: {task: "w9-pod"}});
+  assert.equal(timer.running().task, "w9-pod");
+  timer.running().start -= 12 * 60000;
+  const before = S.logs.length;
+  stopTimer();
+  assert.deepEqual(S.logs.slice(before).map(e => [e.task, e.min, e.skill]), [["w9-pod", 12, "list"]]);
+  timer.start({skill: "gram", label: "x"});
+  stopTimer();   // under a minute: nothing logged
+  assert.equal(S.logs.length, before + 1);
 });

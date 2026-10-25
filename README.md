@@ -69,20 +69,39 @@ Fontes (o Oxford 3000/5000 não pode ser redistribuído, então o site usa equiv
 
 ```
 index.html              shell: header, navegação, <main id="app">
-assets/data/words.tsv   lista das Palavras do dia (gerada por scripts/build-wordlist.py)
 sw.js  manifest.webmanifest  .nojekyll
 assets/css/tokens.css   cores, fontes, raios, sombras (claro e “luz de vela”)
 assets/css/base.css     reset, tipografia, layout
 assets/css/components.css
-js/app.js               boot, rotas (#hoje, #palavras…), delegação de eventos, cronômetro
-js/core/                db (IndexedDB), store (estado em memória + persistência), migrate, date, dom, toast, timer
-js/data/                só conteúdo: lições, fases, plano das 52 semanas, can-do, prompts, habilidades
-js/domain/              regras: rota e ritmo, estatísticas, plano do dia, conquistas
-js/flashcards/          srs, deck, enrich + providers (free, claude), importer, wordlist (Palavras do dia)
-js/ui/                  pedaços de interface compartilhados (tarefas, palavras, backup, celebração)
-js/views/               uma tela por arquivo
-tests/                  node --test
+assets/data/words.tsv   lista das Palavras do dia (gerada por scripts/build-wordlist.py)
+js/main.js              boot
+js/app/                 router (telas, #hoje, #palavras…, navegação), delegação de eventos, barra do cronômetro,
+                        lembrete de backup, service worker
+js/core/                utilitários sem conhecer o app: date, dom, format, id, icons, theme, toast, rerender, study-timer
+js/state/               store (estado em memória + persistência), db (IndexedDB), schema, backup-format, memo, selectors
+js/data/                só conteúdo: lições, fases, as 52 semanas (weeks), can-do, prompts, habilidades
+js/domain/              regras: tarefas de cada semana, extras da meta, ritmo e semana atual, fechamento da semana,
+                        plano do dia, notas das lições, estatísticas, conquistas
+js/flashcards/          srs, deck, card, enrich + providers (claude, free/ com uma fonte por arquivo), importer,
+                        word-list (Palavras do dia), pos, audio
+js/ui/                  pedaços de interface compartilhados (tarefa, ações de tarefa, logs, foco da semana, fala,
+                        Palavras do dia, backup, conquistas, confete)
+js/views/               uma tela por arquivo (today = #hoje, words = #palavras, route = #rota…)
+tests/                  node --test, um arquivo por módulo
 ```
+
+As regras ficam em funções puras (`buildWeek`, `buildExtras`, `paceFor`, `deckSummary`…), testadas sem navegador; ao lado de cada uma, um wrapper com o nome usado pelas telas lê o store (`weekTasks`, `extraTasks`, `paceText`, `deckToday`…).
+
+Dependências: `core` não importa nada do app; `data` só importa `data`; `domain` e `flashcards` não importam `ui` nem `views`; `ui` não importa `views`.
+
+## Testes
+
+```bash
+npm test
+npm run coverage
+```
+
+`tests/route-snapshot.test.js` guarda as tarefas de cada semana da rota (1 a 60) para alguns estados fixos. Se você mudar o conteúdo da rota de propósito, gere de novo com `UPDATE_SNAPSHOT=1 node --test tests/route-snapshot.test.js`. `tests/imports.test.js` confere que todo import relativo aponta para um arquivo e um export que existem, inclusive nas telas, que os outros testes não carregam.
 
 ## Como mudar o visual
 
@@ -90,7 +109,7 @@ Todas as cores, fontes, raios e sombras estão em `assets/css/tokens.css`, com o
 
 ## Como adicionar uma tela
 
-1. Crie `js/views/minha-tela.js`:
+1. Crie `js/views/my-screen.js` (o nome do arquivo é em inglês; o `id` vira a URL):
 
    ```js
    export default {
@@ -103,8 +122,8 @@ Todas as cores, fontes, raios e sombras estão em `assets/css/tokens.css`, com o
    };
    ```
 
-2. Importe e adicione em `VIEWS` no `js/app.js`. Para aparecer na navegação, adicione em `NAV`; para ficar dentro de “Mais”, adicione em `PARENT` e um link em `js/views/mais.js`.
+2. Importe e adicione em `VIEWS` no `js/app/router.js`. Para aparecer na navegação, adicione em `NAV`; para ficar dentro de “Mais”, adicione em `PARENT` e um link em `js/views/more.js`.
 
 Opcionais: `enter()`/`leave()` ao entrar e sair, `mounted(root)` depois de cada render, `onKey(e)` para atalhos, `focus: true` para esconder a navegação (como no estudo).
 
-Dados: leia de `S` (`js/core/store.js`) e altere com `update(s => { ... })`, `addLog`, `putCard` etc. Toda mudança salva no IndexedDB e redesenha a tela.
+Dados: leia de `S` (`js/state/store.js`) e altere com `update(s => { ... })`, `addLog`, `putCard` etc. Toda mudança salva no IndexedDB e redesenha a tela.
