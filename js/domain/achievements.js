@@ -11,7 +11,7 @@ export const ACHIEVEMENTS = [
   {id: "hours-10", icon: "target", t: "10 horas", d: "As primeiras 10 horas de estudo.", test: c => c.hours >= 10},
   {id: "hours-100", icon: "target", t: "100 horas", d: "Cem horas de inglês.", test: c => c.hours >= 100},
   {id: "hours-450", icon: "target", t: "450 horas", d: "A meta de horas para o B2.", test: c => c.hours >= 450},
-  {id: "week-1", icon: "check", t: "Primeira semana fechada", d: "80% das tarefas de uma semana da rota.", test: c => c.weeksDone >= 1},
+  {id: "week-1", icon: "check", t: "Primeira semana fechada", d: "Uma semana da rota concluída.", test: c => c.weeksDone >= 1},
   {id: "phase-1", icon: "route", t: "A2 consolidado", d: "Você passou da fase 1.", test: c => c.week > 12},
   {id: "phase-2", icon: "route", t: "B1 construído", d: "Você passou da fase 2.", test: c => c.week > 26},
   {id: "phase-3", icon: "route", t: "Chegada ao B2", d: "Você passou da fase 3.", test: c => c.week > 44},

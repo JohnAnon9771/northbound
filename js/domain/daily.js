@@ -9,7 +9,8 @@ export function planDay({tasks, done, todayISO, mondayISO, dayMap, prev}){
   const doneToday = tasks.filter(t => done[t.k] === todayISO).map(t => t.k);
   if (prev && prev.date === todayISO){
     const keep = prev.keys.filter(k => tasks.some(t => t.k === k));
-    return {keys: uniq(keep.concat(doneToday)), fresh: false};
+    // a plan made for another week (the route week changed today) is planned again
+    if (keep.length || !prev.keys.length) return {keys: uniq(keep.concat(doneToday)), fresh: false};
   }
   const dayIdx = Math.max(0, Math.min(6, daysBetween(mondayISO, todayISO)));
   const daysLeft = 7 - dayIdx;
