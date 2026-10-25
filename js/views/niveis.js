@@ -1,6 +1,8 @@
 // Níveis e testes: test results (with the EF SET chart) and the "can-do" self-assessment.
 import { S, update } from "../core/store.js";
-import { esc, pct, uid } from "../core/dom.js";
+import { esc } from "../core/dom.js";
+import { pct } from "../core/format.js";
+import { uid } from "../core/id.js";
 import { today, shortDate } from "../core/date.js";
 import { toast } from "../core/toast.js";
 import { CANDO } from "../data/cando.js";

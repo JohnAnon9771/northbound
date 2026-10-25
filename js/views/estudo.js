@@ -1,9 +1,11 @@
 // Estudo: focused flashcard session. Space flips, 1-4 answer, swipe left/right on phones.
 import { S, addLog } from "../core/store.js";
-import { esc, icon, plural } from "../core/dom.js";
+import { esc } from "../core/dom.js";
+import { icon } from "../core/icons.js";
+import { plural } from "../core/format.js";
 import { endOfDay, addDays, today, parse } from "../core/date.js";
 import { rerender } from "../core/rerender.js";
-import * as timer from "../core/timer.js";
+import * as timer from "../core/study-timer.js";
 import { buildQueue, preview } from "../flashcards/srs.js";
 import { answer, deckToday } from "../flashcards/deck.js";
 import { highlight, cloze, speak, speakBtn } from "../ui/words.js";

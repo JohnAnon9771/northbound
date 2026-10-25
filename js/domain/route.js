@@ -1,7 +1,7 @@
 // Route logic: which tasks each week has, where you are, pace and the extras above the base route.
 import { S, version } from "../core/store.js";
 import { today, daysBetween, addDays } from "../core/date.js";
-import { fmtH } from "../core/dom.js";
+import { formatHours } from "../core/format.js";
 import { LES, LK, EERL, IDX } from "../data/lessons.js";
 import { PH, phaseOf } from "../data/phases.js";
 import { T, lessonTask, PX, WD, NOTE, msT, wiT, efT, cdT } from "../data/plan.js";
@@ -204,5 +204,5 @@ export function lowLessons(ids){
 export function allLogs(){ return cached("logs", () => S.logs.slice().sort((a, b) => a.date < b.date ? 1 : a.date > b.date ? -1 : (b.ts||0) - (a.ts||0))); }
 export function minutesBy(fn){ let t = 0; S.logs.forEach(e => { if (fn(e)) t += e.min; }); return t; }
 export function hasContent(){ const s = S.state; return Object.keys(s.done).length || S.logs.length || s.errors.length || s.tests.length || Object.keys(s.cando).length || Object.keys(s.skip).length || Object.keys(s.scores).length || S.cards.length; }
-export const goalLabel = () => fmtH(S.state.settings.goalH * 60) + " h";
+export const goalLabel = () => formatHours(S.state.settings.goalH * 60) + " h";
 export const phaseNow = () => PH[phaseOf(currentRoadmapWeek())];

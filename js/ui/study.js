@@ -1,6 +1,6 @@
 // "Can I study now, and if not, why?" Shared by Hoje, Palavras and the study screen.
 import { S } from "../core/store.js";
-import { plural } from "../core/dom.js";
+import { plural } from "../core/format.js";
 import { today, daysBetween, isoOf, shortDate } from "../core/date.js";
 
 // earliest due time among cards already in rotation (new cards don't count)

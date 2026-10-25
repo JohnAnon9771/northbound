@@ -1,11 +1,12 @@
 // Boot, hash router, event delegation and the global timer bar.
 // To add a section: create js/views/<name>.js exporting {id, title, render(), actions?} and add it to VIEWS.
 import { S, load, subscribe, onError, persistent, updateQuiet } from "./core/store.js";
-import { $, esc, icon } from "./core/dom.js";
+import { $, esc } from "./core/dom.js";
+import { icon } from "./core/icons.js";
 import { today } from "./core/date.js";
 import { toast } from "./core/toast.js";
 import { setRenderer } from "./core/rerender.js";
-import * as timer from "./core/timer.js";
+import * as timer from "./core/study-timer.js";
 import { taskActions, resetTasks, trackDetails, stopTimer } from "./ui/tasks.js";
 import { wordActions } from "./ui/words.js";
 import { dailyWordsActions } from "./ui/daily-words.js";

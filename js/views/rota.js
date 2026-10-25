@@ -1,6 +1,8 @@
 // Rota: the journey map, this week's tasks and hours, and the full 52-week route.
 import { S, update } from "../core/store.js";
-import { esc, icon, fmtH } from "../core/dom.js";
+import { esc } from "../core/dom.js";
+import { icon } from "../core/icons.js";
+import { formatHours } from "../core/format.js";
 import { today, addDays, parse, shortDate, DIAS } from "../core/date.js";
 import { rerender } from "../core/rerender.js";
 import { CATN, sk } from "../data/skills.js";
@@ -51,8 +53,8 @@ function hoursMeter(){
   const h = S.logs.reduce((a, e) => a + e.min, 0) / 60;
   const next = LEVEL_HOURS.find(l => l[1] > h) || LEVEL_HOURS[LEVEL_HOURS.length - 1];
   const cap = 700;
-  let s = '<p style="margin:14px 0 0"><b>Rumo ao ' + next[0] + ":</b> " + fmtH(h * 60) + " de cerca de " + next[1] + ' h de estudo ativo <span class="muted">(estimativa)</span></p>';
-  s += '<div class="meter" role="img" aria-label="' + fmtH(h * 60) + ' horas estudadas"><i style="width:' + Math.min(100, h / cap * 100) + '%"></i>';
+  let s = '<p style="margin:14px 0 0"><b>Rumo ao ' + next[0] + ":</b> " + formatHours(h * 60) + " de cerca de " + next[1] + ' h de estudo ativo <span class="muted">(estimativa)</span></p>';
+  s += '<div class="meter" role="img" aria-label="' + formatHours(h * 60) + ' horas estudadas"><i style="width:' + Math.min(100, h / cap * 100) + '%"></i>';
   LEVEL_HOURS.forEach((l, i) => { s += '<span class="mark' + (i % 2 ? " lo" : "") + '" style="left:' + (l[1] / cap * 100) + '%"><span>' + l[0] + " · " + l[1] + " h</span></span>"; });
   return s + "</div>";
 }
@@ -69,9 +71,9 @@ function weekHours(){
   const perDay = days.map(d => inWeek.filter(e => e.date === d).reduce((a, e) => a + e.min, 0));
   const cardsDay = days.map(d => inWeek.some(e => e.date === d && (e.skill === "cards" || e.skill === "vocab")) || S.reviews.some(r => r.date === d));
   const maxDay = Math.max(90, ...perDay);
-  let h = '<p class="big"><strong class="num">' + fmtH(tot) + " h</strong> de " + goalLabel() + (cw > 0 ? '<span class="muted" style="font-size:14px;display:block;margin-top:6px">' + shortDate(days[0]) + " a " + shortDate(days[6]) + (tot >= goal ? ", meta da semana batida" : ", faltam " + fmtH(goal - tot) + " h") + "</span>" : "") + "</p>";
+  let h = '<p class="big"><strong class="num">' + formatHours(tot) + " h</strong> de " + goalLabel() + (cw > 0 ? '<span class="muted" style="font-size:14px;display:block;margin-top:6px">' + shortDate(days[0]) + " a " + shortDate(days[6]) + (tot >= goal ? ", meta da semana batida" : ", faltam " + formatHours(goal - tot) + " h") + "</span>" : "") + "</p>";
   h += '<div class="barstack" role="img" aria-label="Horas por categoria">' + ["base", "in", "out"].map(c => '<span class="c-' + c + '" style="width:' + (by[c] / scale * 100) + '%;background:var(--lc)"></span>').join("") + "</div>";
-  h += '<ul class="legend">' + ["base", "in", "out"].map(c => '<li class="c-' + c + '">' + (c === "base" ? "Base" : CATN[c]) + " " + fmtH(by[c]) + " h</li>").join("") + "</ul>";
+  h += '<ul class="legend">' + ["base", "in", "out"].map(c => '<li class="c-' + c + '">' + (c === "base" ? "Base" : CATN[c]) + " " + formatHours(by[c]) + " h</li>").join("") + "</ul>";
   h += '<div class="days">' + days.map((d, i) => { const dt = parse(d); return '<div class="day' + (d === t ? " today" : "") + '" title="' + perDay[i] + ' min"><div class="day-bar"><span style="height:' + (perDay[i] / maxDay * 100) + '%"></span></div><span>' + DIAS[dt.getDay()] + '</span><span class="num">' + (perDay[i] ? perDay[i] + "′" : "–") + '</span><span class="dot' + (cardsDay[i] ? " on" : "") + '" title="' + (cardsDay[i] ? "Flashcards feitos" : "Sem flashcards") + '"></span></div>'; }).join("") + "</div>";
   h += '<p class="hint">O pontinho acende nos dias com flashcards.</p>';
   return h;

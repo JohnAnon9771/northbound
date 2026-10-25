@@ -1,6 +1,8 @@
 // Progresso: what you've built so far. Heatmap, known words, achievements, hours, skills, lessons, history.
 import { S } from "../core/store.js";
-import { esc, icon, fmtH, pct, plural } from "../core/dom.js";
+import { esc } from "../core/dom.js";
+import { icon } from "../core/icons.js";
+import { formatHours, pct, plural } from "../core/format.js";
 import { today, addDays, mondayOf, parse, MESES, shortDate } from "../core/date.js";
 import { sk, CATN } from "../data/skills.js";
 import { LES } from "../data/lessons.js";
@@ -21,10 +23,10 @@ function statTiles(dayMap){
   const bal = inM + outM ? Math.round(inM / (inM + outM) * 100) : 0;
   const st = streak(dayMap, today());
   let h = '<div class="stats">';
-  h += '<div class="stat"><b>' + fmtH(total) + " h</b><span>estudadas no total</span></div>";
+  h += '<div class="stat"><b>' + formatHours(total) + " h</b><span>estudadas no total</span></div>";
   h += '<div class="stat"><b>' + st.days + "</b><span>" + (st.days === 1 ? "dia seguido" : "dias seguidos") + " com estudo" + (st.restThisWeek ? " (folga da semana usada)" : "") + "</span></div>";
   h += '<div class="stat"><b>' + knownCount(S.cards) + "</b><span>palavras que você sabe · " + learnedCount(S.cards) + " em estudo</span></div>";
-  h += '<div class="stat"><b>' + fmtH(m4 / last4.length) + " h</b><span>média semanal " + (last4.length === 1 ? "nesta semana" : "nas últimas " + last4.length + " semanas") + " (meta " + fmtH(S.state.settings.goalH * 60) + " h)</span></div>";
+  h += '<div class="stat"><b>' + formatHours(m4 / last4.length) + " h</b><span>média semanal " + (last4.length === 1 ? "nesta semana" : "nas últimas " + last4.length + " semanas") + " (meta " + formatHours(S.state.settings.goalH * 60) + " h)</span></div>";
   h += '<div class="stat"><b>' + (inM + outM ? bal + "/" + (100 - bal) : "–") + "</b><span>entrada/produção em % (alvo 55–60/40–45)</span></div>";
   return h + "</div>";
 }
@@ -32,7 +34,7 @@ function statTiles(dayMap){
 function summaryCard(){
   const mon = mondayOf(parse(today()));
   const line = (label, s) => '<div><b>' + label + '</b><div class="summary-line">' +
-    '<span class="pill">' + fmtH(s.min) + " h</span>" +
+    '<span class="pill">' + formatHours(s.min) + " h</span>" +
     '<span class="pill">' + plural(s.days, "dia", "dias") + " de estudo</span>" +
     '<span class="pill">' + plural(s.newWords, "palavra nova", "palavras novas") + "</span>" +
     '<span class="pill">' + plural(s.reviews, "revisão", "revisões") + "</span>" +
@@ -42,7 +44,7 @@ function summaryCard(){
   let h = '<section class="card section"><h2>Resumo da semana</h2><div class="stack">' + line("Esta semana", cur);
   if (prev.min || prev.reviews) h += line("Semana passada", prev);
   const diff = cur.min - prev.min;
-  if (prev.min && cur.min) h += '<p class="hint" style="margin:0">' + (diff >= 0 ? "Já " + fmtH(diff) + " h acima da semana passada. Bom ritmo!" : "Faltam " + fmtH(-diff) + " h para igualar a semana passada.") + "</p>";
+  if (prev.min && cur.min) h += '<p class="hint" style="margin:0">' + (diff >= 0 ? "Já " + formatHours(diff) + " h acima da semana passada. Bom ritmo!" : "Faltam " + formatHours(-diff) + " h para igualar a semana passada.") + "</p>";
   return h + "</div></section>";
 }
 
@@ -97,7 +99,7 @@ function weeklyChart(cw){
   for (let w = 1; w <= n; w++){
     const o = data.get(w) || {base: 0, in: 0, out: 0}, x = padL + (w - 1) * (bw + gap) + gap / 2;
     let acc = 0;
-    ["base", "in", "out"].forEach(c => { if (!o[c]) return; const y1 = y(acc + o[c]), y0 = y(acc); s += '<rect x="' + x + '" y="' + y1 + '" width="' + bw + '" height="' + Math.max(0, y0 - y1) + '" rx="3" fill="var(--c-' + c + ')"><title>Semana ' + w + ": " + fmtH(o[c]) + " h de " + CATN[c] + "</title></rect>"; acc += o[c]; });
+    ["base", "in", "out"].forEach(c => { if (!o[c]) return; const y1 = y(acc + o[c]), y0 = y(acc); s += '<rect x="' + x + '" y="' + y1 + '" width="' + bw + '" height="' + Math.max(0, y0 - y1) + '" rx="3" fill="var(--c-' + c + ')"><title>Semana ' + w + ": " + formatHours(o[c]) + " h de " + CATN[c] + "</title></rect>"; acc += o[c]; });
     if (w === 1 || w % 4 === 0 || w === cw) s += '<text x="' + (x + bw / 2) + '" y="' + (H - 6) + '" text-anchor="middle"' + (w === cw ? ' style="fill:var(--ink);font-weight:700"' : "") + ">" + w + "</text>";
   }
   s += '<line x1="' + padL + '" x2="' + Wd + '" y1="' + y(goal) + '" y2="' + y(goal) + '" stroke="var(--ink)" stroke-width="1.5" stroke-dasharray="5 4"/>';
@@ -114,7 +116,7 @@ function skillsHTML(){
   let h = '<section class="card section"><h2>Habilidades</h2><p class="muted">A barra é a sua parte do tempo; o traço é a parte planejada.</p><div class="hbars">';
   PLAN.forEach(s => {
     const a = sumAct ? actual[s[0]] / sumAct * 100 : 0, pl = s[2] / sumPlan * 100;
-    h += '<div class="hbar c-' + sk(s[0]).c + '"><span>' + s[1] + '</span><span class="hbar-track"><i style="width:' + (a / top * 100) + '%"></i><em style="left:' + (pl / top * 100) + '%"></em></span><span class="v">' + fmtH(actual[s[0]]) + " h, " + Math.round(a) + "%</span></div>";
+    h += '<div class="hbar c-' + sk(s[0]).c + '"><span>' + s[1] + '</span><span class="hbar-track"><i style="width:' + (a / top * 100) + '%"></i><em style="left:' + (pl / top * 100) + '%"></em></span><span class="v">' + formatHours(actual[s[0]]) + " h, " + Math.round(a) + "%</span></div>";
   });
   h += "</div></section>";
   h += '<section class="card section"><h2>Lições do British Council</h2><p class="muted">Gramática, listening, reading, writing e speaking marcadas como feitas.</p><div class="hbars">';
@@ -143,7 +145,7 @@ function historyHTML(){
   if (!months.length) return h + '<p class="muted">Sem registros ainda.</p></section>';
   months.slice(0, ui.months).forEach(m => {
     const list = by.get(m), mt = list.reduce((a, e) => a + e.min, 0), dt = parse(m + "-01");
-    h += '<div class="month"><h3>' + MESES[dt.getMonth()] + " de " + dt.getFullYear() + ', <span class="muted">' + fmtH(mt) + ' h</span></h3><ul class="loglist">' + list.map(logLi).join("") + "</ul></div>";
+    h += '<div class="month"><h3>' + MESES[dt.getMonth()] + " de " + dt.getFullYear() + ', <span class="muted">' + formatHours(mt) + ' h</span></h3><ul class="loglist">' + list.map(logLi).join("") + "</ul></div>";
   });
   if (months.length > ui.months) h += '<p><button class="btn btn-ghost btn-small" type="button" data-act="more-months">Ver meses anteriores</button></p>';
   return h + "</section>";

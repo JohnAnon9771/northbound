@@ -1,5 +1,5 @@
 // Mais: hub for the less frequent sections.
-import { icon } from "../core/dom.js";
+import { icon } from "../core/icons.js";
 import { daysSinceBackup } from "../ui/backup.js";
 
 const LINKS = [

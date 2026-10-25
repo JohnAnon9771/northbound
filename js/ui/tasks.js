@@ -1,9 +1,10 @@
 // Shared task, score and log rendering plus their actions (used by Hoje and Rota).
 import { S, update, addLog, deleteLog, restoreLog } from "../core/store.js";
-import { esc, icon } from "../core/dom.js";
+import { esc } from "../core/dom.js";
+import { icon } from "../core/icons.js";
 import { today, shortDate } from "../core/date.js";
 import { toast } from "../core/toast.js";
-import * as timer from "../core/timer.js";
+import * as timer from "../core/study-timer.js";
 import { LES, IDX } from "../data/lessons.js";
 import { sk } from "../data/skills.js";
 import { PH, phaseOf, weekMilestone, weekNote, scoreFor, latestScore, setScore, lowLessons, currentRoadmapWeek } from "../domain/route.js";

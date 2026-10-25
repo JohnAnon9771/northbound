@@ -1,10 +1,12 @@
 // Hoje: one clear next step, today's short plan, progress ring, streak and the phrase of the day.
 import { S, addLog, updateQuiet } from "../core/store.js";
-import { esc, icon, plural } from "../core/dom.js";
+import { esc } from "../core/dom.js";
+import { icon } from "../core/icons.js";
+import { plural } from "../core/format.js";
 import { today, longDate, mondayOf } from "../core/date.js";
 import { toast } from "../core/toast.js";
 import { rerender } from "../core/rerender.js";
-import * as timer from "../core/timer.js";
+import * as timer from "../core/study-timer.js";
 import { SK, SKORDER, sk } from "../data/skills.js";
 import { PH, phaseOf, weekTasks, extraTasks, currentRoadmapWeek, calWeekOf, calWeekStart, paceText } from "../domain/route.js";
 import { minutesByDate, streak } from "../domain/stats.js";

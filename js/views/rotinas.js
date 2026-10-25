@@ -1,6 +1,9 @@
 // Rotinas: how to use the flashcards, the week split, recurring errors and the ChatGPT prompts.
 import { S, update } from "../core/store.js";
-import { esc, icon, fmtH, uid } from "../core/dom.js";
+import { esc } from "../core/dom.js";
+import { icon } from "../core/icons.js";
+import { formatHours } from "../core/format.js";
+import { uid } from "../core/id.js";
 import { toast } from "../core/toast.js";
 import { PROMPTS } from "../data/prompts.js";
 import { extraPlan, planSplit, phaseNow } from "../domain/route.js";
@@ -48,7 +51,7 @@ function cardsHTML(){
 function splitHTML(){
   const xp = extraPlan();
   return '<section class="card section" aria-labelledby="hSplit"><h2 id="hSplit">Divisão da semana</h2>' +
-    '<p class="muted">Para a sua meta de ' + fmtH(S.state.settings.goalH * 60) + " h por semana. Os flashcards entram como 20 minutos por dia." + (xp.extra ? " A rota base ocupa 13,5 h; as " + fmtH(xp.extra) + " h a mais viram leitura com áudio e conversa, como extras de cada semana." : "") + "</p>" +
+    '<p class="muted">Para a sua meta de ' + formatHours(S.state.settings.goalH * 60) + " h por semana. Os flashcards entram como 20 minutos por dia." + (xp.extra ? " A rota base ocupa 13,5 h; as " + formatHours(xp.extra) + " h a mais viram leitura com áudio e conversa, como extras de cada semana." : "") + "</p>" +
     '<ul class="split">' + planSplit(false).map(s => "<li><span>" + s[1] + "</span><span>" + Math.round(s[2] / 5) * 5 + " min</span></li>").join("") + "</ul>" +
     '<h3 style="margin-top:20px">Três princípios</h3><ul class="plain"><li>Revisões antes de cartões novos.</li>' +
     "<li>Cerca de 55 a 60% do tempo em entrada (listening e reading) e 40 a 45% em produção (fala e escrita), aumentando a produção na fase 3, sem deixar a entrada cair abaixo de 4 h por semana.</li>" +

@@ -1,6 +1,8 @@
 // "Palavras do dia" card (Palavras) and its one-line hint (Hoje).
 import { S, update } from "../core/store.js";
-import { esc, icon, plural, pct } from "../core/dom.js";
+import { esc } from "../core/dom.js";
+import { icon } from "../core/icons.js";
+import { plural, pct } from "../core/format.js";
 import { toast } from "../core/toast.js";
 import { rerender } from "../core/rerender.js";
 import { deckToday } from "../flashcards/deck.js";

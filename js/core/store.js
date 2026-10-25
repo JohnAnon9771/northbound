@@ -2,7 +2,7 @@
 // every change goes through a mutation below, which persists it and notifies subscribers.
 import * as db from "./db.js";
 import { blankState, normalizeState, normalizeLog, fromBackup } from "./migrate.js";
-import { uid } from "./dom.js";
+import { uid } from "./id.js";
 import { today } from "./date.js";
 
 export const S = {state: blankState(), logs: [], cards: [], reviews: [], secrets: {}};

@@ -1,8 +1,10 @@
 // Ajustes: plan, flashcards, Claude API, appearance and data.
 import { S, update, setSecret, resetAll, persistent } from "../core/store.js";
-import { esc, icon } from "../core/dom.js";
+import { esc } from "../core/dom.js";
+import { icon } from "../core/icons.js";
 import { toast } from "../core/toast.js";
 import { rerender } from "../core/rerender.js";
+import { getTheme, setTheme } from "../core/theme.js";
 import { PH, phaseNow } from "../domain/route.js";
 import { CLAUDE_MODELS } from "../flashcards/providers/claude.js";
 import { enrichMessage } from "../flashcards/enrich.js";
@@ -12,11 +14,6 @@ import { dailyWordsSettingsHTML } from "../ui/daily-words.js";
 const ui = {resetArmed: false, testing: false, keyDraft: "", persisted: null};
 let resetTimer = null;
 
-const getTheme = () => { try { return localStorage.getItem("nb:theme") || "auto"; } catch (e){ return "auto"; } };
-function setTheme(t){
-  try { if (t === "auto") localStorage.removeItem("nb:theme"); else localStorage.setItem("nb:theme", t); } catch (e){}
-  if (t === "auto") delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme = t;
-}
 const opt = (v, label, cur) => '<option value="' + esc(v) + '"' + (String(cur) === String(v) ? " selected" : "") + ">" + esc(label) + "</option>";
 
 function planHTML(st){
