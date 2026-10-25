@@ -1,5 +1,5 @@
 // Backup download/restore, shared by Ajustes and the reminder toast.
-import { S, update, exportAll, importAll } from "../core/store.js";
+import { S, update, exportAll, importAll } from "../state/store.js";
 import { today, daysBetween } from "../core/date.js";
 import { toast } from "../core/toast.js";
 

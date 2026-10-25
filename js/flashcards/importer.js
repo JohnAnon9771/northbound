@@ -1,10 +1,10 @@
 // Adds a list of words to the deck one by one, looking up translation and examples for each.
 // Used by the pasted-list import and by "Palavras do dia".
-import { S } from "../core/store.js";
+import { S } from "../state/store.js";
 import { enrich, normalizeEnrichment } from "./enrich.js";
 import { addCard, findByTerm } from "./deck.js";
-import { posPt } from "./providers/free.js";
-import { phaseNow } from "../domain/route.js";
+import { posPt } from "./pos.js";
+import { phaseNow } from "../domain/pace.js";
 
 const PAUSE_MS = 600;   // keeps the free APIs (MyMemory especially) happy
 

@@ -1,5 +1,6 @@
 // Pure stats over logs, cards and reviews (no store access, so they run under node --test).
-import { addDays, mondayOf, parse, iso, isoOf, DAY_MS } from "../core/date.js";
+import { addDays, mondayOf, parse } from "../core/date.js";
+import { isFront } from "../flashcards/card.js";
 
 export const KNOWN_IVL = 21;
 
@@ -49,13 +50,12 @@ export function heatmap(dayMap, endISO, weeks){
 }
 export const heatLevel = min => min <= 0 ? 0 : min < 20 ? 1 : min < 60 ? 2 : min < 120 ? 3 : 4;
 
-const front = c => c.dir !== "rev";
-export const knownCount = cards => cards.filter(c => front(c) && c.state === "review" && c.interval >= KNOWN_IVL).length;
-export const learnedCount = cards => cards.filter(c => front(c) && c.state !== "new").length;
+export const knownCount = cards => cards.filter(c => isFront(c) && c.state === "review" && c.interval >= KNOWN_IVL).length;
+export const learnedCount = cards => cards.filter(c => isFront(c) && c.state !== "new").length;
 
 // cumulative "known words" per week: the first review that gave a card an interval ≥ 21 days
 export function knownTimeline(reviews, cards, weeks, endISO){
-  const fronts = new Set(cards.filter(front).map(c => c.id));
+  const fronts = new Set(cards.filter(isFront).map(c => c.id));
   const firstKnown = new Map();
   reviews.forEach(r => { if (fronts.has(r.cardId) && r.ivl >= KNOWN_IVL && !firstKnown.has(r.cardId)) firstKnown.set(r.cardId, r.date); });
   const end = mondayOf(parse(endISO));
@@ -68,7 +68,6 @@ export function knownTimeline(reviews, cards, weeks, endISO){
   return points;
 }
 
-export function reviewsOn(reviews, dateISO){ return reviews.filter(r => r.date === dateISO); }
 export const newIntroducedOn = (reviews, dateISO) => new Set(reviews.filter(r => r.date === dateISO && r.prev === "new").map(r => r.cardId)).size;
 export const reviewMsOn = (reviews, dateISO) => reviews.filter(r => r.date === dateISO && r.prev !== "new").reduce((a, r) => a + Math.min(r.ms || 0, 60000), 0);
 
@@ -86,6 +85,3 @@ export function weekSummary({logs, reviews, done}, mondayISO){
     tasks: Object.keys(done).filter(k => inWeek(done[k])).length
   };
 }
-
-export const dayOfWeekIndex = dateISO => (parse(dateISO).getDay() + 6) % 7;
-export { iso, isoOf, DAY_MS };

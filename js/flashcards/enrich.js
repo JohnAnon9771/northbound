@@ -1,5 +1,5 @@
 // Picks the provider (Claude when there's a key, free sources otherwise) and normalizes the result.
-import { enrichFree } from "./providers/free.js";
+import { enrichFree } from "./providers/free/index.js";
 
 const str = (v, max) => String(v == null ? "" : v).trim().slice(0, max || 400);
 
