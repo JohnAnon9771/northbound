@@ -46,7 +46,8 @@ export function update(fn){
 }
 // change without re-rendering (e.g. caching today's plan while rendering)
 export function updateQuiet(fn){ fn(S.state); clearTimeout(saveTimer); saveTimer = setTimeout(saveState, 250); version++; }
-addEventListener("pagehide", () => { if (saveTimer) saveState(); });
+// guarded so the store also loads under node --test
+if (typeof addEventListener === "function") addEventListener("pagehide", () => { if (saveTimer) saveState(); });
 
 /* ---- logs ---- */
 export function addLog(e){
