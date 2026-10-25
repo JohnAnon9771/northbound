@@ -1,5 +1,5 @@
 // Route phases. `cards` is the flashcards guidance and `newPerDay` the daily cap of new cards.
-export const PH = [
+export const PHASES = [
   {id:0,name:"diagnóstico",from:1,to:1,cefr:"ponto de partida",col:"--p0",newPerDay:10,
    cards:"Palavras do dia (A2): as mais usadas do nível que você ainda não sabe. Meta: 10 novas por dia.",
    gpt:"Prompt 1 (diagnóstico). Salve os 10 erros recorrentes em Rotinas.",

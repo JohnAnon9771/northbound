@@ -1,39 +1,39 @@
 // Free British Council LearnEnglish lessons used by the route.
-export const BC = "https://learnenglish.britishcouncil.org/free-resources/";
-export const LK = {
+export const BC_URL = "https://learnenglish.britishcouncil.org/free-resources/";
+export const LINKS = {
   levelTest: "https://learnenglish.britishcouncil.org/english-levels/online-english-level-test",
   efset: "https://www.efset.org/",
   wi: "https://writeandimprove.com/",
   oxford: "https://www.oxfordlearnersdictionaries.com/wordlists/oxford3000-5000",
   podcasts: "https://learnenglish.britishcouncil.org/general-english/audio-series/podcasts",
-  audioSeries: BC + "general/audio-series",
-  storyA: BC + "general/story-zone/a2-b1",
-  storyB: BC + "general/story-zone/b2-c1",
-  magazine: BC + "general/magazine-zone",
-  audioZone: BC + "general/audio-zone",
-  videoZone: BC + "general/video-zone",
-  videoSeries: BC + "general/video-series",
-  business: BC + "business-english",
-  gramRef: BC + "grammar/english-grammar-reference",
-  c1g: BC + "grammar/c1", c1l: BC + "listening/c1", c1r: BC + "reading/c1", c1w: BC + "writing/c1",
+  audioSeries: BC_URL + "general/audio-series",
+  storyA: BC_URL + "general/story-zone/a2-b1",
+  storyB: BC_URL + "general/story-zone/b2-c1",
+  magazine: BC_URL + "general/magazine-zone",
+  audioZone: BC_URL + "general/audio-zone",
+  videoZone: BC_URL + "general/video-zone",
+  videoSeries: BC_URL + "general/video-series",
+  business: BC_URL + "business-english",
+  gramRef: BC_URL + "grammar/english-grammar-reference",
+  c1g: BC_URL + "grammar/c1", c1l: BC_URL + "listening/c1", c1r: BC_URL + "reading/c1", c1w: BC_URL + "writing/c1",
   eerQuiz: "https://english-e-reader.net/find-level",
   nil2: "https://www.newsinlevels.com/level/level-2/",
   nil3: "https://www.newsinlevels.com/level/level-3/"
 };
-export const EERL = "https://english-e-reader.net/level/";
-export const IDX = {
-  ga: ["índice gramática A1–A2", BC+"grammar/a1-a2"], gb: ["índice gramática B1–B2", BC+"grammar/b1-b2"],
-  la2: ["índice listening A2", BC+"listening/a2"], lb1: ["índice listening B1", BC+"listening/b1"], lb2: ["índice listening B2", BC+"listening/b2"],
-  ra2: ["índice reading A2", BC+"reading/a2"], rb1: ["índice reading B1", BC+"reading/b1"], rb2: ["índice reading B2", BC+"reading/b2"],
-  wa2: ["índice writing A2", BC+"writing/a2"], wb1: ["índice writing B1", BC+"writing/b1"], wb2: ["índice writing B2", BC+"writing/b2"],
-  sa2: ["índice speaking A2", BC+"speaking/a2"], sb1: ["índice speaking B1", BC+"speaking/b1"], sb2: ["índice speaking B2", BC+"speaking/b2"],
-  va: ["índice vocabulário A1–A2", BC+"vocabulary/a1-a2"], vb: ["índice vocabulário B1–B2", BC+"vocabulary/b1-b2"]
+export const EER_LEVEL_URL = "https://english-e-reader.net/level/";
+export const LESSON_INDEXES = {
+  ga: ["índice gramática A1–A2", BC_URL+"grammar/a1-a2"], gb: ["índice gramática B1–B2", BC_URL+"grammar/b1-b2"],
+  la2: ["índice listening A2", BC_URL+"listening/a2"], lb1: ["índice listening B1", BC_URL+"listening/b1"], lb2: ["índice listening B2", BC_URL+"listening/b2"],
+  ra2: ["índice reading A2", BC_URL+"reading/a2"], rb1: ["índice reading B1", BC_URL+"reading/b1"], rb2: ["índice reading B2", BC_URL+"reading/b2"],
+  wa2: ["índice writing A2", BC_URL+"writing/a2"], wb1: ["índice writing B1", BC_URL+"writing/b1"], wb2: ["índice writing B2", BC_URL+"writing/b2"],
+  sa2: ["índice speaking A2", BC_URL+"speaking/a2"], sb1: ["índice speaking B1", BC_URL+"speaking/b1"], sb2: ["índice speaking B2", BC_URL+"speaking/b2"],
+  va: ["índice vocabulário A1–A2", BC_URL+"vocabulary/a1-a2"], vb: ["índice vocabulário B1–B2", BC_URL+"vocabulary/b1-b2"]
 };
 
-export const LES = {};
+export const LESSONS = {};
 function lessons(skill, lvl, idx, base, list){
   list.forEach(([id, t, slug]) => {
-    LES[id] = {id, t, s: skill, lvl, idx, u: slug ? BC + (slug.indexOf("/") > -1 ? slug : base + slug) : IDX[idx][1]};
+    LESSONS[id] = {id, t, s: skill, lvl, idx, u: slug ? BC_URL + (slug.indexOf("/") > -1 ? slug : base + slug) : LESSON_INDEXES[idx][1]};
   });
 }
 lessons("gram","A2","ga","",[
@@ -165,9 +165,9 @@ lessons("speak","B2","sb2","speaking/b2/",[
   ["S2-04","Giving advice","giving-advice"],["S2-05","Persuading someone to do something","persuading-someone-do-something"]
 ]);
 
-export const LIDS = s => Object.keys(LES).filter(k => LES[k].s === s);
-export const GRAM_IDS = LIDS("gram");
+const idsOf = s => Object.keys(LESSONS).filter(k => LESSONS[k].s === s);
+export const GRAM_IDS = idsOf("gram");
 export const GA_IDS = GRAM_IDS.filter(k => k.indexOf("GA") === 0);
-export const GB1_IDS = GRAM_IDS.filter(k => LES[k].lvl === "B1");
-export const GB2_IDS = GRAM_IDS.filter(k => LES[k].lvl === "B2");
-export const SKILL_IDS = Object.keys(LES).filter(k => LES[k].s !== "gram");
+export const GB1_IDS = GRAM_IDS.filter(k => LESSONS[k].lvl === "B1");
+export const GB2_IDS = GRAM_IDS.filter(k => LESSONS[k].lvl === "B2");
+export const SKILL_IDS = Object.keys(LESSONS).filter(k => LESSONS[k].s !== "gram");

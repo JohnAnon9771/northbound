@@ -4,8 +4,8 @@ import { esc } from "../core/dom.js";
 import { icon } from "../core/icons.js";
 import { formatHours, pct, plural } from "../core/format.js";
 import { today, addDays, mondayOf, parse, MESES, shortDate } from "../core/date.js";
-import { sk, CATN } from "../data/skills.js";
-import { LES } from "../data/lessons.js";
+import { skillOf, CATEGORY_NAMES } from "../data/skills.js";
+import { LESSONS } from "../data/lessons.js";
 import { allLogs, minutesBy } from "../state/selectors.js";
 import { calWeekOf, planSplit, latestScore, lowLessons } from "../domain/route.js";
 import { minutesByDate, streak, heatmap, heatLevel, knownCount, learnedCount, knownTimeline, weekSummary } from "../domain/stats.js";
@@ -20,7 +20,7 @@ function statTiles(dayMap){
   const cw = Math.max(1, calWeekOf(today()));
   const last4 = []; for (let w = Math.max(1, cw - 3); w <= cw; w++) last4.push(w);
   const m4 = logs.filter(e => last4.indexOf(calWeekOf(e.date)) > -1).reduce((a, e) => a + e.min, 0);
-  const inM = minutesBy(e => sk(e.skill).c === "in"), outM = minutesBy(e => sk(e.skill).c === "out");
+  const inM = minutesBy(e => skillOf(e.skill).c === "in"), outM = minutesBy(e => skillOf(e.skill).c === "out");
   const bal = inM + outM ? Math.round(inM / (inM + outM) * 100) : 0;
   const st = streak(dayMap, today());
   let h = '<div class="stats">';
@@ -89,7 +89,7 @@ function badgesHTML(){
 function weeklyChart(cw){
   const data = new Map();
   let maxW = cw;
-  S.logs.forEach(e => { const w = calWeekOf(e.date); if (w < 1) return; maxW = Math.max(maxW, w); const o = data.get(w) || {base: 0, in: 0, out: 0}; o[sk(e.skill).c] += e.min; data.set(w, o); });
+  S.logs.forEach(e => { const w = calWeekOf(e.date); if (w < 1) return; maxW = Math.max(maxW, w); const o = data.get(w) || {base: 0, in: 0, out: 0}; o[skillOf(e.skill).c] += e.min; data.set(w, o); });
   const n = Math.max(maxW, 12), bw = 16, gap = 8, padL = 34, padB = 22, H = 190, top = 10;
   const goal = S.state.settings.goalH * 60;
   let maxV = goal * 1.25; data.forEach(o => { maxV = Math.max(maxV, o.base + o.in + o.out); });
@@ -100,7 +100,7 @@ function weeklyChart(cw){
   for (let w = 1; w <= n; w++){
     const o = data.get(w) || {base: 0, in: 0, out: 0}, x = padL + (w - 1) * (bw + gap) + gap / 2;
     let acc = 0;
-    ["base", "in", "out"].forEach(c => { if (!o[c]) return; const y1 = y(acc + o[c]), y0 = y(acc); s += '<rect x="' + x + '" y="' + y1 + '" width="' + bw + '" height="' + Math.max(0, y0 - y1) + '" rx="3" fill="var(--c-' + c + ')"><title>Semana ' + w + ": " + formatHours(o[c]) + " h de " + CATN[c] + "</title></rect>"; acc += o[c]; });
+    ["base", "in", "out"].forEach(c => { if (!o[c]) return; const y1 = y(acc + o[c]), y0 = y(acc); s += '<rect x="' + x + '" y="' + y1 + '" width="' + bw + '" height="' + Math.max(0, y0 - y1) + '" rx="3" fill="var(--c-' + c + ')"><title>Semana ' + w + ": " + formatHours(o[c]) + " h de " + CATEGORY_NAMES[c] + "</title></rect>"; acc += o[c]; });
     if (w === 1 || w % 4 === 0 || w === cw) s += '<text x="' + (x + bw / 2) + '" y="' + (H - 6) + '" text-anchor="middle"' + (w === cw ? ' style="fill:var(--ink);font-weight:700"' : "") + ">" + w + "</text>";
   }
   s += '<line x1="' + padL + '" x2="' + Wd + '" y1="' + y(goal) + '" y2="' + y(goal) + '" stroke="var(--ink)" stroke-width="1.5" stroke-dasharray="5 4"/>';
@@ -117,24 +117,24 @@ function skillsHTML(){
   let h = '<section class="card section"><h2>Habilidades</h2><p class="muted">A barra é a sua parte do tempo; o traço é a parte planejada.</p><div class="hbars">';
   PLAN.forEach(s => {
     const a = sumAct ? actual[s[0]] / sumAct * 100 : 0, pl = s[2] / sumPlan * 100;
-    h += '<div class="hbar c-' + sk(s[0]).c + '"><span>' + s[1] + '</span><span class="hbar-track"><i style="width:' + (a / top * 100) + '%"></i><em style="left:' + (pl / top * 100) + '%"></em></span><span class="v">' + formatHours(actual[s[0]]) + " h, " + Math.round(a) + "%</span></div>";
+    h += '<div class="hbar c-' + skillOf(s[0]).c + '"><span>' + s[1] + '</span><span class="hbar-track"><i style="width:' + (a / top * 100) + '%"></i><em style="left:' + (pl / top * 100) + '%"></em></span><span class="v">' + formatHours(actual[s[0]]) + " h, " + Math.round(a) + "%</span></div>";
   });
   h += "</div></section>";
   h += '<section class="card section"><h2>Lições do British Council</h2><p class="muted">Gramática, listening, reading, writing e speaking marcadas como feitas.</p><div class="hbars">';
   ["A2", "B1", "B2"].forEach(l => {
-    const ids = Object.keys(LES).filter(k => LES[k].lvl === l), d = ids.filter(k => S.state.done[k]).length;
+    const ids = Object.keys(LESSONS).filter(k => LESSONS[k].lvl === l), d = ids.filter(k => S.state.done[k]).length;
     h += '<div class="hbar"><span>Nível ' + l + '</span><span class="hbar-track"><i style="width:' + pct(d, ids.length) + '%"></i></span><span class="v">' + d + " de " + ids.length + "</span></div>";
   });
   return '<div class="grid-2 even">' + h + "</section></div>";
 }
 
 function scoresHTML(){
-  const scored = Object.keys(LES).filter(id => latestScore(id));
+  const scored = Object.keys(LESSONS).filter(id => latestScore(id));
   let h = '<section class="card section"><h2>Notas das lições</h2>';
   if (!scored.length) return h + '<p class="muted">Nenhuma nota ainda. Anote a porcentagem na tarefa da lição ou do reteste, e as revisões de bloco passam a mostrar o que refazer.</p></section>';
   const r = lowLessons(scored), avg = Math.round(scored.reduce((a, id) => a + latestScore(id).p, 0) / scored.length);
   h += '<p class="muted">' + scored.length + (scored.length === 1 ? " lição com nota" : " lições com nota") + ", média " + avg + "% na última tentativa de cada uma. " + (r.low.length ? (r.low.length === 1 ? "Esta está abaixo de 80%:" : "Estas " + r.low.length + " estão abaixo de 80%:") : "Nenhuma abaixo de 80%.") + "</p>";
-  if (r.low.length) h += '<ul class="split">' + r.low.map(x => '<li><a href="' + esc(LES[x[0]].u) + '" target="_blank" rel="noopener">' + esc(x[0] + " " + LES[x[0]].t) + "</a><span>" + x[1] + "%</span></li>").join("") + "</ul>";
+  if (r.low.length) h += '<ul class="split">' + r.low.map(x => '<li><a href="' + esc(LESSONS[x[0]].u) + '" target="_blank" rel="noopener">' + esc(x[0] + " " + LESSONS[x[0]].t) + "</a><span>" + x[1] + "%</span></li>").join("") + "</ul>";
   return h + "</section>";
 }
 
@@ -166,7 +166,7 @@ export default {
     h += "</section>";
     h += badgesHTML();
     h += '<section class="card section"><h2>Horas por semana</h2>';
-    h += S.logs.length ? '<div class="scroll">' + weeklyChart(cw) + '</div><ul class="legend">' + ["base", "in", "out"].map(c => '<li class="c-' + c + '">' + CATN[c] + "</li>").join("") + '<li style="--lc:transparent">Linha tracejada: meta semanal</li></ul>' : '<p class="muted">Nenhum registro ainda. Comece uma tarefa em Hoje e o gráfico aparece aqui.</p>';
+    h += S.logs.length ? '<div class="scroll">' + weeklyChart(cw) + '</div><ul class="legend">' + ["base", "in", "out"].map(c => '<li class="c-' + c + '">' + CATEGORY_NAMES[c] + "</li>").join("") + '<li style="--lc:transparent">Linha tracejada: meta semanal</li></ul>' : '<p class="muted">Nenhum registro ainda. Comece uma tarefa em Hoje e o gráfico aparece aqui.</p>';
     h += "</section>";
     h += skillsHTML();
     h += scoresHTML();

@@ -1,5 +1,5 @@
 // Self-assessment grid adapted from the Council of Europe CEFR descriptors.
-export const CANDO = {
+export const CAN_DO = {
   A2:[["a2-l","Listening","Entendo frases e vocabulário frequente sobre mim, família, compras, região e trabalho, e capto o essencial de mensagens e avisos curtos e claros."],
       ["a2-r","Reading","Leio textos curtos e simples, encontro informação previsível em anúncios, cardápios e horários e entendo cartas pessoais curtas."],
       ["a2-i","Interação","Me comunico em tarefas simples e rotineiras e consigo manter trocas sociais curtas."],

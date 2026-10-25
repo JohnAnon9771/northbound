@@ -5,8 +5,9 @@ import { icon } from "../core/icons.js";
 import { formatHours } from "../core/format.js";
 import { today, addDays, parse, shortDate, DIAS } from "../core/date.js";
 import { rerender } from "../core/rerender.js";
-import { CATN, sk } from "../data/skills.js";
-import { PH, phaseOf, weekTasks, extraTasks, extraPlan, weekStats, weekComplete, weekTimeUpDate, weekLabel, currentRoadmapWeek, calWeekOf, calWeekStart, paceText, goalLabel } from "../domain/route.js";
+import { CATEGORY_NAMES, skillOf } from "../data/skills.js";
+import { PHASES, phaseOf } from "../data/phases.js";
+import { weekTasks, extraTasks, extraPlan, weekStats, weekComplete, weekTimeUpDate, weekLabel, currentRoadmapWeek, calWeekOf, calWeekStart, paceText, goalLabel } from "../domain/route.js";
 import { taskHTML, focusHTML } from "../ui/tasks.js";
 import { openCore } from "../domain/week-close.js";
 
@@ -66,14 +67,14 @@ function weekHours(){
   const days = []; for (let i = 0; i < 7; i++) days.push(addDays(start, i));
   const inWeek = S.logs.filter(e => e.date >= days[0] && e.date <= days[6]);
   const by = {base: 0, in: 0, out: 0}; let tot = 0;
-  inWeek.forEach(e => { by[sk(e.skill).c] += e.min; tot += e.min; });
+  inWeek.forEach(e => { by[skillOf(e.skill).c] += e.min; tot += e.min; });
   const goal = S.state.settings.goalH * 60, scale = Math.max(goal, tot);
   const perDay = days.map(d => inWeek.filter(e => e.date === d).reduce((a, e) => a + e.min, 0));
   const cardsDay = days.map(d => inWeek.some(e => e.date === d && (e.skill === "cards" || e.skill === "vocab")) || S.reviews.some(r => r.date === d));
   const maxDay = Math.max(90, ...perDay);
   let h = '<p class="big"><strong class="num">' + formatHours(tot) + " h</strong> de " + goalLabel() + (cw > 0 ? '<span class="muted" style="font-size:14px;display:block;margin-top:6px">' + shortDate(days[0]) + " a " + shortDate(days[6]) + (tot >= goal ? ", meta da semana batida" : ", faltam " + formatHours(goal - tot) + " h") + "</span>" : "") + "</p>";
   h += '<div class="barstack" role="img" aria-label="Horas por categoria">' + ["base", "in", "out"].map(c => '<span class="c-' + c + '" style="width:' + (by[c] / scale * 100) + '%;background:var(--lc)"></span>').join("") + "</div>";
-  h += '<ul class="legend">' + ["base", "in", "out"].map(c => '<li class="c-' + c + '">' + (c === "base" ? "Base" : CATN[c]) + " " + formatHours(by[c]) + " h</li>").join("") + "</ul>";
+  h += '<ul class="legend">' + ["base", "in", "out"].map(c => '<li class="c-' + c + '">' + (c === "base" ? "Base" : CATEGORY_NAMES[c]) + " " + formatHours(by[c]) + " h</li>").join("") + "</ul>";
   h += '<div class="days">' + days.map((d, i) => { const dt = parse(d); return '<div class="day' + (d === t ? " today" : "") + '" title="' + perDay[i] + ' min"><div class="day-bar"><span style="height:' + (perDay[i] / maxDay * 100) + '%"></span></div><span>' + DIAS[dt.getDay()] + '</span><span class="num">' + (perDay[i] ? perDay[i] + "′" : "–") + '</span><span class="dot' + (cardsDay[i] ? " on" : "") + '" title="' + (cardsDay[i] ? "Flashcards feitos" : "Sem flashcards") + '"></span></div>'; }).join("") + "</div>";
   h += '<p class="hint">O pontinho acende nos dias com flashcards.</p>';
   return h;
@@ -109,7 +110,7 @@ function weekCard(rw){
 /* ---------- full route ---------- */
 function roadmap(rw){
   let h = "";
-  PH.forEach(p => {
+  PHASES.forEach(p => {
     const to = p.to || Math.max(60, rw + 4);
     h += '<section class="phase" style="--pc:var(' + p.col + ')"><div class="phase-head"><h2>Fase ' + p.id + ": " + esc(p.name) + '</h2><p class="muted" style="margin:0">' + (p.to ? (p.from === p.to ? "Semana " + p.from : "Semanas " + p.from + " a " + p.to) + (p.id > 0 ? ", alvo " + p.cefr : ", para descobrir o seu ponto de partida") : "Semanas " + p.from + " em diante, um modelo semanal que se repete") + '</p><dl class="phase-facts"><div><dt>Flashcards</dt><dd>' + esc(p.cards) + "</dd></div><div><dt>ChatGPT</dt><dd>" + esc(p.gpt) + "</dd></div><div><dt>Checkpoint</dt><dd>" + esc(p.check) + '</dd></div></dl></div><ol class="weeks">';
     for (let n = p.from; n <= to; n++){
@@ -129,7 +130,7 @@ export default {
   id: "rota",
   title: "Rota",
   render(){
-    const rw = currentRoadmapWeek(), p = PH[phaseOf(rw)];
+    const rw = currentRoadmapWeek(), p = PHASES[phaseOf(rw)];
     if (!opened){ openWeeks.add(rw); opened = true; }
     const pace = paceText(rw);
     let h = '<div class="page-head"><p class="eyebrow">Fase ' + p.id + ": " + esc(p.name) + (p.id > 0 && p.id < 5 ? " · alvo " + p.cefr : "") + "</p><h1>" + (rw >= 53 ? "Semana " + rw + ": rumo ao C1" : "Semana " + rw + " de 52") + '</h1><p class="lead" style="margin-top:10px"><span class="pace pace-' + pace.tone + '">' + esc(pace.text) + "</span></p></div>";

@@ -5,7 +5,7 @@ import { pct } from "../core/format.js";
 import { uid } from "../core/id.js";
 import { today, shortDate } from "../core/date.js";
 import { toast } from "../core/toast.js";
-import { CANDO } from "../data/cando.js";
+import { CAN_DO } from "../data/can-do.js";
 
 const TTYPE = {efset: "EF SET 50 min", bc: "British Council level test", wi: "Write & Improve", gpt: "ChatGPT examinador", outro: "Outro"};
 const LEVELS = ["A1", "A2", "A2+", "B1", "B1+", "B2", "B2+", "C1", "C2"];
@@ -50,8 +50,8 @@ function testsHTML(){
 
 function candoHTML(){
   let c = '<section class="section"><h2>Listas “can-do”</h2><p class="muted">Adaptadas da grade de autoavaliação do Conselho da Europa. Reavalie nas semanas 12, 26, 44 e 48. A meta é 80% de “sim” no nível-alvo.</p>';
-  Object.keys(CANDO).forEach(l => {
-    const items = CANDO[l], yes = items.filter(i => S.state.cando[i[0]] === 2).length;
+  Object.keys(CAN_DO).forEach(l => {
+    const items = CAN_DO[l], yes = items.filter(i => S.state.cando[i[0]] === 2).length;
     c += '<div class="lvl-head"><h3>' + l + '</h3><span class="muted">' + yes + " de " + items.length + " com “sim”, " + pct(yes, items.length) + '%</span></div><ul class="cando">';
     items.forEach(i => {
       const v = S.state.cando[i[0]] == null ? -1 : S.state.cando[i[0]];

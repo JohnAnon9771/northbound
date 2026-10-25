@@ -5,9 +5,10 @@ import { icon } from "../core/icons.js";
 import { today, shortDate } from "../core/date.js";
 import { toast } from "../core/toast.js";
 import * as timer from "../core/study-timer.js";
-import { LES, IDX } from "../data/lessons.js";
-import { sk } from "../data/skills.js";
-import { PH, phaseOf, weekMilestone, weekNote, scoreFor, latestScore, setScore, lowLessons, currentRoadmapWeek } from "../domain/route.js";
+import { LESSONS, LESSON_INDEXES } from "../data/lessons.js";
+import { skillOf } from "../data/skills.js";
+import { PHASES, phaseOf } from "../data/phases.js";
+import { weekMilestone, weekNote, scoreFor, latestScore, setScore, lowLessons, currentRoadmapWeek } from "../domain/route.js";
 import { confetti } from "./celebrate.js";
 
 // every task rendered in the current view, by key, for the actions below
@@ -18,15 +19,15 @@ export const taskByKey = k => TASKS.get(k);
 export function taskHTML(t, opts){
   const o = opts || {};
   TASKS.set(t.k, t);
-  const done = !!S.state.done[t.k], c = sk(t.s).c;
+  const done = !!S.state.done[t.k], c = skillOf(t.s).c;
   const run = timer.running();
   const isRunning = run && run.task === t.k;
   const ext = t.u && t.u.charAt(0) !== "#";
   const title = t.u ? '<a class="task-title" href="' + esc(t.u) + '"' + (ext ? ' target="_blank" rel="noopener"' : "") + ">" + esc(t.t) + "</a>" : '<span class="task-title">' + esc(t.t) + "</span>";
-  const meta = t.mix ? t.mix.map(p => '<span class="tag c-' + sk(p[0]).c + '">' + sk(p[0]).n + "</span>") : ['<span class="tag c-' + c + '">' + sk(t.s).n + "</span>"];
+  const meta = t.mix ? t.mix.map(p => '<span class="tag c-' + skillOf(p[0]).c + '">' + skillOf(p[0]).n + "</span>") : ['<span class="tag c-' + c + '">' + skillOf(t.s).n + "</span>"];
   if (t.m) meta.push("<span>" + (t.mix ? t.m + " min (" + t.mix.map(p => p[1]).join(" + ") + ")" : t.m + " min") + "</span>");
   if (t.bc) meta.push("<span>" + esc(t.k) + "</span>");
-  if (t.idx) meta.push('<a href="' + IDX[t.idx][1] + '" target="_blank" rel="noopener">' + IDX[t.idx][0] + "</a>");
+  if (t.idx) meta.push('<a href="' + LESSON_INDEXES[t.idx][1] + '" target="_blank" rel="noopener">' + LESSON_INDEXES[t.idx][0] + "</a>");
   const start = o.start && !done && t.m ? '<button class="btn btn-small ' + (isRunning ? "btn-soft" : "btn-ghost") + ' task-start" type="button" data-act="task-start" data-task="' + esc(t.k) + '"' + (isRunning ? " disabled" : "") + ">" + (isRunning ? "Em andamento" : icon("play", 14) + "Começar") + "</button>" : "";
   return '<li class="task' + (done ? " done" : "") + (t.ms ? " milestone" : "") + (isRunning ? " running" : "") + '"><input type="checkbox" class="chk" data-change="task-toggle" data-task="' + esc(t.k) + '" data-fk="task-' + esc(t.k) + '"' + (done ? " checked" : "") + ' aria-label="Concluir: ' + esc(t.t) + '"><div class="task-body">' + title + '<div class="task-meta">' + meta.join("") + "</div>" + (t.n && !o.compact ? '<p class="task-note">' + esc(t.n) + "</p>" : "") + revHTML(t) + scoreHTML(t) + "</div>" + start + "</li>";
 }
@@ -37,7 +38,7 @@ function scoreHTML(t){
   if (!t.sc || !t.sc.length) return "";
   const multi = t.sc.length > 1;
   const rows = t.sc.map(id => {
-    const L = LES[id], v = scoreFor(id, t.k), prev = latestScore(id, t.k);
+    const L = LESSONS[id], v = scoreFor(id, t.k), prev = latestScore(id, t.k);
     const name = multi ? L.t : (L.s === "gram" ? "Nota do Grammar test 2" : "Nota");
     return '<label class="score"><span class="score-n">' + esc(name) + '</span><span class="score-in"><input type="number" min="0" max="100" step="1" inputmode="numeric" data-change="score" data-score="' + esc(id) + '" data-sk="' + esc(t.k) + '" data-fk="sc-' + esc(id) + "-" + esc(t.k) + '" value="' + (v == null ? "" : v) + '" aria-label="Nota em porcentagem: ' + esc(L.t) + '">%</span>' + (prev ? '<span class="score-prev">antes ' + prev.p + "%</span>" : "") + "</label>";
   }).join("");
@@ -54,7 +55,7 @@ function revHTML(t){
   if (!t.rev) return "";
   const r = lowLessons(t.rev);
   let h = "";
-  if (r.low.length) h += '<p class="task-note">Pelas suas notas, refaça ' + (r.low.length === 1 ? "esta" : "estas " + r.low.length) + ':</p><ul class="lowlist">' + r.low.map(x => '<li><a href="' + esc(LES[x[0]].u) + '" target="_blank" rel="noopener">' + esc(LES[x[0]].t) + "</a><span>" + x[1] + "%</span></li>").join("") + "</ul>";
+  if (r.low.length) h += '<p class="task-note">Pelas suas notas, refaça ' + (r.low.length === 1 ? "esta" : "estas " + r.low.length) + ':</p><ul class="lowlist">' + r.low.map(x => '<li><a href="' + esc(LESSONS[x[0]].u) + '" target="_blank" rel="noopener">' + esc(LESSONS[x[0]].t) + "</a><span>" + x[1] + "%</span></li>").join("") + "</ul>";
   else if (r.none.length < t.rev.length) h += '<p class="task-note">Nenhuma lição deste bloco ficou abaixo de 80%. Use o tempo com o prompt 8 nos tópicos que parecem mais fracos.</p>';
   if (r.none.length === t.rev.length) h += '<p class="task-note">Nenhuma nota registrada neste bloco. Escolha pelos tópicos que você sente mais fracos e, daqui para a frente, anote as notas nas tarefas.</p>';
   else if (r.none.length) h += '<p class="task-note">' + r.none.length + (r.none.length === 1 ? " lição do bloco ainda está sem nota." : " lições do bloco ainda estão sem nota.") + "</p>";
@@ -62,7 +63,7 @@ function revHTML(t){
 }
 
 export function focusHTML(n){
-  const p = PH[phaseOf(n)];
+  const p = PHASES[phaseOf(n)];
   const ms = weekMilestone(n), note = weekNote(n);
   let h = '<div class="focus" style="--pc:var(' + p.col + ')"><dl>';
   h += '<dt>Flashcards</dt><dd>' + esc(p.cards) + "</dd>";
@@ -74,7 +75,7 @@ export function focusHTML(n){
 }
 
 export function logLi(e){
-  const s = sk(e.skill);
+  const s = skillOf(e.skill);
   return '<li><span class="d">' + esc(shortDate(e.date)) + '</span><span class="mid"><span class="tag c-' + s.c + '">' + s.n + "</span>" + (e.note ? ' <span class="n">' + esc(e.note) + "</span>" : "") + '</span><span class="num">' + e.min + ' min</span><button class="x" type="button" data-act="log-del" data-id="' + esc(e.id) + '" aria-label="Apagar registro de ' + e.min + " min de " + s.n + '">×</button></li>';
 }
 
@@ -88,7 +89,7 @@ function splitMix(mix, min){
   let left = min;
   return mix.map((p, i) => { const v = i === mix.length - 1 ? left : Math.round(min * p[1] / total); left -= v; return [p[0], v]; });
 }
-const logged = ens => ens.map(en => en.min + " min de " + sk(en.skill).n).join(" e ");
+const logged = ens => ens.map(en => en.min + " min de " + skillOf(en.skill).n).join(" e ");
 function undoLogs(ens){ return {label: "Desfazer", fn: () => ens.forEach(en => deleteLog(en.id))}; }
 
 /* Marks a task as done and celebrates week/phase changes. */
@@ -99,7 +100,7 @@ export function setDone(key, on, el){
   if (on && after > before){
     const ph = phaseOf(after) > phaseOf(before);
     confetti(null, true);
-    toast(ph ? "Começa a fase " + phaseOf(after) + ": " + PH[phaseOf(after)].name + "." : "Rumo à semana " + after + ".", [], {title: ph ? "Fase " + phaseOf(before) + " concluída!" : "Semana " + before + " fechada!", tone: "warm", ms: 6000});
+    toast(ph ? "Começa a fase " + phaseOf(after) + ": " + PHASES[phaseOf(after)].name + "." : "Rumo à semana " + after + ".", [], {title: ph ? "Fase " + phaseOf(before) + " concluída!" : "Semana " + before + " fechada!", tone: "warm", ms: 6000});
     return true;
   }
   if (on && el) confetti(el);
@@ -115,7 +116,7 @@ export const taskActions = {
     const already = S.logs.some(e => e.task === key && e.date === today());
     const run = timer.running();
     if (already || (run && run.task === key) || !task.m) return;
-    const what = task.mix ? task.mix.map(p => p[1] + " min de " + sk(p[0]).n).join(" e ") : task.m + " min de " + sk(task.s).n;
+    const what = task.mix ? task.mix.map(p => p[1] + " min de " + skillOf(p[0]).n).join(" e ") : task.m + " min de " + skillOf(task.s).n;
     toast("Feito! Registrar " + what + "?", [{label: "Registrar", fn: () => { const ens = logTask(task, task.m); toast("Registrado: " + logged(ens) + ".", [undoLogs(ens)]); }}]);
   },
   score(el){

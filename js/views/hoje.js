@@ -7,8 +7,9 @@ import { today, longDate, mondayOf } from "../core/date.js";
 import { toast } from "../core/toast.js";
 import { rerender } from "../core/rerender.js";
 import * as timer from "../core/study-timer.js";
-import { SK, SKORDER, sk } from "../data/skills.js";
-import { PH, phaseOf, weekTasks, extraTasks, currentRoadmapWeek, calWeekOf, calWeekStart, paceText } from "../domain/route.js";
+import { SKILLS, SKILL_ORDER, skillOf } from "../data/skills.js";
+import { PHASES, phaseOf } from "../data/phases.js";
+import { weekTasks, extraTasks, currentRoadmapWeek, calWeekOf, calWeekStart, paceText } from "../domain/route.js";
 import { minutesByDate, streak } from "../domain/stats.js";
 import { planDay, nextOpen } from "../domain/daily.js";
 import { deckToday, phraseOfDay } from "../flashcards/deck.js";
@@ -19,7 +20,7 @@ import { highlight, speakBtn } from "../ui/words.js";
 
 const LS_SKILL = "nb:lastSkill";
 let lastSkill = "gram";
-try { const v = localStorage.getItem(LS_SKILL); if (v && SK[v]) lastSkill = v; } catch (e){}
+try { const v = localStorage.getItem(LS_SKILL); if (v && SKILLS[v]) lastSkill = v; } catch (e){}
 
 function greeting(){
   const h = new Date().getHours();
@@ -53,7 +54,7 @@ function nextStep(deck, list){
   if (open){
     const run = timer.running();
     if (run && run.task === open.k) return {eyebrow: "Em andamento", title: open.t, sub: "O cronômetro está rodando. Quando terminar, toque em Parar lá embaixo.", btn: null};
-    return {eyebrow: "Próximo passo", title: open.t, sub: sk(open.s).n + (open.m ? " · cerca de " + open.m + " min" : ""), btn: icon("play", 16) + "Começar agora", act: "task-start", task: open.k};
+    return {eyebrow: "Próximo passo", title: open.t, sub: skillOf(open.s).n + (open.m ? " · cerca de " + open.m + " min" : ""), btn: icon("play", 16) + "Começar agora", act: "task-start", task: open.k};
   }
   const dw = dailyWordsHint();
   if (dw) return {eyebrow: "Próximo passo", title: "Palavras do dia (" + dw.level + "): " + plural(dw.n, "pronta", "prontas") + " para adicionar", sub: "As mais usadas do seu nível que você ainda não tem. Marque as que já sabe e adicione o resto.", btn: icon("plus", 18) + "Ver palavras", href: "#palavras"};
@@ -83,7 +84,7 @@ function dailyWordsRow(){
 }
 
 function manualForm(){
-  const chips = SKORDER.map(k => '<label class="chip c-' + SK[k].c + '"><input type="radio" name="logSkill" value="' + k + '"' + (k === lastSkill ? " checked" : "") + ' data-change="pick-skill"><span>' + SK[k].n + "</span></label>").join("");
+  const chips = SKILL_ORDER.map(k => '<label class="chip c-' + SKILLS[k].c + '"><input type="radio" name="logSkill" value="' + k + '"' + (k === lastSkill ? " checked" : "") + ' data-change="pick-skill"><span>' + SKILLS[k].n + "</span></label>").join("");
   return '<details class="disc" data-det="manual-log"' + (isOpen("manual-log") ? " open" : "") + '><summary>' + icon("plus", 18) + 'Registrar estudo à mão</summary><div class="disc-body"><form data-submit="log-manual">' +
     '<div class="row"><div class="field"><label for="logDate">Data</label><input type="date" id="logDate" name="date" value="' + today() + '"></div><div class="field"><label for="logMin">Minutos</label><input type="number" id="logMin" name="min" min="1" max="600" inputmode="numeric" placeholder="30"></div></div>' +
     '<div class="quick">' + [15, 20, 30, 45, 60, 90].map(m => '<button class="btn btn-ghost btn-small" type="button" data-act="quick-min" data-min="' + m + '">' + m + " min</button>").join("") + "</div>" +
@@ -97,7 +98,7 @@ export default {
   title: "Hoje",
   render(){
     const t = today();
-    const rw = currentRoadmapWeek(), p = PH[phaseOf(rw)];
+    const rw = currentRoadmapWeek(), p = PHASES[phaseOf(rw)];
     const dayMap = minutesByDate(S.logs), st = streak(dayMap, t);
     const minToday = dayMap.get(t) || 0;
     const goalDay = Math.round(S.state.settings.goalH * 60 / 6);
@@ -152,13 +153,13 @@ export default {
       if (!(min >= 1 && min <= 600)){ toast("Informe entre 1 e 600 minutos."); return; }
       const skill = f.get("logSkill") || lastSkill;
       const e = addLog({date: f.get("date") || today(), min, skill, note: String(f.get("note") || "").trim()});
-      toast("Registrado: " + min + " min de " + sk(e.skill).n + ".");
+      toast("Registrado: " + min + " min de " + skillOf(e.skill).n + ".");
     },
     "free-timer"(){
       if (timer.running()){ toast("Já tem um cronômetro rodando."); return; }
       const sel = document.querySelector('input[name="logSkill"]:checked');
       const skill = sel ? sel.value : lastSkill;
-      timer.start({skill, label: SK[skill].n});
+      timer.start({skill, label: SKILLS[skill].n});
     }
   }
 };
