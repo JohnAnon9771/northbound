@@ -7,7 +7,9 @@ import { today, addDays, parse, shortDate, DIAS } from "../core/date.js";
 import { rerender } from "../core/rerender.js";
 import { CATEGORY_NAMES, skillOf } from "../data/skills.js";
 import { PHASES, phaseOf } from "../data/phases.js";
-import { weekTasks, extraTasks, extraPlan, weekStats, weekComplete, weekTimeUpDate, weekLabel, currentRoadmapWeek, calWeekOf, calWeekStart, paceText, goalLabel } from "../domain/route.js";
+import { weekTasks, weekLabel } from "../domain/week-tasks.js";
+import { extraTasks, extraPlan } from "../domain/goal-extras.js";
+import { weekStats, weekComplete, weekTimeUpDate, currentRoadmapWeek, calWeekOf, calWeekStart, paceText, goalLabel } from "../domain/pace.js";
 import { taskHTML, focusHTML } from "../ui/tasks.js";
 import { openCore } from "../domain/week-close.js";
 

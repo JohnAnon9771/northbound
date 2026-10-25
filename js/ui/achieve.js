@@ -2,9 +2,9 @@
 import { S, update } from "../state/store.js";
 import { today } from "../core/date.js";
 import { toast } from "../core/toast.js";
-import { ACHIEVEMENTS, newlyUnlocked } from "../domain/achievements.js";
+import { newlyUnlocked } from "../domain/achievements.js";
 import { minutesByDate, streak, knownCount } from "../domain/stats.js";
-import { currentRoadmapWeek, weekComplete } from "../domain/route.js";
+import { currentRoadmapWeek, weekComplete } from "../domain/pace.js";
 import { confetti } from "./celebrate.js";
 
 export function achievementContext(){
@@ -33,4 +33,3 @@ export function checkAchievements(silent){
   confetti(null, true);
   toast(a.d + (fresh.length > 1 ? " (+" + (fresh.length - 1) + " outras em Progresso)" : ""), [], {title: "Conquista: " + a.t, tone: "warm", ms: 7000});
 }
-export { ACHIEVEMENTS };

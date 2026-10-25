@@ -8,7 +8,9 @@ import * as timer from "../core/study-timer.js";
 import { LESSONS, LESSON_INDEXES } from "../data/lessons.js";
 import { skillOf } from "../data/skills.js";
 import { PHASES, phaseOf } from "../data/phases.js";
-import { weekMilestone, weekNote, scoreFor, latestScore, setScore, lowLessons, currentRoadmapWeek } from "../domain/route.js";
+import { weekMilestone, weekNote } from "../domain/week-tasks.js";
+import { scoreFor, latestScore, setScore, lowLessons } from "../domain/lesson-scores.js";
+import { currentRoadmapWeek } from "../domain/pace.js";
 import { confetti } from "./celebrate.js";
 
 // every task rendered in the current view, by key, for the actions below
@@ -38,13 +40,13 @@ function scoreHTML(t){
   if (!t.sc || !t.sc.length) return "";
   const multi = t.sc.length > 1;
   const rows = t.sc.map(id => {
-    const L = LESSONS[id], v = scoreFor(id, t.k), prev = latestScore(id, t.k);
+    const L = LESSONS[id], v = scoreFor(S.state.scores, id, t.k), prev = latestScore(S.state.scores, id, t.k);
     const name = multi ? L.t : (L.s === "gram" ? "Nota do Grammar test 2" : "Nota");
     return '<label class="score"><span class="score-n">' + esc(name) + '</span><span class="score-in"><input type="number" min="0" max="100" step="1" inputmode="numeric" data-change="score" data-score="' + esc(id) + '" data-sk="' + esc(t.k) + '" data-fk="sc-' + esc(id) + "-" + esc(t.k) + '" value="' + (v == null ? "" : v) + '" aria-label="Nota em porcentagem: ' + esc(L.t) + '">%</span>' + (prev ? '<span class="score-prev">antes ' + prev.p + "%</span>" : "") + "</label>";
   }).join("");
   const box = '<div class="scores' + (multi ? " multi" : "") + '">' + rows + "</div>";
   if (t.sc.length <= 4) return box;
-  const filled = t.sc.filter(id => scoreFor(id, t.k) != null).length;
+  const filled = t.sc.filter(id => scoreFor(S.state.scores, id, t.k) != null).length;
   return '<details class="score-more" data-det="' + esc(t.k) + '"' + (openDetails.has(t.k) ? " open" : "") + "><summary>Anotar as notas (" + filled + " de " + t.sc.length + ")</summary>" + box + "</details>";
 }
 export function trackDetails(e){
@@ -53,7 +55,7 @@ export function trackDetails(e){
 }
 function revHTML(t){
   if (!t.rev) return "";
-  const r = lowLessons(t.rev);
+  const r = lowLessons(S.state.scores, t.rev);
   let h = "";
   if (r.low.length) h += '<p class="task-note">Pelas suas notas, refaça ' + (r.low.length === 1 ? "esta" : "estas " + r.low.length) + ':</p><ul class="lowlist">' + r.low.map(x => '<li><a href="' + esc(LESSONS[x[0]].u) + '" target="_blank" rel="noopener">' + esc(LESSONS[x[0]].t) + "</a><span>" + x[1] + "%</span></li>").join("") + "</ul>";
   else if (r.none.length < t.rev.length) h += '<p class="task-note">Nenhuma lição deste bloco ficou abaixo de 80%. Use o tempo com o prompt 8 nos tópicos que parecem mais fracos.</p>';
@@ -124,9 +126,9 @@ export const taskActions = {
     let p = null;
     if (raw !== ""){
       p = Math.round(Number(raw));
-      if (!(p >= 0 && p <= 100)){ toast("Use uma nota de 0 a 100."); el.value = scoreFor(el.dataset.score, el.dataset.sk) ?? ""; return; }
+      if (!(p >= 0 && p <= 100)){ toast("Use uma nota de 0 a 100."); el.value = scoreFor(S.state.scores, el.dataset.score, el.dataset.sk) ?? ""; return; }
     }
-    update(s => setScore(s, el.dataset.score, el.dataset.sk, p));
+    update(s => setScore(s.scores, el.dataset.score, el.dataset.sk, p));
   },
   "task-start"(el){
     const task = TASKS.get(el.dataset.task);

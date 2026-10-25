@@ -6,7 +6,7 @@ import { toast } from "../core/toast.js";
 import { rerender } from "../core/rerender.js";
 import { getTheme, setTheme } from "../core/theme.js";
 import { PHASES } from "../data/phases.js";
-import { phaseNow } from "../domain/route.js";
+import { phaseNow } from "../domain/pace.js";
 import { CLAUDE_MODELS } from "../flashcards/providers/claude.js";
 import { enrichMessage } from "../flashcards/enrich.js";
 import { downloadBackup, restoreBackup, daysSinceBackup } from "../ui/backup.js";

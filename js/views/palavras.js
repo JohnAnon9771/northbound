@@ -9,7 +9,6 @@ import { rerender } from "../core/rerender.js";
 import { enrich, enrichMessage, normalizeEnrichment } from "../flashcards/enrich.js";
 import { importTerms, providerOpts } from "../flashcards/importer.js";
 import { addCard, updateCard, removeCard, restoreCards, findByTerm, deckToday, twinOf, setReverse } from "../flashcards/deck.js";
-import { phaseNow } from "../domain/route.js";
 import { KNOWN_IVL } from "../domain/stats.js";
 import { highlight, speakBtn } from "../ui/words.js";
 import { studyStatus } from "../ui/study.js";

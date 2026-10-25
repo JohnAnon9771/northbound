@@ -4,7 +4,7 @@ import { uid } from "../core/id.js";
 import { today } from "../core/date.js";
 import { newSrs, schedule, buildQueue } from "./srs.js";
 import { reviewMsOn, newIntroducedOn, knownCount } from "../domain/stats.js";
-import { phaseNow } from "../domain/route.js";
+import { phaseNow } from "../domain/pace.js";
 
 export const REVIEW_CAP_MS = 15 * 60000;   // past this, no new cards today
 export const SEC_PER_CARD = 9;

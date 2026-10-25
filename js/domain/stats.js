@@ -1,5 +1,5 @@
 // Pure stats over logs, cards and reviews (no store access, so they run under node --test).
-import { addDays, mondayOf, parse, iso, isoOf, DAY_MS } from "../core/date.js";
+import { addDays, mondayOf, parse } from "../core/date.js";
 
 export const KNOWN_IVL = 21;
 
@@ -68,7 +68,6 @@ export function knownTimeline(reviews, cards, weeks, endISO){
   return points;
 }
 
-export function reviewsOn(reviews, dateISO){ return reviews.filter(r => r.date === dateISO); }
 export const newIntroducedOn = (reviews, dateISO) => new Set(reviews.filter(r => r.date === dateISO && r.prev === "new").map(r => r.cardId)).size;
 export const reviewMsOn = (reviews, dateISO) => reviews.filter(r => r.date === dateISO && r.prev !== "new").reduce((a, r) => a + Math.min(r.ms || 0, 60000), 0);
 
@@ -86,6 +85,3 @@ export function weekSummary({logs, reviews, done}, mondayISO){
     tasks: Object.keys(done).filter(k => inWeek(done[k])).length
   };
 }
-
-export const dayOfWeekIndex = dateISO => (parse(dateISO).getDay() + 6) % 7;
-export { iso, isoOf, DAY_MS };

@@ -6,10 +6,10 @@ import { uid } from "../core/id.js";
 import { today, shortDate } from "../core/date.js";
 import { toast } from "../core/toast.js";
 import { CAN_DO } from "../data/can-do.js";
+import { efLevel } from "../domain/efset.js";
 
 const TTYPE = {efset: "EF SET 50 min", bc: "British Council level test", wi: "Write & Improve", gpt: "ChatGPT examinador", outro: "Outro"};
 const LEVELS = ["A1", "A2", "A2+", "B1", "B1+", "B2", "B2+", "C1", "C2"];
-export function efLevel(sc){ sc = Number(sc); if (!isFinite(sc)) return ""; return sc <= 20 ? "pré-A1" : sc <= 30 ? "A1" : sc <= 40 ? "A2" : sc <= 50 ? "B1" : sc <= 60 ? "B2" : sc <= 70 ? "C1" : "C2"; }
 
 function efChart(ef){
   const W = Math.max(520, 80 + ef.length * 60), H = 210, padL = 40, padR = 46, top = 10, bot = 26, lo = 20, hi = 80;

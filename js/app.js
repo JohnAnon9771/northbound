@@ -12,7 +12,7 @@ import { wordActions } from "./ui/words.js";
 import { dailyWordsActions } from "./ui/daily-words.js";
 import { checkAchievements } from "./ui/achieve.js";
 import { downloadBackup, daysSinceBackup } from "./ui/backup.js";
-import { currentRoadmapWeek } from "./domain/route.js";
+import { currentRoadmapWeek } from "./domain/pace.js";
 import { hasContent } from "./state/selectors.js";
 import { deckToday } from "./flashcards/deck.js";
 

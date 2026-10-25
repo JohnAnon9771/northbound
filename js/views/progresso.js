@@ -7,7 +7,9 @@ import { today, addDays, mondayOf, parse, MESES, shortDate } from "../core/date.
 import { skillOf, CATEGORY_NAMES } from "../data/skills.js";
 import { LESSONS } from "../data/lessons.js";
 import { allLogs, minutesBy } from "../state/selectors.js";
-import { calWeekOf, planSplit, latestScore, lowLessons } from "../domain/route.js";
+import { calWeekOf } from "../domain/pace.js";
+import { planSplit } from "../domain/goal-extras.js";
+import { latestScore, lowLessons } from "../domain/lesson-scores.js";
 import { minutesByDate, streak, heatmap, heatLevel, knownCount, learnedCount, knownTimeline, weekSummary } from "../domain/stats.js";
 import { ACHIEVEMENTS } from "../domain/achievements.js";
 import { logLi } from "../ui/tasks.js";
@@ -129,10 +131,10 @@ function skillsHTML(){
 }
 
 function scoresHTML(){
-  const scored = Object.keys(LESSONS).filter(id => latestScore(id));
+  const scored = Object.keys(LESSONS).filter(id => latestScore(S.state.scores, id));
   let h = '<section class="card section"><h2>Notas das lições</h2>';
   if (!scored.length) return h + '<p class="muted">Nenhuma nota ainda. Anote a porcentagem na tarefa da lição ou do reteste, e as revisões de bloco passam a mostrar o que refazer.</p></section>';
-  const r = lowLessons(scored), avg = Math.round(scored.reduce((a, id) => a + latestScore(id).p, 0) / scored.length);
+  const r = lowLessons(S.state.scores, scored), avg = Math.round(scored.reduce((a, id) => a + latestScore(S.state.scores, id).p, 0) / scored.length);
   h += '<p class="muted">' + scored.length + (scored.length === 1 ? " lição com nota" : " lições com nota") + ", média " + avg + "% na última tentativa de cada uma. " + (r.low.length ? (r.low.length === 1 ? "Esta está abaixo de 80%:" : "Estas " + r.low.length + " estão abaixo de 80%:") : "Nenhuma abaixo de 80%.") + "</p>";
   if (r.low.length) h += '<ul class="split">' + r.low.map(x => '<li><a href="' + esc(LESSONS[x[0]].u) + '" target="_blank" rel="noopener">' + esc(x[0] + " " + LESSONS[x[0]].t) + "</a><span>" + x[1] + "%</span></li>").join("") + "</ul>";
   return h + "</section>";

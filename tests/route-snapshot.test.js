@@ -8,7 +8,8 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { update } from "../js/state/store.js";
 import { normalizeState } from "../js/state/schema.js";
-import { weekTasks, extraTasks, weekLabel, weekMilestone, weekNote, planSplit, extraPlan } from "../js/domain/route.js";
+import { weekTasks, weekLabel, weekMilestone, weekNote } from "../js/domain/week-tasks.js";
+import { extraTasks, planSplit, extraPlan } from "../js/domain/goal-extras.js";
 
 const FIXTURE = new URL("./fixtures/route-snapshot.json", import.meta.url);
 const STATES = {

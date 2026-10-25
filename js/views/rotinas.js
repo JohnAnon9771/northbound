@@ -6,7 +6,8 @@ import { formatHours } from "../core/format.js";
 import { uid } from "../core/id.js";
 import { toast } from "../core/toast.js";
 import { PROMPTS } from "../data/prompts.js";
-import { extraPlan, planSplit, phaseNow } from "../domain/route.js";
+import { extraPlan, planSplit } from "../domain/goal-extras.js";
+import { phaseNow } from "../domain/pace.js";
 import { addCard, findByTerm } from "../flashcards/deck.js";
 
 function promptText(i){
