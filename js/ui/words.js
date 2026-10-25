@@ -2,7 +2,7 @@
 import { S } from "../state/store.js";
 import { esc } from "../core/dom.js";
 import { icon } from "../core/icons.js";
-import { pickAudio } from "../flashcards/providers/free.js";
+import { pickAudio } from "../flashcards/audio.js";
 
 const reEsc = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 /* Marks the term inside a sentence. Matches inflections loosely ("get over" → "got over", "getting over"). */

@@ -1,6 +1,11 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { parseWiktionary, parseTatoeba, parseMyMemory, parseDictionary, pickAudio, stripHtml } from "../js/flashcards/providers/free.js";
+import { parseWiktionary } from "../js/flashcards/providers/free/wiktionary.js";
+import { parseTatoeba } from "../js/flashcards/providers/free/tatoeba.js";
+import { parseMyMemory } from "../js/flashcards/providers/free/mymemory.js";
+import { parseDictionary } from "../js/flashcards/providers/free/dictionary.js";
+import { pickAudio } from "../js/flashcards/audio.js";
+import { stripHtml } from "../js/flashcards/providers/free/html.js";
 import { normalizeEnrichment } from "../js/flashcards/enrich.js";
 
 test("Wiktionary: keeps real senses and short examples, skips 'plural of' entries", () => {

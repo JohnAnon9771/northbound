@@ -11,6 +11,7 @@ import { answer, deckToday } from "../flashcards/deck.js";
 import { highlight, cloze, speak, speakBtn } from "../ui/words.js";
 import { confetti } from "../ui/celebrate.js";
 import { studyStatus } from "../ui/study.js";
+import { isFront } from "../flashcards/card.js";
 
 const MAX_CARD_MS = 60000;   // time on one card counted for stats/log
 const GRADE_UI = [[1, "De novo", "g1"], [2, "Difícil", "g2"], [3, "Bom", "g3"], [4, "Fácil", "g4"]];
@@ -59,8 +60,8 @@ function exampleFor(c){
 function frontHTML(c){
   const ex = exampleFor(c);
   const kind = c.state === "new" ? ["nova", "pill pill-honey"] : c.state === "review" ? ["revisão", "pill pill-sage"] : ["aprendendo", "pill pill-accent"];
-  let h = '<div class="flash-kind"><span class="' + kind[1] + '">' + kind[0] + "</span>" + (c.dir === "rev" ? '<span class="pill">português → inglês</span>' : "") + "</div>";
-  if (c.dir === "rev"){
+  let h = '<div class="flash-kind"><span class="' + kind[1] + '">' + kind[0] + "</span>" + (!isFront(c) ? '<span class="pill">português → inglês</span>' : "") + "</div>";
+  if (!isFront(c)){
     h += '<p class="flash-term">' + esc(c.translation || "(sem tradução)") + "</p>";
     if (ex && ex.pt) h += '<p class="flash-q" style="font-size:20px">' + esc(ex.pt) + "</p>";
     if (ex) h += '<p class="muted" style="margin:0">' + cloze(ex.en, c.term) + "</p>";

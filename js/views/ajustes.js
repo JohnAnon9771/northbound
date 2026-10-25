@@ -11,6 +11,7 @@ import { CLAUDE_MODELS } from "../flashcards/providers/claude.js";
 import { enrichMessage } from "../flashcards/enrich.js";
 import { downloadBackup, restoreBackup, daysSinceBackup } from "../ui/backup.js";
 import { dailyWordsSettingsHTML } from "../ui/daily-words.js";
+import { isFront } from "../flashcards/card.js";
 
 const ui = {resetArmed: false, testing: false, keyDraft: "", persisted: null};
 let resetTimer = null;
@@ -59,7 +60,7 @@ function dataHTML(){
   const where = !persistent ? "O armazenamento do navegador não está disponível (modo privado?). Nada está sendo salvo."
     : "Seus dados ficam no IndexedDB deste navegador, neste aparelho." + (ui.persisted === true ? " O navegador marcou o armazenamento como persistente." : ui.persisted === false ? " O navegador pode apagar os dados se faltar espaço ou se você ficar semanas sem abrir o site (Safari: 7 dias); instalar como app ajuda." : "");
   return '<section class="card section" aria-labelledby="hData"><h2 id="hData">Seus dados</h2><p class="muted">' + where + "</p>" +
-    "<p>" + (d == null ? "Você ainda não baixou um backup." : d === 0 ? "Último backup: hoje." : "Último backup: há " + d + (d === 1 ? " dia." : " dias.")) + " " + S.cards.filter(c => c.dir !== "rev").length + " cartões, " + S.logs.length + " registros.</p>" +
+    "<p>" + (d == null ? "Você ainda não baixou um backup." : d === 0 ? "Último backup: hoje." : "Último backup: há " + d + (d === 1 ? " dia." : " dias.")) + " " + S.cards.filter(isFront).length + " cartões, " + S.logs.length + " registros.</p>" +
     '<div class="row" style="margin-bottom:12px"><button class="btn btn-soft" type="button" data-act="backup">Baixar backup (JSON)</button><label class="btn btn-ghost" for="impFile">Restaurar de um arquivo</label><input type="file" id="impFile" data-change="restore" accept=".json,application/json" class="sr"></div>' +
     '<p class="hint">Aceita backups deste site e da página antiga (rota-ingles). Restaurar substitui tudo o que está aqui, exceto a chave da Claude API.</p>' +
     '<h3 style="margin-top:20px">Apagar tudo</h3><p class="muted">Remove registros, tarefas marcadas, cartões, testes, erros e listas. Não dá para desfazer; baixe um backup antes.</p>' +

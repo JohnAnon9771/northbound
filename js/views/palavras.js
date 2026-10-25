@@ -13,6 +13,7 @@ import { KNOWN_IVL } from "../domain/stats.js";
 import { highlight, speakBtn } from "../ui/words.js";
 import { studyStatus } from "../ui/study.js";
 import { dailyWordsHTML } from "../ui/daily-words.js";
+import { isFront } from "../flashcards/card.js";
 
 const ui = {
   term: "", context: "", status: "idle", draft: null, reverse: false, warning: "", source: "",
@@ -66,7 +67,7 @@ function status(c){
 const FILTERS = [["all", "Todas"], ["new", "Novas"], ["learning", "Aprendendo"], ["known", "Sabidas"], ["hard", "Difíceis"]];
 function filtered(){
   const q = ui.q.trim().toLowerCase();
-  return S.cards.filter(c => c.dir !== "rev").filter(c => {
+  return S.cards.filter(isFront).filter(c => {
     if (ui.filter === "new" && c.state !== "new") return false;
     if (ui.filter === "learning" && !(c.state === "learning" || c.state === "relearning" || (c.state === "review" && c.interval < KNOWN_IVL))) return false;
     if (ui.filter === "known" && !(c.state === "review" && c.interval >= KNOWN_IVL)) return false;

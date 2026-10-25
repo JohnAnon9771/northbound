@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { newSrs, schedule, buildQueue, dayDue, preview, GRADES } from "../js/flashcards/srs.js";
+import { newSrs, schedule, buildQueue, dayDue, preview, fmtIvl, GRADES } from "../js/flashcards/srs.js";
 
 const NOW = new Date(2026, 9, 24, 10, 0).getTime();
 const MIN = 60000;
@@ -76,4 +76,16 @@ test("preview labels", () => {
   assert.equal(p[1], "<1 min");
   assert.equal(p[3], "<10 min");
   assert.equal(p[4], "4 d");
+});
+
+test("interval labels", () => {
+  const DAY = 86400000;
+  assert.equal(fmtIvl(10 * 1000), "<1 min");
+  assert.equal(fmtIvl(10 * MIN), "<10 min");
+  assert.equal(fmtIvl(3 * 60 * MIN), "3 h");
+  assert.equal(fmtIvl(5 * DAY), "5 d");
+  assert.equal(fmtIvl(45 * DAY), "1,5 m");
+  assert.equal(fmtIvl(730 * DAY), "2 a");
+  const old = card({state: "review", interval: 40, ease: 2.5});
+  assert.equal(preview(old, NOW)[3], "3,3 m");
 });

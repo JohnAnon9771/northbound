@@ -2,7 +2,7 @@
 // Pure functions (no DOM, no IndexedDB) so they run under node --test.
 import { mondayOf } from "../core/date.js";
 import { uid } from "../core/id.js";
-import { blankWl, normalizeWl } from "../flashcards/wordlist.js";
+import { blankWl, normalizeWl } from "../flashcards/word-list.js";
 
 export const STATE_VERSION = 2;
 const ISO = /^\d{4}-\d{2}-\d{2}$/;

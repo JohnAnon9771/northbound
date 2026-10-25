@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { parseList, nextBatch, advance, withKnown, levelFor, phaseLevel, progress, batchSize, blankWl, displayTerm, WL_LEVELS } from "../js/flashcards/wordlist.js";
+import { parseList, nextBatch, advance, withKnown, levelFor, phaseLevel, progress, batchSize, blankWl, displayTerm, WL_LEVELS } from "../js/flashcards/word-list.js";
 import { normalizeState } from "../js/state/schema.js";
 
 const tsv = "# header\nthe\tA1\tdeterminer\t\n" +

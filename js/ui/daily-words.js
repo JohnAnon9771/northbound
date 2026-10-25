@@ -8,8 +8,8 @@ import { rerender } from "../core/rerender.js";
 import { deckToday } from "../flashcards/deck.js";
 import { importTerms } from "../flashcards/importer.js";
 import { enrichMessage } from "../flashcards/enrich.js";
-import { posPt } from "../flashcards/providers/free.js";
-import { WL_LEVELS, loadList, levelFor, phaseLevel, nextBatch, advance, withKnown, progress, batchSize, displayTerm, deckTermSet } from "../flashcards/wordlist.js";
+import { posPt } from "../flashcards/pos.js";
+import { WL_LEVELS, loadList, levelFor, phaseLevel, nextBatch, advance, withKnown, progress, batchSize, displayTerm, deckTermSet } from "../flashcards/word-list.js";
 import { phaseNow } from "../domain/pace.js";
 
 const dw = {list: null, loading: false, error: false, run: null};

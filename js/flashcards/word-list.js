@@ -1,5 +1,6 @@
 // "Palavras do dia": the next words of your level, from the most to the least frequent (assets/data/words.tsv,
 // built by scripts/build-wordlist.py). Pure helpers except loadList, so they run under node --test.
+import { isFront } from "./card.js";
 
 export const WL_LEVELS = ["A1", "A2", "B1", "B2", "C1"];
 export const blankWl = () => ({level: "auto", cur: {A1: 0, A2: 0, B1: 0, B2: 0, C1: 0}, known: []});
@@ -74,4 +75,4 @@ export function progress(list, wl, level, deckTerms){
    still waiting, so batches never pile up. d = deckToday(). */
 export const batchSize = d => d.blocked ? 0 : Math.max(0, d.limit - d.introduced - d.newWaiting);
 
-export const deckTermSet = cards => new Set(cards.filter(c => c.dir !== "rev").map(c => keyOf(c.term)));
+export const deckTermSet = cards => new Set(cards.filter(isFront).map(c => keyOf(c.term)));

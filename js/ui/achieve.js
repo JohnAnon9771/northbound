@@ -6,6 +6,7 @@ import { newlyUnlocked } from "../domain/achievements.js";
 import { minutesByDate, streak, knownCount } from "../domain/stats.js";
 import { currentRoadmapWeek, weekComplete } from "../domain/pace.js";
 import { confetti } from "./celebrate.js";
+import { isFront } from "../flashcards/card.js";
 
 export function achievementContext(){
   const rw = currentRoadmapWeek();
@@ -13,7 +14,7 @@ export function achievementContext(){
   for (let n = 1; n < Math.min(rw + 1, 400); n++) if (!S.state.skip[n] && weekComplete(n)) weeksDone++;
   const ef = S.state.tests.filter(t => t.type === "efset").map(t => Number(t.score)).filter(v => isFinite(v));
   return {
-    cards: S.cards.filter(c => c.dir !== "rev").length,
+    cards: S.cards.filter(isFront).length,
     known: knownCount(S.cards),
     streak: streak(minutesByDate(S.logs), today()).days,
     hours: S.logs.reduce((a, e) => a + e.min, 0) / 60,

@@ -3,7 +3,7 @@
 import { S } from "../state/store.js";
 import { enrich, normalizeEnrichment } from "./enrich.js";
 import { addCard, findByTerm } from "./deck.js";
-import { posPt } from "./providers/free.js";
+import { posPt } from "./pos.js";
 import { phaseNow } from "../domain/pace.js";
 
 const PAUSE_MS = 600;   // keeps the free APIs (MyMemory especially) happy
