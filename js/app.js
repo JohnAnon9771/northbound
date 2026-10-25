@@ -7,10 +7,12 @@ import { today } from "./core/date.js";
 import { toast } from "./core/toast.js";
 import { setRenderer } from "./core/rerender.js";
 import * as timer from "./core/study-timer.js";
-import { taskActions, resetTasks, trackDetails, stopTimer } from "./ui/tasks.js";
-import { wordActions } from "./ui/words.js";
-import { dailyWordsActions } from "./ui/daily-words.js";
-import { checkAchievements } from "./ui/achieve.js";
+import { taskActions, stopTimer } from "./ui/task-actions.js";
+import { resetTasks, trackDetails } from "./ui/task-item.js";
+import { logActions } from "./ui/log-list.js";
+import { speechActions } from "./ui/speech.js";
+import { dailyWordsActions } from "./ui/daily-words-card.js";
+import { checkAchievements } from "./ui/achievement-check.js";
 import { downloadBackup, daysSinceBackup } from "./ui/backup.js";
 import { currentRoadmapWeek } from "./domain/pace.js";
 import { hasContent } from "./state/selectors.js";
@@ -31,7 +33,7 @@ const NAV = [["hoje", "Hoje", "home"], ["palavras", "Palavras", "cards"], ["rota
 // old links from the single-page version and task links
 const ALIAS = {"": "hoje", semana: "rota", roteiro: "rota", flashcards: "palavras"};
 const PARENT = {niveis: "mais", rotinas: "mais", ajustes: "mais", estudo: "palavras"};
-const SHARED = Object.assign({}, taskActions, wordActions, dailyWordsActions);
+const SHARED = Object.assign({}, taskActions, logActions, speechActions, dailyWordsActions);
 
 const root = $("#app");
 let view = null;

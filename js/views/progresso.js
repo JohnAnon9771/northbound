@@ -12,7 +12,7 @@ import { planSplit } from "../domain/goal-extras.js";
 import { latestScore, lowLessons } from "../domain/lesson-scores.js";
 import { minutesByDate, streak, heatmap, heatLevel, knownCount, learnedCount, knownTimeline, weekSummary } from "../domain/stats.js";
 import { ACHIEVEMENTS } from "../domain/achievements.js";
-import { logLi } from "../ui/tasks.js";
+import { logLi } from "../ui/log-list.js";
 import { rerender } from "../core/rerender.js";
 
 const ui = {months: 3};

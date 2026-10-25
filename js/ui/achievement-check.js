@@ -5,7 +5,7 @@ import { toast } from "../core/toast.js";
 import { newlyUnlocked } from "../domain/achievements.js";
 import { minutesByDate, streak, knownCount } from "../domain/stats.js";
 import { currentRoadmapWeek, weekComplete } from "../domain/pace.js";
-import { confetti } from "./celebrate.js";
+import { confetti } from "./confetti.js";
 import { isFront } from "../flashcards/card.js";
 
 export function achievementContext(){

@@ -10,9 +10,10 @@ import { enrich, enrichMessage, normalizeEnrichment } from "../flashcards/enrich
 import { importTerms, providerOpts } from "../flashcards/importer.js";
 import { addCard, updateCard, removeCard, restoreCards, findByTerm, deckToday, twinOf, setReverse } from "../flashcards/deck.js";
 import { KNOWN_IVL } from "../domain/stats.js";
-import { highlight, speakBtn } from "../ui/words.js";
-import { studyStatus } from "../ui/study.js";
-import { dailyWordsHTML } from "../ui/daily-words.js";
+import { highlight } from "../ui/word-text.js";
+import { speakBtn } from "../ui/speech.js";
+import { studyStatus } from "../ui/study-status.js";
+import { dailyWordsHTML } from "../ui/daily-words-card.js";
 import { isFront } from "../flashcards/card.js";
 
 const ui = {

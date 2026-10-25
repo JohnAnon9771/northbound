@@ -1,4 +1,4 @@
-// A few meaningful milestones. `ctx` is computed by the app (see ui/achieve.js); tests pass plain objects.
+// A few meaningful milestones. `ctx` is computed by the app (see ui/achievement-check.js); tests pass plain objects.
 export const ACHIEVEMENTS = [
   {id: "first-card", icon: "cards", t: "Primeira palavra", d: "Você adicionou o primeiro cartão.", test: c => c.cards >= 1},
   {id: "known-100", icon: "leaf", t: "100 palavras", d: "100 palavras com revisão a cada 3 semanas ou mais.", test: c => c.known >= 100},

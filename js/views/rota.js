@@ -10,7 +10,8 @@ import { PHASES, phaseOf } from "../data/phases.js";
 import { weekTasks, weekLabel } from "../domain/week-tasks.js";
 import { extraTasks, extraPlan } from "../domain/goal-extras.js";
 import { weekStats, weekComplete, weekTimeUpDate, currentRoadmapWeek, calWeekOf, calWeekStart, paceText, goalLabel } from "../domain/pace.js";
-import { taskHTML, focusHTML } from "../ui/tasks.js";
+import { taskHTML } from "../ui/task-item.js";
+import { focusHTML } from "../ui/week-focus.js";
 import { openCore } from "../domain/week-close.js";
 
 let viewWeek = null;

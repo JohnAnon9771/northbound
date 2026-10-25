@@ -8,9 +8,10 @@ import { rerender } from "../core/rerender.js";
 import * as timer from "../core/study-timer.js";
 import { buildQueue, preview } from "../flashcards/srs.js";
 import { answer, deckToday } from "../flashcards/deck.js";
-import { highlight, cloze, speak, speakBtn } from "../ui/words.js";
-import { confetti } from "../ui/celebrate.js";
-import { studyStatus } from "../ui/study.js";
+import { highlight, cloze } from "../ui/word-text.js";
+import { speak, speakBtn } from "../ui/speech.js";
+import { confetti } from "../ui/confetti.js";
+import { studyStatus } from "../ui/study-status.js";
 import { isFront } from "../flashcards/card.js";
 
 const MAX_CARD_MS = 60000;   // time on one card counted for stats/log

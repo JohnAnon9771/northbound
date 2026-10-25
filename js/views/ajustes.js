@@ -10,7 +10,7 @@ import { phaseNow } from "../domain/pace.js";
 import { CLAUDE_MODELS } from "../flashcards/providers/claude.js";
 import { enrichMessage } from "../flashcards/enrich.js";
 import { downloadBackup, restoreBackup, daysSinceBackup } from "../ui/backup.js";
-import { dailyWordsSettingsHTML } from "../ui/daily-words.js";
+import { dailyWordsSettingsHTML } from "../ui/daily-words-card.js";
 import { isFront } from "../flashcards/card.js";
 
 const ui = {resetArmed: false, testing: false, keyDraft: "", persisted: null};

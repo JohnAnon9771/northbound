@@ -15,10 +15,12 @@ import { currentRoadmapWeek, calWeekOf, calWeekStart, paceText } from "../domain
 import { minutesByDate, streak } from "../domain/stats.js";
 import { planDay, nextOpen } from "../domain/daily-plan.js";
 import { deckToday, phraseOfDay } from "../flashcards/deck.js";
-import { studyStatus } from "../ui/study.js";
-import { dailyWordsHint } from "../ui/daily-words.js";
-import { taskHTML, logLi, isOpen } from "../ui/tasks.js";
-import { highlight, speakBtn } from "../ui/words.js";
+import { studyStatus } from "../ui/study-status.js";
+import { dailyWordsHint } from "../ui/daily-words-card.js";
+import { taskHTML, isOpen } from "../ui/task-item.js";
+import { logLi } from "../ui/log-list.js";
+import { highlight } from "../ui/word-text.js";
+import { speakBtn } from "../ui/speech.js";
 
 const LS_SKILL = "nb:lastSkill";
 let lastSkill = "gram";
