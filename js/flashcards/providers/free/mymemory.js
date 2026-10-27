@@ -6,7 +6,8 @@ const mymemoryUrl = (q, email) => "https://api.mymemory.translated.net/get?q=" +
 
 // MyMemory's top answer can be a fuzzy memory match for a *different* sentence ("…the ball" for "…the trip"),
 // so prefer entries whose source is exactly the query, then its machine translation.
-const fold = s => String(s).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+export const fold = s => String(s).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+const otherScript = s => /[^\p{Script=Latin}\P{L}]/u.test(s);
 const normQ = s => String(s || "").toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
 export function parseMyMemory(json, term){
   if (!json || json.quotaFinished) throw new Error("quota");
@@ -21,13 +22,17 @@ export function parseMyMemory(json, term){
     let t = stripHtml(s).replace(/^["“]|[.!\s]+$/g, "");
     // short glosses read better in lower case ("Supere Isso" → "supere isso"); keep acronyms
     if (t.split(/\s+/).length <= 4 && !/\b[A-ZÀ-Ý]{2,}\b/.test(t)) t = t.toLowerCase();
-    // translation memories carry junk: broken encodings ("prﾃｳximo"), questions, the English word itself
-    if (!t || t.length > 60 || t.toLowerCase() === term.toLowerCase() || /[\uFF61-\uFF9F\uFFFD?]|Ã[\u00A0-\u00BF]/.test(t)) return;
+    // translation memories carry junk: broken encodings ("prﾃｳximo"), questions, the English word itself,
+    // other scripts (Japanese…) and stray two-letter words ("thought" → "em")
+    if (!t || t.length > 60 || t.toLowerCase() === term.toLowerCase() || /[\uFF61-\uFF9F\uFFFD?]|Ã[\u00A0-\u00BF]/.test(t) || otherScript(t)) return;
+    if (t.length < 3 && alts.length) return;
     if (!alts.some(a => fold(a) === fold(t))) alts.push(t);
   };
   add(main);
-  same.forEach(m => add(m.translation));
-  return {text: main, alts: alts.slice(0, 3)};
+  // alternatives need the very same source: "though." → "ninja." is some other sentence
+  const exact = String(term).trim().toLowerCase();
+  same.filter(m => String(m.segment).trim().toLowerCase() === exact).forEach(m => add(m.translation));
+  return {text: otherScript(main) ? alts[0] || "" : main, alts: alts.slice(0, 3)};
 }
 
 export async function translate(text, email){ return parseMyMemory(await getJSON(mymemoryUrl(text, email)), text); }

@@ -12,7 +12,7 @@ import { highlight, cloze } from "../ui/word-text.js";
 import { speak, speakBtn } from "../ui/speech.js";
 import { confetti } from "../ui/confetti.js";
 import { studyStatus } from "../ui/study-status.js";
-import { isFront } from "../flashcards/card.js";
+import { isFront, meaningFor } from "../flashcards/card.js";
 
 const MAX_CARD_MS = 60000;   // time on one card counted for stats/log
 const GRADE_UI = [[1, "De novo", "g1"], [2, "Difícil", "g2"], [3, "Bom", "g3"], [4, "Fácil", "g4"]];
@@ -54,35 +54,51 @@ function logSession(){
 }
 
 /* ---------- card faces ---------- */
+// a card with several senses shows one per review, with that sense's own example
 function exampleFor(c){
+  const m = meaningFor(c);
+  if (m) return m.ex ? {en: m.ex, pt: ""} : null;
   const ex = (c.examples || []).filter(e => e.en);
   return ex.length ? ex[(c.reps || 0) % ex.length] : null;
 }
 function frontHTML(c){
-  const ex = exampleFor(c);
+  const ex = exampleFor(c), m = meaningFor(c);
   const kind = c.state === "new" ? ["nova", "pill pill-honey"] : c.state === "review" ? ["revisão", "pill pill-sage"] : ["aprendendo", "pill pill-accent"];
-  let h = '<div class="flash-kind"><span class="' + kind[1] + '">' + kind[0] + "</span>" + (!isFront(c) ? '<span class="pill">português → inglês</span>' : "") + "</div>";
+  let h = '<div class="flash-kind"><span class="' + kind[1] + '">' + kind[0] + "</span>" + (!isFront(c) ? '<span class="pill">português → inglês</span>' : "") + (m ? '<span class="pill">sentido ' + (c.meanings.indexOf(m) + 1) + " de " + c.meanings.length + "</span>" : "") + "</div>";
   if (!isFront(c)){
-    h += '<p class="flash-term">' + esc(c.translation || "(sem tradução)") + "</p>";
+    h += '<p class="flash-term">' + esc(m ? m.pt.join(", ") : c.translation || "(sem tradução)") + "</p>";
     if (ex && ex.pt) h += '<p class="flash-q" style="font-size:20px">' + esc(ex.pt) + "</p>";
     if (ex) h += '<p class="muted" style="margin:0">' + cloze(ex.en, c.term) + "</p>";
     h += '<p class="hint">Como se diz em inglês?</p>';
   } else if (ex){
     h += '<p class="flash-q">' + highlight(ex.en, c.term) + "</p>";
     h += '<p class="hint">O que <b>' + esc(c.term) + "</b> quer dizer aqui?</p>";
+  } else if (m){
+    h += '<p class="flash-term">' + esc(c.term) + "</p>";
+    h += '<p class="flash-def">' + esc(m.def || m.gloss) + "</p>";
+    h += '<p class="hint">O que <b>' + esc(c.term) + "</b> quer dizer neste sentido?</p>";
   } else {
     h += '<p class="flash-term">' + esc(c.term) + "</p>";
     if (c.pos) h += '<p class="hint">' + esc(c.pos) + "</p>";
   }
   return h;
 }
+const fold = s => String(s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+// "O chumbo é um metal" mentions "chumbo"; "liderou" counts for "liderar"
+const mentions = (pt, words) => words.some(w => fold(pt).includes(fold(w).slice(0, Math.max(4, w.length - 2))));
 function backHTML(c){
-  const shown = exampleFor(c);
-  let h = '<div class="flash-back"><div class="row" style="align-items:center;gap:10px"><span class="flash-term" style="font-size:30px">' + esc(c.term) + "</span>" + (c.ipa ? '<span class="muted">/' + esc(c.ipa) + "/</span>" : "") + speakBtn(c.term, "Ouvir " + c.term, c.audio) + "</div>";
-  h += '<div class="flash-tr">' + esc(c.translation || "—") + (c.pos ? ' <span class="muted" style="font-size:14px;font-weight:700">' + esc(c.pos) + "</span>" : "") + "</div>";
-  if (c.definition) h += '<p class="flash-def">' + esc(c.definition) + "</p>";
-  const exs = (c.examples || []).filter(e => e.en);
-  const order = shown ? [shown].concat(exs.filter(e => e !== shown)) : exs;
+  const shown = exampleFor(c), m = meaningFor(c);
+  // homographs sound different ("lead" /lɛd/ the metal, /ˈliːd/ to guide): the recording only fits its own sense
+  const ipa = m && m.ipa ? m.ipa : c.ipa, audio = !m || !m.ipa || m.ipa === c.ipa ? c.audio : "";
+  let h = '<div class="flash-back"><div class="row" style="align-items:center;gap:10px"><span class="flash-term" style="font-size:30px">' + esc(c.term) + "</span>" + (ipa ? '<span class="muted">/' + esc(ipa) + "/</span>" : "") + speakBtn(c.term, "Ouvir " + c.term, audio) + "</div>";
+  h += '<div class="flash-tr">' + esc(m ? m.pt.join(", ") : c.translation || "—") + (c.pos && !m ? ' <span class="muted" style="font-size:14px;font-weight:700">' + esc(c.pos) + "</span>" : "") + "</div>";
+  if (m) h += '<p class="muted" style="margin:0;font-size:14px">Outros sentidos: ' + c.meanings.filter(x => x !== m).map(x => esc(x.pt[0])).join(" · ") + "</p>";
+  // without an example the front already showed this sense's definition
+  const def = m ? (m.ex ? m.def || m.gloss : "") : c.definition;
+  if (def) h += '<p class="flash-def">' + esc(def) + "</p>";
+  // other examples aren't tied to a sense: keep your own sentence and the ones whose translation uses this sense's words
+  const exs = (c.examples || []).filter(e => e.en && (!m || e.en === c.context || mentions(e.pt, m.pt)));
+  const order = shown ? [shown].concat(exs.filter(e => e.en !== shown.en)) : exs;
   order.slice(0, 3).forEach(e => { h += '<p class="ex">' + highlight(e.en, c.term) + " " + speakBtnInline(e.en) + (e.pt ? '<span class="pt">' + esc(e.pt) + "</span>" : "") + "</p>"; });
   if (c.collocations && c.collocations.length) h += '<p class="muted" style="margin:0;font-size:14px">Combina com: ' + c.collocations.map(esc).join(" · ") + "</p>";
   if (c.notes) h += '<p class="note">' + esc(c.notes) + "</p>";
