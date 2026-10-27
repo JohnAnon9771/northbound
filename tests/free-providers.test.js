@@ -19,6 +19,7 @@ const API = {
     {text: "I need to go to the bank today.", translations: [[{lang: "por", text: "Preciso ir ao banco hoje."}]]},
     {text: "Is there a bank near the station?", translations: [[{lang: "por", text: "Tem um banco perto da estação?"}]]}
   ]},
+  wiktionaryPt: {error: {code: "missingtitle"}},
   dictionary: [{phonetic: "/bæŋk/", phonetics: [{audio: "https://api.dictionaryapi.dev/media/pronunciations/en/bank-uk.mp3"}]}]
 };
 // routes each URL to a canned answer; `over` replaces some of them (a function or an Error)
@@ -27,11 +28,11 @@ function mockFetch(over){
   const calls = [];
   globalThis.fetch = async url => {
     calls.push(url);
-    const host = new URL(url).hostname;
-    const key = host.includes("wiktionary") ? "wiktionary" : host.includes("tatoeba") ? "tatoeba" : host.includes("dictionaryapi") ? "dictionary" : "mymemory";
+    const { hostname: host, pathname } = new URL(url);
+    const key = pathname.endsWith("api.php") ? "wiktionaryPt" : host.includes("wiktionary") ? "wiktionary" : host.includes("tatoeba") ? "tatoeba" : host.includes("dictionaryapi") ? "dictionary" : "mymemory";
     const v = key in o ? o[key] : key === "mymemory" ? (q => ({responseData: {translatedText: q === "bank" ? "banco" : "(pt) " + q, match: 1}, matches: []})) : API[key];
     if (v instanceof Error) throw v;
-    if (typeof v === "function") return ok(v(new URL(url).searchParams.get("q")));
+    if (typeof v === "function"){ const q = new URL(url).searchParams; return ok(v(q.get("q") || q.get("page"))); }
     return ok(v);
   };
   return calls;
@@ -69,6 +70,17 @@ test("without Tatoeba, dictionary examples fill in and get translated", async ()
   const r = await enrichFree("bank", "", {});
   assert.deepEqual(r.examples, [{en: "She went to the bank to open an account.", pt: "(pt) She went to the bank to open an account"}]);
   assert.equal(r.ipa, "");
+});
+
+test("meanings come from Wiktionary's translation tables (subpage included) before MyMemory", async () => {
+  const page = wikitext => ({parse: {wikitext}});
+  mockFetch({wiktionaryPt: p => p === "lead" ? page("==English==\n===Noun===\n{{see translation subpage|Noun}}")
+    : page("==English==\n====Verb====\n{{trans-top|to guide}}\n* Portuguese: {{t+|pt|conduzir}}\n{{trans-bottom}}\n"
+      + "====Noun====\n{{trans-top|precedence}}\n* Portuguese: {{t+|pt|liderança|f}}, {{t|pt|dianteira|f}}\n{{trans-bottom}}\n"
+      + "{{checktrans-top}}\n* Portuguese: {{t|pt|superar}}\n{{trans-bottom}}")});
+  const r = await enrichFree("lead", "", {pos: "noun"});
+  assert.equal(r.translation, "liderança, conduzir, dianteira");   // the "superar" guess sits in an unchecked table
+  assert.deepEqual(r.meanings.map(m => m.pt), [["liderança", "dianteira"], ["conduzir"]]);
 });
 
 test("nothing found: quota when MyMemory ran out, offline otherwise", async () => {

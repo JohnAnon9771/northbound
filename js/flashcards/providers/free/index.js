@@ -1,34 +1,34 @@
 /* Free sources, no key needed (all allow CORS), combined into one card:
    - Wiktionary REST: part of speech, definitions and usage examples (works for phrasal verbs and idioms)
    - Tatoeba: real sentences with human pt-BR translations
-   - MyMemory: translation of the term and of examples that have no translation
+   - Wiktionary translation tables: Portuguese words per sense (the card's meanings)
+   - MyMemory: translation of the term when Wiktionary has none, and of examples that have no translation
    - Free Dictionary API: IPA and pronunciation audio, when it's up */
-import { posPt } from "../../pos.js";
+import { posPt, posFirst } from "../../pos.js";
 import { getJSON } from "./http.js";
 import { wiktionaryUrl, parseWiktionary } from "./wiktionary.js";
 import { tatoebaUrl, parseTatoeba } from "./tatoeba.js";
 import { translate } from "./mymemory.js";
+import { wiktionaryPtUrl, parseWiktionaryPt, ptMeanings, buildMeanings } from "./wiktionary-pt.js";
 import { dictionaryUrl, parseDictionary } from "./dictionary.js";
 
 export async function enrichFree(term, context, opts){
   const o = opts || {};
   const t = term.trim(), lower = t.toLowerCase();
-  const [wk, tt, tr, dc] = await Promise.allSettled([
+  const [wk, tt, tr, dc, wp] = await Promise.allSettled([
     getJSON(wiktionaryUrl(lower)).catch(() => getJSON(wiktionaryUrl(t))).then(parseWiktionary),
     getJSON(tatoebaUrl(lower)).then(j => parseTatoeba(j, lower)),
     translate(t, o.email),
-    getJSON(dictionaryUrl(lower), 5000).then(parseDictionary)
+    getJSON(dictionaryUrl(lower), 5000).then(parseDictionary),
+    getJSON(wiktionaryPtUrl(lower)).then(parseWiktionaryPt)
+      .then(p => p.subpage ? getJSON(wiktionaryPtUrl(lower + "/translations")).then(parseWiktionaryPt).then(s => Object.assign(p, {senses: p.senses.concat(s.senses)})) : p)
   ]);
-  let senses = wk.status === "fulfilled" ? wk.value : [];
-  // a part-of-speech hint ("verb/noun", from the word list) puts the matching senses first
-  if (o.pos){
-    // the list says "modal auxiliary", "be-verb"…; Wiktionary calls all of those verbs
-    const want = String(o.pos).toLowerCase().split("/").map(w => /verb|auxiliary/.test(w) && w !== "adverb" ? "verb" : w);
-    const match = s => want.some(w => String(s.pos).toLowerCase().indexOf(w) === 0);
-    senses = senses.filter(match).concat(senses.filter(s => !match(s)));
-  }
+  const rest = wk.status === "fulfilled" ? wk.value : [];
+  const senses = posFirst(rest, o.pos);
   const tato = tt.status === "fulfilled" ? tt.value : [];
-  const trans = tr.status === "fulfilled" ? tr.value : null;
+  const page = wp.status === "fulfilled" ? wp.value : {senses: []};
+  const ptWords = ptMeanings(page.senses, o.pos);
+  const trans = ptWords.length ? {text: ptWords[0], alts: ptWords} : tr.status === "fulfilled" ? tr.value : null;
   const dict = dc.status === "fulfilled" ? dc.value : {};
   if (!senses.length && !tato.length && !trans) throw new Error(tr.reason && tr.reason.message === "quota" ? "quota" : "offline");
 
@@ -50,7 +50,7 @@ export async function enrichFree(term, context, opts){
   return {
     term: t, ipa: dict.ipa || "", audio: dict.audio || "",
     pos: posPt(first.pos), translation: trans ? (trans.alts.join(", ") || trans.text) : "",
-    definition: first.text || "", examples, collocations: [], cefr: "", notes: "",
+    definition: first.text || "", examples, meanings: buildMeanings(page, o.pos, rest), collocations: [], cefr: "", notes: "",
     senses: senses.slice(0, 4).map(s => ({pos: posPt(s.pos), text: s.text}))
   };
 }

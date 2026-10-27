@@ -30,6 +30,11 @@ function editorHTML(d, mode){
   h += '<div class="editor-head"><span class="term">' + esc(d.term) + "</span>" + (d.ipa ? '<span class="muted">/' + esc(d.ipa) + "/</span>" : "") + speakBtn(d.term, "Ouvir a palavra", d.audio) + (d.cefr ? '<span class="pill pill-honey">' + esc(d.cefr) + "</span>" : "") + (mode === "add" && ui.source ? '<span class="pill">' + (ui.source === "claude" ? "via Claude" : "via fontes gratuitas") + "</span>" : "") + "</div>";
   h += '<div class="row"><div class="field" style="flex:2 1 220px"><label>Tradução</label><input type="text" name="translation" data-fk="' + mode + '-tr" value="' + esc(d.translation) + '" placeholder="Ex.: superar"></div><div class="field"><label>Classe</label><input type="text" name="pos" data-fk="' + mode + '-pos" value="' + esc(d.pos) + '" placeholder="verbo"></div></div>';
   h += '<div class="field"><label>Significado (em inglês)</label><input type="text" name="definition" data-fk="' + mode + '-def" value="' + esc(d.definition) + '"></div>';
+  if (d.meanings && d.meanings.length > 1){
+    h += '<div class="field"><span class="lbl">Sentidos (o cartão alterna um por revisão)</span><ul class="stack" style="gap:6px;margin:0;padding:0;list-style:none">';
+    d.meanings.forEach((m, i) => { h += '<li class="row" style="align-items:center;gap:8px;flex-wrap:nowrap"><span style="flex:1;min-width:0"><b>' + esc(m.pt.join(", ")) + "</b>" + (m.ipa ? ' <span class="muted">/' + esc(m.ipa) + "/</span>" : "") + ' <span class="muted" style="font-size:14px">' + esc(m.gloss || m.def) + '</span></span><button class="link-btn" type="button" data-act="meaning-del" data-mode="' + mode + '" data-i="' + i + '" aria-label="Tirar o sentido ' + esc(m.pt[0]) + '">×</button></li>'; });
+    h += "</ul></div>";
+  }
   if (d.senses && d.senses.length > 1 && mode === "add") h += '<details><summary class="muted" style="cursor:pointer;font-size:14px">Outros sentidos no dicionário</summary><ol class="senses">' + d.senses.map(s => "<li>" + esc(s.text) + (s.pos ? " <i>(" + esc(s.pos) + ")</i>" : "") + "</li>").join("") + "</ol></details>";
   h += '<div class="field"><span class="lbl">Exemplos de uso</span><div class="stack" style="gap:8px">';
   ex.forEach((e, i) => { h += '<div class="ex-edit"><textarea name="en' + i + '" data-fk="' + mode + "-en" + i + '" placeholder="Frase em inglês" aria-label="Exemplo ' + (i + 1) + ' em inglês">' + esc(e.en) + '</textarea><textarea name="pt' + i + '" data-fk="' + mode + "-pt" + i + '" placeholder="Tradução" aria-label="Exemplo ' + (i + 1) + ' em português">' + esc(e.pt) + '</textarea><button class="x" type="button" data-act="ex-del" data-mode="' + mode + '" data-i="' + i + '" aria-label="Remover exemplo">×</button></div>'; });
@@ -162,6 +167,14 @@ export default {
       const i = document.getElementById("addTerm"); if (i) i.focus();
     },
     "ex-add"(el){ const d = el.dataset.mode === "edit" ? ui.editDraft : ui.draft; d.examples = d.examples.concat({en: "", pt: ""}); rerender(); },
+    // down to one sense, the card stops taking turns and shows that one (as its translation)
+    "meaning-del"(el){
+      const d = el.dataset.mode === "edit" ? ui.editDraft : ui.draft;
+      d.meanings = d.meanings.filter((x, i) => i !== Number(el.dataset.i));
+      d.translation = d.meanings.map(m => m.pt[0]).join(", ");
+      if (d.meanings.length === 1){ const m = d.meanings[0]; d.translation = m.pt.join(", "); if (m.def) d.definition = m.def; if (m.ipa) d.ipa = m.ipa; if (m.ex && !d.examples.some(e => e.en === m.ex)) d.examples = [{en: m.ex, pt: ""}].concat(d.examples); d.meanings = []; }
+      rerender();
+    },
     "ex-del"(el){ const d = el.dataset.mode === "edit" ? ui.editDraft : ui.draft; d.examples = d.examples.filter((x, i) => i !== Number(el.dataset.i)); rerender(); },
     "deck-q"(el){ ui.q = el.value; ui.limit = 60; rerender(); },
     "deck-filter"(el){ ui.filter = el.dataset.f; ui.limit = 60; rerender(); },

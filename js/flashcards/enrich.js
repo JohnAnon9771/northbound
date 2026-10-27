@@ -3,6 +3,15 @@ import { enrichFree } from "./providers/free/index.js";
 
 const str = (v, max) => String(v == null ? "" : v).trim().slice(0, max || 400);
 
+// senses the card takes turns showing (see buildMeanings); fewer than two means no turns
+export function normalizeMeanings(list){
+  const out = (Array.isArray(list) ? list : []).map(m => ({
+    pt: (Array.isArray(m && m.pt) ? m.pt : []).map(t => str(t, 60)).filter(Boolean).slice(0, 3),
+    gloss: str(m && m.gloss, 120), def: str(m && m.def, 300), ex: str(m && m.ex, 240), ipa: str(m && m.ipa, 60).replace(/^\/|\/$/g, "")
+  })).filter(m => m.pt.length).slice(0, 4);
+  return out.length > 1 ? out : [];
+}
+
 export function normalizeEnrichment(o, term){
   o = o || {};
   const examples = (Array.isArray(o.examples) ? o.examples : [])
@@ -20,7 +29,8 @@ export function normalizeEnrichment(o, term){
     collocations: (Array.isArray(o.collocations) ? o.collocations : []).map(c => str(c, 60)).filter(Boolean).slice(0, 5),
     cefr: /^[ABC][12]$/.test(o.cefr || "") ? o.cefr : "",
     notes: str(o.notes, 300),
-    senses: Array.isArray(o.senses) ? o.senses.slice(0, 4) : []
+    senses: Array.isArray(o.senses) ? o.senses.slice(0, 4) : [],
+    meanings: normalizeMeanings(o.meanings)
   };
 }
 
