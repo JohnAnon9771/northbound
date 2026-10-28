@@ -6,9 +6,18 @@ export const posPt = p => POS_PT[String(p || "").toLowerCase()] || String(p || "
 
 // a part-of-speech hint ("verb/noun", from the word list) puts the matching items first;
 // the list says "modal auxiliary", "be-verb"…, Wiktionary calls all of those verbs
+const posMatcher = pos => {
+  const want = String(pos).toLowerCase().split("/").map(w => /verb|auxiliary/.test(w) && w !== "adverb" ? "verb" : w);
+  return s => want.some(w => String(s.pos).toLowerCase().indexOf(w) === 0);
+};
 export function posFirst(items, pos){
   if (!pos) return items;
-  const want = String(pos).toLowerCase().split("/").map(w => /verb|auxiliary/.test(w) && w !== "adverb" ? "verb" : w);
-  const match = s => want.some(w => String(s.pos).toLowerCase().indexOf(w) === 0);
+  const match = posMatcher(pos);
   return items.filter(match).concat(items.filter(s => !match(s)));
+}
+// only the items of the hinted part of speech, when there are any ("time" the noun leaves out "to time")
+export function posOnly(items, pos){
+  if (!pos) return items;
+  const hit = items.filter(posMatcher(pos));
+  return hit.length ? hit : items;
 }

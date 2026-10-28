@@ -11,6 +11,8 @@ import { bindEvents } from "./app/events.js";
 import { paintTimer } from "./app/timer-bar.js";
 import { backupReminder } from "./app/backup-reminder.js";
 import { registerSW } from "./app/service-worker.js";
+import { refreshFromList } from "./flashcards/deck.js";
+import { plural } from "./core/format.js";
 
 setRenderer(render);
 bindEvents();
@@ -34,6 +36,7 @@ async function boot(){
   paintTimer();
   backupReminder();
   registerSW();
+  refreshFromList().then(n => { if (n) toast(plural(n, "palavra do deck foi corrigida", "palavras do deck foram corrigidas") + " com a lista revisada."); }).catch(() => {});
 }
 
 boot();

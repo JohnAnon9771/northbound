@@ -6,6 +6,7 @@ import { newSrs, schedule, buildQueue } from "./srs.js";
 import { isFront, pickContent } from "./card.js";
 import { reviewMsOn, newIntroducedOn, knownCount } from "../domain/stats.js";
 import { phaseNow } from "../domain/pace.js";
+import { lookupMeanings, refreshed, LIST_SRC } from "./meanings-list.js";
 
 export const REVIEW_CAP_MS = 15 * 60000;   // past this, no new cards today
 export const SEC_PER_CARD = 9;
@@ -45,6 +46,21 @@ export function removeCard(id){
   return c ? [c].concat(twins) : [];
 }
 export const restoreCards = cards => putCards(cards);
+
+/* Cards made before the ready-made list (or from the free sources) take its content, once: the review history,
+   your sentence, notes and tags stay. Returns how many words changed. */
+export async function refreshFromList(){
+  const changed = [];
+  for (const c of S.cards.filter(c => isFront(c) && c.src !== LIST_SRC)){
+    const entry = await lookupMeanings(c.term);
+    if (!entry) continue;
+    const card = refreshed(c, entry);
+    changed.push(card);
+    S.cards.filter(x => x.parent === c.id).forEach(r => changed.push(Object.assign({}, r, pickContent(card))));
+  }
+  if (changed.length) putCards(changed);
+  return changed.filter(isFront).length;
+}
 export const twinOf = id => S.cards.find(x => x.parent === id);
 
 export function answer(card, grade, ms){

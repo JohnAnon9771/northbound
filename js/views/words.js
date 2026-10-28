@@ -27,7 +27,7 @@ const ui = {
 function editorHTML(d, mode){
   const ex = d.examples.length ? d.examples : [{en: "", pt: ""}];
   let h = '<form class="editor" data-submit="' + (mode === "edit" ? "edit-save" : "add-save") + '" data-input="' + (mode === "edit" ? "edit-draft" : "add-draft") + '">';
-  h += '<div class="editor-head"><span class="term">' + esc(d.term) + "</span>" + (d.ipa ? '<span class="muted">/' + esc(d.ipa) + "/</span>" : "") + speakBtn(d.term, "Ouvir a palavra", d.audio) + (d.cefr ? '<span class="pill pill-honey">' + esc(d.cefr) + "</span>" : "") + (mode === "add" && ui.source ? '<span class="pill">' + (ui.source === "claude" ? "via Claude" : "via fontes gratuitas") + "</span>" : "") + "</div>";
+  h += '<div class="editor-head"><span class="term">' + esc(d.term) + "</span>" + (d.ipa ? '<span class="muted">/' + esc(d.ipa) + "/</span>" : "") + speakBtn(d.term, "Ouvir a palavra", d.audio) + (d.cefr ? '<span class="pill pill-honey">' + esc(d.cefr) + "</span>" : "") + (mode === "add" && ui.source ? '<span class="pill">' + (ui.source === "list" ? "via lista revisada" : ui.source === "claude" ? "via Claude" : "via fontes gratuitas") + "</span>" : "") + "</div>";
   h += '<div class="row"><div class="field" style="flex:2 1 220px"><label>Tradução</label><input type="text" name="translation" data-fk="' + mode + '-tr" value="' + esc(d.translation) + '" placeholder="Ex.: superar"></div><div class="field"><label>Classe</label><input type="text" name="pos" data-fk="' + mode + '-pos" value="' + esc(d.pos) + '" placeholder="verbo"></div></div>';
   h += '<div class="field"><label>Significado (em inglês)</label><input type="text" name="definition" data-fk="' + mode + '-def" value="' + esc(d.definition) + '"></div>';
   if (d.meanings && d.meanings.length > 1){

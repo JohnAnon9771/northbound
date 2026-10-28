@@ -34,11 +34,13 @@ O service worker só é registrado em HTTPS, então em `localhost` ele não inte
 
 ## Flashcards
 
-Ao adicionar uma palavra (com a frase onde você a viu, opcional), o site busca:
+As palavras da lista (`assets/data/words.tsv`) vêm de uma **lista revisada** em `assets/data/meanings/` (um arquivo por letra): de 1 a 4 sentidos por palavra, cada um com as palavras em português, uma definição, um exemplo e a tradução do exemplo, escritos juntos para que a pergunta e a resposta do cartão sempre combinem. `scripts/check-meanings.mjs` confere tudo (roda no `npm test`): o exemplo usa a palavra, a tradução do exemplo contém a palavra em português, a classe gramatical bate com a lista e cada sentido tem uma palavra em português diferente. Lotes novos entram com `node scripts/merge-meanings.mjs lote.json…`, que recusa dados com erro. Cartões antigos de palavras da lista são atualizados ao abrir o site, sem perder o histórico de revisão.
+
+Para palavras fora da lista (com a frase onde você a viu, opcional), o site busca:
 
 | Fonte | O que traz |
 |---|---|
-| [Wiktionary](https://en.wiktionary.org/api/rest_v1/) | classe gramatical, definições e exemplos |
+| [Wiktionary](https://en.wiktionary.org/api/rest_v1/) | classe gramatical, definições, exemplos e traduções por sentido (o cartão só alterna sentidos quando cada um achou um exemplo próprio) |
 | [Tatoeba](https://tatoeba.org) | frases reais com tradução humana para o português |
 | [MyMemory](https://mymemory.translated.net) | tradução da palavra e das frases sem tradução (5 mil caracteres/dia; 50 mil com e-mail em Ajustes) |
 | [Free Dictionary API](https://dictionaryapi.dev) | pronúncia (IPA) e áudio, quando disponível |
@@ -74,6 +76,7 @@ assets/css/tokens.css   cores, fontes, raios, sombras (claro e “luz de vela”
 assets/css/base.css     reset, tipografia, layout
 assets/css/components.css
 assets/data/words.tsv   lista das Palavras do dia (gerada por scripts/build-wordlist.py)
+assets/data/meanings/   sentidos revisados das palavras da lista (scripts/merge-meanings.mjs, scripts/check-meanings.mjs)
 js/main.js              boot
 js/app/                 router (telas, #hoje, #palavras…, navegação), delegação de eventos, barra do cronômetro,
                         lembrete de backup, service worker

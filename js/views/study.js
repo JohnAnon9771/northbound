@@ -57,7 +57,7 @@ function logSession(){
 // a card with several senses shows one per review, with that sense's own example
 function exampleFor(c){
   const m = meaningFor(c);
-  if (m) return m.ex ? {en: m.ex, pt: ""} : null;
+  if (m) return m.ex ? {en: m.ex, pt: m.exPt || "", form: m.form || ""} : null;
   const ex = (c.examples || []).filter(e => e.en);
   return ex.length ? ex[(c.reps || 0) % ex.length] : null;
 }
@@ -68,10 +68,10 @@ function frontHTML(c){
   if (!isFront(c)){
     h += '<p class="flash-term">' + esc(m ? m.pt.join(", ") : c.translation || "(sem tradução)") + "</p>";
     if (ex && ex.pt) h += '<p class="flash-q" style="font-size:20px">' + esc(ex.pt) + "</p>";
-    if (ex) h += '<p class="muted" style="margin:0">' + cloze(ex.en, c.term) + "</p>";
+    if (ex) h += '<p class="muted" style="margin:0">' + cloze(ex.en, c.term, ex.form) + "</p>";
     h += '<p class="hint">Como se diz em inglês?</p>';
   } else if (ex){
-    h += '<p class="flash-q">' + highlight(ex.en, c.term) + "</p>";
+    h += '<p class="flash-q">' + highlight(ex.en, c.term, ex.form) + "</p>";
     h += '<p class="hint">O que <b>' + esc(c.term) + "</b> quer dizer aqui?</p>";
   } else if (m){
     h += '<p class="flash-term">' + esc(c.term) + "</p>";
@@ -97,9 +97,10 @@ function backHTML(c){
   const def = m ? (m.ex ? m.def || m.gloss : "") : c.definition;
   if (def) h += '<p class="flash-def">' + esc(def) + "</p>";
   // other examples aren't tied to a sense: keep your own sentence and the ones whose translation uses this sense's words
-  const exs = (c.examples || []).filter(e => e.en && (!m || e.en === c.context || mentions(e.pt, m.pt)));
+  // (the list's examples each belong to one sense, so only your own sentence joins this one)
+  const exs = (c.examples || []).filter(e => e.en && (!m || e.en === c.context || (c.src !== "list" && mentions(e.pt, m.pt))));
   const order = shown ? [shown].concat(exs.filter(e => e.en !== shown.en)) : exs;
-  order.slice(0, 3).forEach(e => { h += '<p class="ex">' + highlight(e.en, c.term) + " " + speakBtnInline(e.en) + (e.pt ? '<span class="pt">' + esc(e.pt) + "</span>" : "") + "</p>"; });
+  order.slice(0, 3).forEach(e => { h += '<p class="ex">' + highlight(e.en, c.term, e.form) + " " + speakBtnInline(e.en) + (e.pt ? '<span class="pt">' + esc(e.pt) + "</span>" : "") + "</p>"; });
   if (c.collocations && c.collocations.length) h += '<p class="muted" style="margin:0;font-size:14px">Combina com: ' + c.collocations.map(esc).join(" · ") + "</p>";
   if (c.notes) h += '<p class="note">' + esc(c.notes) + "</p>";
   return h + "</div>";

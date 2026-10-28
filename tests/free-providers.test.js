@@ -79,8 +79,8 @@ test("meanings come from Wiktionary's translation tables (subpage included) befo
       + "====Noun====\n{{trans-top|precedence}}\n* Portuguese: {{t+|pt|liderança|f}}, {{t|pt|dianteira|f}}\n{{trans-bottom}}\n"
       + "{{checktrans-top}}\n* Portuguese: {{t|pt|superar}}\n{{trans-bottom}}")});
   const r = await enrichFree("lead", "", {pos: "noun"});
-  assert.equal(r.translation, "liderança, conduzir, dianteira");   // the "superar" guess sits in an unchecked table
-  assert.deepEqual(r.meanings.map(m => m.pt), [["liderança", "dianteira"], ["conduzir"]]);
+  assert.equal(r.translation, "liderança, dianteira");   // the "superar" guess sits in an unchecked table; "conduzir" is a verb
+  assert.deepEqual(r.meanings, []);
 });
 
 test("nothing found: quota when MyMemory ran out, offline otherwise", async () => {
