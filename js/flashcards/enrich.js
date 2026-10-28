@@ -1,5 +1,9 @@
-// Picks the provider (Claude when there's a key, free sources otherwise) and normalizes the result.
+// Picks the source (the ready-made list for its words, then Claude when there's a key, free sources otherwise)
+// and normalizes the result.
 import { enrichFree } from "./providers/free/index.js";
+import { lookupMeanings, toCard, LIST_SRC } from "./meanings-list.js";
+import { getJSON } from "./providers/free/http.js";
+import { dictionaryUrl, parseDictionary } from "./providers/free/dictionary.js";
 
 const str = (v, max) => String(v == null ? "" : v).trim().slice(0, max || 400);
 
@@ -7,7 +11,8 @@ const str = (v, max) => String(v == null ? "" : v).trim().slice(0, max || 400);
 export function normalizeMeanings(list){
   const out = (Array.isArray(list) ? list : []).map(m => ({
     pt: (Array.isArray(m && m.pt) ? m.pt : []).map(t => str(t, 60)).filter(Boolean).slice(0, 3),
-    gloss: str(m && m.gloss, 120), def: str(m && m.def, 300), ex: str(m && m.ex, 240), ipa: str(m && m.ipa, 60).replace(/^\/|\/$/g, "")
+    gloss: str(m && m.gloss, 120), def: str(m && m.def, 300), ex: str(m && m.ex, 240), ipa: str(m && m.ipa, 60).replace(/^\/|\/$/g, ""),
+    exPt: str(m && m.exPt, 240), form: str(m && m.form, 60)
   })).filter(m => m.pt.length).slice(0, 4);
   return out.length > 1 ? out : [];
 }
@@ -29,6 +34,7 @@ export function normalizeEnrichment(o, term){
     collocations: (Array.isArray(o.collocations) ? o.collocations : []).map(c => str(c, 60)).filter(Boolean).slice(0, 5),
     cefr: /^[ABC][12]$/.test(o.cefr || "") ? o.cefr : "",
     notes: str(o.notes, 300),
+    src: o.src === LIST_SRC ? LIST_SRC : "",
     senses: Array.isArray(o.senses) ? o.senses.slice(0, 4) : [],
     meanings: normalizeMeanings(o.meanings)
   };
@@ -46,6 +52,12 @@ export const enrichMessage = code => MSG[code] || "Não deu para buscar. Preench
 /* opts: {apiKey, model, level, email}. Returns {data, source, warning?}. */
 export async function enrich(term, context, opts){
   const o = opts || {};
+  const listed = await lookupMeanings(term);
+  if (listed){
+    // the list has no recordings: the Free Dictionary's, when it answers quickly
+    const dict = await getJSON(dictionaryUrl(term.trim().toLowerCase()), 4000).then(parseDictionary).catch(() => ({}));
+    return {data: normalizeEnrichment(Object.assign(toCard(listed, term.trim(), context), {audio: dict.audio || ""}), term), source: LIST_SRC};
+  }
   if (o.apiKey){
     try {
       const { enrichClaude } = await import("./providers/claude.js");

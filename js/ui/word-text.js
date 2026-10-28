@@ -2,9 +2,14 @@
 import { esc } from "../core/dom.js";
 
 const reEsc = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-/* Marks the term inside a sentence. Matches inflections loosely ("get over" → "got over", "getting over"). */
-export function highlight(sentence, term){
+/* Marks the term inside a sentence. Matches inflections loosely ("get over" → "got over", "getting over");
+   form, when known (the ready-made list says how the term appears: "went"), is marked exactly. */
+export function highlight(sentence, term, form){
   const safe = esc(sentence);
+  if (form){
+    const re = new RegExp("(^|[^\\w])(" + reEsc(esc(form)) + ")(?![\\w])", "i");
+    if (re.test(safe)) return safe.replace(re, "$1<mark>$2</mark>");
+  }
   const words = String(term || "").trim().split(/\s+/).filter(Boolean);
   if (!words.length) return safe;
   const stem = w => { const x = reEsc(esc(w)); return x.length > 4 ? x.slice(0, -2) + "\\w*" : x + "\\w*"; };
@@ -17,7 +22,7 @@ export function highlight(sentence, term){
 const IRR = {get: "got|gotten", go: "went|gone", take: "took|taken", give: "gave|given", come: "came", make: "made", put: "put", run: "ran", bring: "brought", think: "thought", catch: "caught", find: "found", keep: "kept", hold: "held", break: "broke|broken", fall: "fell|fallen", turn: "turned", look: "looked", set: "set", carry: "carried"};
 const irregular = w => IRR[w.toLowerCase()] || reEsc(w);
 
-export function cloze(sentence, term){
-  const h = highlight(sentence, term);
+export function cloze(sentence, term, form){
+  const h = highlight(sentence, term, form);
   return h.replace(/<mark>(.*?)<\/mark>/, (m, inner) => "<mark>" + inner.replace(/\S/g, "_").replace(/_+/g, "____") + "</mark>");
 }

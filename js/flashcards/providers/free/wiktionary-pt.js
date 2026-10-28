@@ -1,16 +1,18 @@
 // Wiktionary translation tables: Portuguese words per sense, curated by people (MyMemory's single-word
 // answers come from unrelated projects: "lead" → "superar", "though." → "ninja.").
-import { posFirst } from "../../pos.js";
+import { posFirst, posOnly } from "../../pos.js";
 import { fold } from "./mymemory.js";
 
 export const wiktionaryPtUrl = page => "https://en.wiktionary.org/w/api.php?action=parse&prop=wikitext&format=json&formatversion=2&origin=*&page=" + encodeURIComponent(page.replace(/ /g, "_"));
 
 const POS = /^(noun|proper noun|verb|adjective|adverb|preposition|prepositional phrase|conjunction|pronoun|interjection|determiner|article|phrase|idiom|proverb|particle|numeral|contraction)$/i;
 const unlink = s => s.replace(/\[\[(?:[^\]|]*\|)?([^\]]*)\]\]/g, "$1");
-// "{{t+|pt|[[no]] [[entanto]]|m}}, {{t+|pt|apesar}} de" → ["no entanto", "apesar de"]
+// "{{t+|pt|[[no]] [[entanto]]|m}}, {{t+|pt|apesar}} de" → ["no entanto", "apesar de"];
+// alt= is the form to show ("{{t+|pt|ter|alt=ter (por/como)}}" → "ter (por/como)")
+const ptTerm = t => { const alt = t.match(/\|alt=([^|}]+)/); return alt ? alt[1] : t.match(/\{\{tt?\+?\|pt\|([^|}]+)/)[1]; };
 const ptTerms = line => line.replace(/^[*:\s]*[^:{]*:/, "").split(/,(?![^{]*\}\})/)
   .filter(c => /\{\{tt?\+?\|pt\|/.test(c))
-  .map(c => unlink(c.replace(/\{\{tt?\+?\|pt\|([^|}]+)[^}]*\}\}/, "$1").replace(/\{\{[^}]*\}\}/g, "")).replace(/\s+/g, " ").trim())
+  .map(c => unlink(c.replace(/\{\{tt?\+?\|pt\|[^}]*\}\}/, m => ptTerm(m)).replace(/\{\{[^}]*\}\}/g, "")).replace(/\s+/g, " ").trim())
   .filter(Boolean);
 
 /* common words keep their tables on "<word>/translations" (subpage: true says to fetch it).
@@ -52,9 +54,10 @@ export function parseWiktionaryPt(json){
 // ("lead" the metal, "lead" the verb)
 function ordered(senses, pos){
   const groups = [];
-  posFirst(senses, pos).forEach(s => { const g = groups.find(g => g.ety === s.ety); g ? g.list.push(s) : groups.push({ety: s.ety, list: [s]}); });
+  posFirst(posOnly(senses, pos), pos).forEach(s => { const g = groups.find(g => g.ety === s.ety); g ? g.list.push(s) : groups.push({ety: s.ety, list: [s]}); });
   const out = [];
-  for (let i = 0; out.length < senses.length; i++) groups.forEach(g => { if (g.list[i]) out.push(g.list[i]); });
+  const n = groups.reduce((a, g) => a + g.list.length, 0);
+  for (let i = 0; out.length < n; i++) groups.forEach(g => { if (g.list[i]) out.push(g.list[i]); });
   return out;
 }
 
@@ -79,23 +82,28 @@ function bestDefinition(gloss, defs){
 }
 
 /* The senses a card takes turns showing, one per review: [{pt, gloss, def, ex, ipa}], up to 4, or [] when
-   there is only one. page: parseWiktionaryPt (main page, with the subpage's senses); rest: parseWiktionary. */
+   there is only one. page: parseWiktionaryPt (main page, with the subpage's senses); rest: parseWiktionary.
+   A sense counts when it brings a new Portuguese word, which it shows first ("ter (por/como), considerar").
+   The definitions and examples are matched to senses by guessing, so the card only takes turns when every
+   sense found an example of its own: a wrong pairing would ask one sense and answer another. */
 export function buildMeanings(page, pos, rest){
   const used = [], out = [];
   ordered(page.senses, pos).forEach(s => {
-    const pt = s.pt.filter(t => !used.some(u => fold(u) === fold(t))).slice(0, 3);
-    if (!pt.length || out.length >= 4) return;
-    used.push(...pt);
-    out.push({s, pt});
+    const fresh = s.pt.filter(t => !used.some(u => fold(u) === fold(t)));
+    if (!fresh.length || out.length >= 4) return;
+    used.push(...fresh);
+    out.push({s, pt: fresh.concat(s.pt.filter(t => fresh.indexOf(t) < 0)).slice(0, 3)});
   });
   if (out.length < 2) return [];
   const sections = page.sections || [], ipa = page.ipa || {};
   // REST blocks follow the page's part-of-speech headings; if they don't line up, skip definitions
   const aligned = (rest || []).every(d => sections[d.block] && sections[d.block].pos.toLowerCase() === String(d.pos).toLowerCase());
   const twoSounds = new Set(Object.values(ipa)).size > 1;
-  return out.map(({s, pt}) => {
+  const list = out.map(({s, pt}) => {
     const block = sections.findIndex(x => x.ety === s.ety && x.pos === s.pos);
     const d = aligned && block > -1 ? bestDefinition(s.gloss, rest.filter(r => r.block === block)) : null;
     return {pt, gloss: s.gloss, def: d ? d.text.split("\n")[0] : "", ex: d && d.examples[0] || "", ipa: twoSounds ? ipa[s.ety] || "" : ""};
   });
+  const exs = list.map(m => m.ex);
+  return exs.every((e, i) => e && exs.indexOf(e) === i) ? list : [];
 }

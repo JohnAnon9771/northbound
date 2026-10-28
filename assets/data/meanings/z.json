@@ -1,0 +1,4 @@
+{
+"zone":{"pos":"noun","ipa":"zəʊn","senses":[{"pos":"noun","pt":["área","zona"],"def":"an area that is different from others or used for a special purpose","ex":"The school is in a quiet residential zone.","form":"zone","exPt":"A escola fica em uma área residencial tranquila.","hit":"área"},{"pos":"noun","pt":["fuso horário"],"def":"one of the areas of the world that has its own time (time zone)","ex":"London and Lisbon are in the same time zone.","form":"zone","exPt":"Londres e Lisboa ficam no mesmo fuso horário.","hit":"fuso horário"}]},
+"zoo":{"pos":"noun","ipa":"zuː","senses":[{"pos":"noun","pt":["zoológico","zoo"],"def":"a place where wild animals are kept for people to see","ex":"We took the kids to the zoo on Sunday.","form":"zoo","exPt":"Levamos as crianças ao zoológico no domingo.","hit":"zoológico"}]}
+}

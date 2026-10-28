@@ -79,7 +79,7 @@ test("Wiktionary translations: Portuguese words per sense, unchecked tables left
     {ety: 0, pos: "Adverb", gloss: "however", pt: ["no entanto", "contudo"]},
     {ety: 0, pos: "Conjunction", gloss: "although", pt: ["embora", "apesar de"]}
   ]);
-  assert.deepEqual(ptMeanings(p.senses, "conjunction"), ["embora", "no entanto", "apesar de", "contudo"]);
+  assert.deepEqual(ptMeanings(p.senses, "conjunction"), ["embora", "apesar de"]);   // only the hinted part of speech
   assert.deepEqual(ptMeanings(p.senses), ["no entanto", "embora", "contudo", "apesar de"]);
   assert.equal(parseWiktionaryPt({parse: {wikitext: "==English==\n===Noun===\n{{see translation subpage|Noun}}"}}).subpage, true);
   assert.deepEqual(parseWiktionaryPt({error: {code: "missingtitle"}}).senses, []);
@@ -144,24 +144,51 @@ test("Wiktionary: sections and pronunciations per etymology", () => {
   assert.deepEqual(p.ipa, {1: "/lɛd/", 2: "/ˈliːd/"});
 });
 
-test("senses to take turns: one per new word, each with its own definition, example and sound", () => {
-  const m = buildMeanings(parseWiktionaryPt({parse: {wikitext: LEAD}}), "noun", LEAD_REST);
-  assert.deepEqual(m.map(x => x.pt), [["chumbo"], ["liderança", "dianteira"], ["chumbar"]]);   // the "bullets" sense adds nothing new
-  assert.deepEqual(m[0], {pt: ["chumbo"], gloss: "chemical element", def: "A heavy, pliable metal element.", ex: "", ipa: "/lɛd/"});
+test("senses to take turns: one per new word of the hinted part of speech, each with its own definition, example and sound", () => {
+  const rest = parseWiktionary({en: [
+    {partOfSpeech: "Noun", definitions: [{definition: "A heavy, pliable metal element.", examples: ["The pipes were made of lead."]}, {definition: "Bullets fired from a gun.", examples: ["He filled them full of lead."]}]},
+    {partOfSpeech: "Verb", definitions: [{definition: "To cover with lead."}]},
+    {partOfSpeech: "Verb", definitions: [{definition: "To guide or conduct.", examples: ["She will lead the team to victory."]}]},
+    {partOfSpeech: "Noun", definitions: [{definition: "The act of leading."}, {definition: "Precedence; advance position.", examples: ["The white horse had the lead."]}]}
+  ]});
+  const m = buildMeanings(parseWiktionaryPt({parse: {wikitext: LEAD}}), "noun", rest);
+  assert.deepEqual(m.map(x => x.pt), [["chumbo"], ["liderança", "dianteira"]]);   // "bullets" adds nothing new; "chumbar" is a verb
+  assert.deepEqual(m[0], {pt: ["chumbo"], gloss: "chemical element", def: "A heavy, pliable metal element.", ex: "The pipes were made of lead.", ipa: "/lɛd/"});
   assert.deepEqual(m[1], {pt: ["liderança", "dianteira"], gloss: "precedence; advance position", def: "Precedence; advance position.", ex: "The white horse had the lead.", ipa: "/ˈliːd/"});
+  // a sense without an example of its own could be asked with another sense's sentence: no turns then
+  assert.deepEqual(buildMeanings(parseWiktionaryPt({parse: {wikitext: LEAD}}), "noun", LEAD_REST), []);
 });
 
-test("senses: none for a single sense; no definitions when the REST blocks don't line up; one sound means no ipa", () => {
+// "consider": "considerar" belongs to several senses, and alt= says how to show "ter"
+const CONSIDER = "==English==\n===Verb===\n{{trans-top|think about seriously}}\n* Portuguese: {{t+|pt|considerar}}\n"
+  + "{{trans-top|think of doing}}\n* Portuguese: {{t+|pt|considerar}}, {{t|pt|pensar em}}\n"
+  + "{{trans-top|assign some quality to}}\n* Portuguese: {{t+|pt|considerar}}, {{t+|pt|ter|alt=ter (por/como)}}\n";
+
+test("senses keep their shared words after the new one, and alt= is the word shown", () => {
+  const p = parseWiktionaryPt({parse: {wikitext: CONSIDER}});
+  assert.deepEqual(p.senses[2].pt, ["considerar", "ter (por/como)"]);
+  const rest = second => parseWiktionary({en: [{partOfSpeech: "Verb", definitions: [
+    {definition: "To think about seriously.", examples: ["Consider the cost first."]},
+    {definition: second, examples: ["I'm considering a new job."]},
+    {definition: "To assign some quality to.", examples: ["Consider yourself lucky."]}
+  ]}]});
+  assert.deepEqual(buildMeanings(p, "verb", rest("To think of doing something.")).map(m => m.pt), [["considerar"], ["pensar em", "considerar"], ["ter (por/como)", "considerar"]]);
+  // Wiktionary's real wording: "think of doing" matches the first definition best, so two senses would share
+  // "Consider the cost first." and the card would ask one sense and answer another; no turns then
+  assert.deepEqual(buildMeanings(p, "verb", rest("To think about whether one will do (an action).")), []);
+});
+
+test("senses: none for a single sense, nor when the REST blocks don't line up", () => {
   const one = parseWiktionaryPt({parse: {wikitext: "==English==\n===Noun===\n{{trans-top|idea}}\n* Portuguese: {{t|pt|pensamento}}\n{{trans-top|process}}\n* Portuguese: {{t|pt|pensamento}}"}});
   assert.deepEqual(buildMeanings(one, "noun", []), []);
   const two = parseWiktionaryPt({parse: {wikitext: "==English==\n===Pronunciation===\n* {{IPA|en|/bæŋk/}}\n===Noun===\n{{trans-top|institution}}\n* Portuguese: {{t|pt|banco}}\n{{trans-top|edge of river}}\n* Portuguese: {{t|pt|margem}}"}});
   const m = buildMeanings(two, "noun", parseWiktionary({en: [{partOfSpeech: "Verb", definitions: [{definition: "An institution."}]}]}));
-  assert.deepEqual(m.map(x => [x.pt[0], x.def, x.ipa]), [["banco", "", ""], ["margem", "", ""]]);
+  assert.deepEqual(m, []);   // no examples to tell them apart
 });
 
 test("normalizeMeanings: cleans the list and drops it below two senses", () => {
   assert.deepEqual(normalizeMeanings([{pt: ["chumbo", ""], gloss: "metal", ipa: "/lɛd/"}, {pt: []}, {pt: ["liderança"]}]),
-    [{pt: ["chumbo"], gloss: "metal", def: "", ex: "", ipa: "lɛd"}, {pt: ["liderança"], gloss: "", def: "", ex: "", ipa: ""}]);
+    [{pt: ["chumbo"], gloss: "metal", def: "", ex: "", ipa: "lɛd", exPt: "", form: ""}, {pt: ["liderança"], gloss: "", def: "", ex: "", ipa: "", exPt: "", form: ""}]);
   assert.deepEqual(normalizeMeanings([{pt: ["chumbo"]}]), []);
   assert.deepEqual(normalizeMeanings("x"), []);
   assert.deepEqual(normalizeEnrichment({}, "x").meanings, []);
