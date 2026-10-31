@@ -12,7 +12,7 @@ export function blankState(){
     v: STATE_VERSION,
     settings: {start: mondayOf(new Date()), goalH: 18, targetWeeks: 52, accent: "en-GB", newPerDay: null, mmEmail: "", claudeModel: "claude-haiku-5-5"},
     done: {}, skip: {}, cando: {}, errors: [], tests: [], scores: {}, revFrom: null,
-    achievements: {}, lastBackup: null, dayPlan: null, wl: blankWl()
+    achievements: {}, lastBackup: null, dayPlan: null, wl: blankWl(), feedback: []
   };
 }
 
@@ -43,7 +43,28 @@ export function normalizeState(o){
     achievements: Object.assign({}, o.achievements || {}),
     lastBackup: typeof o.lastBackup === "string" ? o.lastBackup : null,
     dayPlan: plan,
-    wl: normalizeWl(o.wl)
+    wl: normalizeWl(o.wl),
+    feedback: Array.isArray(o.feedback) ? o.feedback.map(normalizeFeedback).filter(Boolean) : []
+  };
+}
+
+// One ChatGPT session in the Diário: a conversation ("conv") or a corrected text ("writ").
+export const CRIT = {conv: ["flu", "gram", "voc"], writ: ["ta", "org", "gram", "voc"]};
+const LEVEL = /^[ABC][12]\+?$/;
+const str = (v, n) => typeof v === "string" ? v.trim().slice(0, n) : "";
+export function normalizeFeedback(e){
+  if (!e || !CRIT[e.kind] || !ISO.test(e.date)) return null;
+  const crit = {};
+  CRIT[e.kind].forEach(k => { const v = Number(e.crit && e.crit[k]); if (e.crit && e.crit[k] != null && e.crit[k] !== "" && v >= 0 && v <= 5) crit[k] = Math.round(v * 2) / 2; });
+  const feel = Math.round(Number(e.feel));
+  return {
+    id: String(e.id || uid()), kind: e.kind, date: e.date, task: str(e.task, 40), topic: str(e.topic, 120),
+    min: Number(e.min) > 0 ? Math.min(600, Math.round(Number(e.min))) : 0,
+    feel: e.kind === "conv" && feel >= 1 && feel <= 5 ? feel : null,
+    level: LEVEL.test(e.level || "") ? e.level : "",
+    crit,
+    errs: Array.isArray(e.errs) ? e.errs.filter(x => x && str(x.wrong, 160) && str(x.right, 160)).slice(0, 20).map(x => ({wrong: str(x.wrong, 160), right: str(x.right, 160)})) : [],
+    grammar: str(e.grammar, 160), raw: str(e.raw, 6000), ts: Number(e.ts) || 0
   };
 }
 

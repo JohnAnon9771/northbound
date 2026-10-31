@@ -112,6 +112,29 @@ a.task-title:hover{text-decoration-color:var(--accent)}
 .task-meta a{color:var(--muted)}
 .task-note{font-size:13.5px;color:var(--muted);margin:4px 0 0}
 .task-start{flex:0 0 auto;margin-top:-2px}
+.fb-line{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font-size:13.5px;color:var(--muted);margin-top:8px}
+.fb-line .btn{white-space:nowrap}
+.fb-dots{display:inline-flex;gap:4px}
+.fb-dots i{width:10px;height:10px;border-radius:50%;border:2px solid var(--rule-strong);box-sizing:border-box}
+.fb-dots i.on{background:var(--accent);border-color:var(--accent)}
+.fb-preview{border-top:1px solid var(--rule);padding-top:14px;margin-top:4px}
+.fb-crit{display:flex;flex-wrap:wrap;gap:8px 14px}
+.fb-chk{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;color:var(--muted);cursor:pointer}
+.fb-errs li{grid-template-columns:1fr auto}
+.fb-tips{list-style:none;padding:0;margin:0 0 16px}
+.fb-tips li{padding:8px 12px;background:var(--surface-2);border-radius:12px;margin:0 0 6px}
+.fb-kind{margin:18px 0 6px}
+.fb-kind h3{margin:0}
+.fb-h{margin:24px 0 4px}
+.fb-week{margin:6px 0 0}
+.fb-hist{list-style:none;padding:0;margin:0}
+.fb-hist > li{padding:12px 0;border-bottom:1px solid var(--rule)}
+.fb-hist-head{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px}
+.fb-hist-head .d{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;min-width:48px}
+.fb-hist-head .x{margin-left:auto}
+.fb-hist details{margin-top:6px;font-size:14px}
+.fb-hist summary{cursor:pointer;color:var(--muted);font-size:13.5px;font-weight:700}
+.fb-raw{font-size:13.5px;margin-top:8px}
 .task.milestone .task-title::after{content:"checkpoint";margin-left:8px;font-size:11.5px;font-weight:800;color:var(--accent);border:1px solid currentColor;border-radius:6px;padding:0 6px;vertical-align:2px}
 .task.running{background:var(--accent-soft);border-radius:12px;padding-left:8px;padding-right:8px}
 .task-cards .chk{pointer-events:none}
@@ -263,7 +286,7 @@ a.task-title:hover{text-decoration-color:var(--accent)}
 .prompt{border-top:1px solid var(--rule);padding:16px 0 14px}
 .prompt-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 8px}
 .prompt-head h3{margin:0;flex:1 1 auto}
-.prompt-text{font-size:15px;line-height:1.55;background:var(--surface-2);border-radius:var(--r);padding:12px 14px;margin:0;max-width:none;user-select:text}
+.prompt-text{font-size:15px;line-height:1.55;white-space:pre-line;background:var(--surface-2);border-radius:var(--r);padding:12px 14px;margin:0;max-width:none;user-select:text}
 .split{list-style:none;padding:0;margin:0;font-size:15px}
 .split li{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid var(--rule)}
 .split li span:last-child{font-variant-numeric:tabular-nums;color:var(--muted)}

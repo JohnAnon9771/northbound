@@ -3,6 +3,7 @@ import { icon } from "../core/icons.js";
 import { daysSinceBackup } from "../ui/backup.js";
 
 const LINKS = [
+  ["diario", "speak", "Diário de conversas", "Cada conversa e texto corrigido no ChatGPT, com o feedback e a evolução das notas."],
   ["niveis", "target", "Níveis e testes", "EF SET, level test e as listas “can-do” para ver o nível subir."],
   ["rotinas", "book", "Rotinas", "Como usar os flashcards, a divisão da semana, seus erros recorrentes e os prompts."],
   ["ajustes", "gear", "Ajustes", "Meta semanal, prazo, Claude API, tema e backup dos seus dados."]
