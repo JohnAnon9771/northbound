@@ -54,7 +54,7 @@ function splitHTML(){
   return '<section class="card section" aria-labelledby="hSplit"><h2 id="hSplit">Divisão da semana</h2>' +
     '<p class="muted">Para a sua meta de ' + formatHours(S.state.settings.goalH * 60) + " h por semana. Os flashcards entram como 20 minutos por dia." + (xp.extra ? " A rota base ocupa 13,5 h; as " + formatHours(xp.extra) + " h a mais viram leitura com áudio e conversa, como extras de cada semana." : "") + "</p>" +
     '<ul class="split">' + planSplit(false).map(s => "<li><span>" + s[1] + "</span><span>" + Math.round(s[2] / 5) * 5 + " min</span></li>").join("") + "</ul>" +
-    '<h3 style="margin-top:20px">Três princípios</h3><ul class="plain"><li>Revisões antes de cartões novos.</li>' +
+    '<h3 class="mt-l">Três princípios</h3><ul class="plain"><li>Revisões antes de cartões novos.</li>' +
     "<li>Cerca de 55 a 60% do tempo em entrada (listening e reading) e 40 a 45% em produção (fala e escrita), aumentando a produção na fase 3, sem deixar a entrada cair abaixo de 4 h por semana.</li>" +
     "<li>Cada lição de gramática volta duas vezes: o “Grammar test 2” 7 dias depois e questões novas (prompt 8) cerca de 4 semanas depois. Anote as notas na própria tarefa.</li></ul></section>";
 }
@@ -62,9 +62,9 @@ function splitHTML(){
 function errorsHTML(){
   const errs = S.state.errors.slice().sort((a, b) => (b.count || 1) - (a.count || 1));
   let h = '<section class="card section" aria-labelledby="hErr"><h2 id="hErr">Meus erros recorrentes</h2><p class="muted">Comece com os 10 erros do diagnóstico. Use “+1” quando o erro voltar a aparecer; os mais frequentes vão para o topo e para o prompt 7, que entra toda semana como um drill de 10 minutos.</p>';
-  h += '<form class="row" data-submit="err-add" style="align-items:flex-end"><div class="field"><label for="eWrong">Como eu disse</label><input type="text" id="eWrong" name="wrong" data-fk="eWrong" maxlength="120" placeholder="I have 30 years"></div><div class="field"><label for="eRight">Como é o certo</label><input type="text" id="eRight" name="right" data-fk="eRight" maxlength="120" placeholder="I’m 30"></div><div class="field" style="flex:0 0 auto"><button class="btn" type="submit">Adicionar erro</button></div></form>';
+  h += '<form class="row" data-submit="err-add"><div class="field"><label for="eWrong">Como eu disse</label><input type="text" id="eWrong" name="wrong" data-fk="eWrong" maxlength="120" placeholder="I have 30 years"></div><div class="field"><label for="eRight">Como é o certo</label><input type="text" id="eRight" name="right" data-fk="eRight" maxlength="120" placeholder="I’m 30"></div><div class="field" style="flex:0 0 auto"><button class="btn" type="submit">Adicionar erro</button></div></form>';
   h += '<ul class="errs">';
-  if (!errs.length) h += '<li style="display:block" class="muted">Nenhum erro anotado ainda.</li>';
+  if (!errs.length) h += '<li class="muted errs-empty">Nenhum erro anotado ainda.</li>';
   errs.forEach(e => {
     const carded = e.card && S.cards.some(c => c.id === e.card);
     h += '<li><span><span class="wrong">' + esc(e.wrong) + '</span><br><span class="right">' + esc(e.right) + '</span></span><span class="cnt">' + (e.count || 1) + "×</span>" +
@@ -83,7 +83,7 @@ export default {
   id: "rotinas",
   title: "Rotinas",
   render(){
-    return '<div class="page-head"><a class="eyebrow" href="#mais">← Mais</a><h1>Rotinas</h1><p class="lead">Os hábitos que fazem a rota funcionar no dia a dia.</p></div>' +
+    return '<header class="page-head"><div><a class="eyebrow back" href="#mais">' + icon("back", 14) + 'Mais</a><h1>Rotinas</h1><p class="lead">Os hábitos que fazem a rota funcionar no dia a dia.</p></div></header>' +
       '<div class="grid-2">' + cardsHTML() + splitHTML() + "</div>" + errorsHTML() + promptsHTML();
   },
   actions: {

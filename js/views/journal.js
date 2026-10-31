@@ -2,6 +2,7 @@
 // this week's count against the phase goal and how the scores move over time.
 import { S, update, addLog } from "../state/store.js";
 import { esc } from "../core/dom.js";
+import { icon } from "../core/icons.js";
 import { uid } from "../core/id.js";
 import { today, shortDate } from "../core/date.js";
 import { toast } from "../core/toast.js";
@@ -14,7 +15,7 @@ import { setDone } from "../ui/task-actions.js";
 
 const LEVELS = ["A1", "A1+", "A2", "A2+", "B1", "B1+", "B2", "B2+", "C1", "C1+", "C2"];
 const KIND = {conv: "Conversa", writ: "Writing"};
-const COLORS = {flu: "var(--sky)", gram: "var(--accent)", voc: "var(--sage)", ta: "var(--plum)", org: "var(--honey)"};
+const COLORS = {flu: "var(--sky)", gram: "var(--accent)", voc: "var(--sage)", ta: "var(--plum)", org: "var(--leather)"};
 const nf = v => v.toLocaleString("pt-BR", {maximumFractionDigits: 1});
 // time is added to the study log unless the task's timer logged it after the last Diário entry
 // (the Diário's own logs carry no task key, so they never count here)
@@ -78,7 +79,7 @@ function previewHTML(){
 }
 function formHTML(){
   const conv = d.kind === "conv";
-  let h = '<section class="card section" aria-labelledby="hFbForm"><div class="section-head"><h2 id="hFbForm">Registrar</h2><span class="seg" role="group" aria-label="Tipo">' +
+  let h = '<section class="card section" aria-labelledby="hFbForm"><div class="card-head"><h2 id="hFbForm">Registrar</h2><span class="seg" role="group" aria-label="Tipo">' +
     ["conv", "writ"].map(k => '<button type="button" data-act="fb-kind" data-k="' + k + '" aria-pressed="' + (d.kind === k) + '">' + KIND[k] + "</button>").join("") + "</span></div>";
   h += '<form data-submit="fb-save">' + taskSelect();
   h += '<div class="row"><div class="field"><label for="fbDate">Data</label><input type="date" id="fbDate" name="date" data-input="fb-field" data-fk="fbDate" value="' + esc(d.date) + '"></div>' +
@@ -88,7 +89,7 @@ function formHTML(){
   h += '<div class="field"><label for="fbRaw">Cole o feedback do ChatGPT</label><textarea id="fbRaw" name="raw" data-input="fb-raw" data-fk="fbRaw" rows="6" placeholder="Level: A2+&#10;Scores: fluency 3/5, grammar 2/5, vocabulary 3/5&#10;Errors:&#10;I go to the beach yesterday → I went to the beach yesterday&#10;Grammar point: past simple">' + esc(d.raw) + '</textarea><p class="hint">Use o prompt ' + (conv ? "2 ou 3" : "4") + ' de <a href="#rotinas">Rotinas</a>: ele termina com um bloco pronto para colar aqui. O que der para ler vira nível, notas e erros abaixo, e dá para corrigir à mão.</p></div>';
   h += previewHTML();
   const min = Number(d.min) || 0;
-  if (min > 0) h += '<label class="fb-chk" style="margin:0 0 14px;display:flex"><input type="checkbox" data-change="fb-log" data-fk="fb-log"' + (logTime() ? " checked" : "") + "> Somar " + min + " min de " + (conv ? "Conversa" : "Writing") + " ao tempo de estudo</label>";
+  if (min > 0) h += '<label class="fb-chk log"><input type="checkbox" data-change="fb-log" data-fk="fb-log"' + (logTime() ? " checked" : "") + "> Somar " + min + " min de " + (conv ? "Conversa" : "Writing") + " ao tempo de estudo</label>";
   return h + '<button class="btn" type="submit">Salvar ' + (conv ? "conversa" : "correção") + "</button></form></section>";
 }
 
@@ -121,7 +122,7 @@ function scoreChart(sessions, keys, label){
 }
 function kindBlock(kind, title){
   const ss = sessionsFor(S.state.feedback, kind), lv = latestLevel(S.state.feedback, kind);
-  let h = '<div class="fb-kind"><div class="section-head"><h3>' + title + '</h3><span class="muted">' + ss.length + (ss.length === 1 ? " registro" : " registros") + (lv ? ' · nível mais recente <b>' + esc(lv.level) + "</b>" : "") + "</span></div>";
+  let h = '<div class="fb-kind"><div class="card-head"><h3>' + title + '</h3><span class="muted">' + ss.length + (ss.length === 1 ? " registro" : " registros") + (lv ? ' · nível mais recente <b>' + esc(lv.level) + "</b>" : "") + "</span></div>";
   if (!ss.some(e => Object.keys(e.crit).length)) return h + '<p class="muted">As notas de 0 a 5 aparecem aqui quando o feedback colado trouxer a linha “Scores”.</p></div>';
   h += scoreChart(ss.filter(e => Object.keys(e.crit).length), CRIT[kind], "Notas de " + title.toLowerCase() + " ao longo do tempo");
   const t = trend(S.state.feedback, kind);
@@ -173,7 +174,7 @@ export default {
   enter(){ d = fromHash(); },
   render(){
     if (!d) d = fromHash();
-    return '<div class="page-head"><a class="eyebrow" href="#mais">← Mais</a><h1>Diário de conversas e textos</h1><p class="lead">Cada conversa e cada texto corrigido no ChatGPT, com o feedback do fim. É aqui que dá para ver se a fala e a escrita estão subindo.</p></div>' +
+    return '<header class="page-head"><div><a class="eyebrow back" href="#mais">' + icon("back", 14) + 'Mais</a><h1>Diário de conversas e textos</h1><p class="lead">Cada conversa e cada texto corrigido no ChatGPT, com o feedback do fim. É aqui que dá para ver se a fala e a escrita estão subindo.</p></div></header>' +
       '<div class="grid-2">' + formHTML() + weekHTML() + "</div>" + progressHTML() + historyHTML();
   },
   actions: {

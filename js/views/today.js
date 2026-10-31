@@ -3,7 +3,7 @@ import { S, addLog, updateQuiet } from "../state/store.js";
 import { esc } from "../core/dom.js";
 import { icon } from "../core/icons.js";
 import { plural } from "../core/format.js";
-import { today, longDate, mondayOf } from "../core/date.js";
+import { today, longDate, mondayOf, addDays, DIAS } from "../core/date.js";
 import { toast } from "../core/toast.js";
 import { rerender } from "../core/rerender.js";
 import * as timer from "../core/study-timer.js";
@@ -46,9 +46,25 @@ function todayPlan(rw){
   return {tasks, list: plan.keys.map(k => tasks.find(x => x.k === k)).filter(Boolean)};
 }
 
+// minutes ring: a thin arc on a track, with a tick for every 10 minutes of the daily goal
 function ring(min, goal){
-  const r = 44, C = 2 * Math.PI * r, f = Math.min(1, goal ? min / goal : 0);
-  return '<div class="ring' + (f >= 1 ? " full" : "") + '" role="img" aria-label="' + min + " de " + goal + ' minutos hoje"><svg viewBox="0 0 104 104"><circle class="track" cx="52" cy="52" r="' + r + '" fill="none" stroke-width="10"/><circle class="val" cx="52" cy="52" r="' + r + '" fill="none" stroke-width="10" stroke-linecap="round" stroke-dasharray="' + C.toFixed(1) + '" stroke-dashoffset="' + (C * (1 - f)).toFixed(1) + '"/></svg><div class="ring-label"><b class="num">' + min + "</b><small>de " + goal + " min</small></div></div>";
+  const r = 46, C = 2 * Math.PI * r, f = Math.min(1, goal ? min / goal : 0);
+  const n = Math.max(1, Math.round(goal / 10)), tr = 55, TC = 2 * Math.PI * tr;
+  return '<div class="ring' + (f >= 1 ? " full" : "") + '" role="img" aria-label="' + min + " de " + goal + ' minutos hoje"><svg viewBox="0 0 120 120">' +
+    '<circle class="ticks" cx="60" cy="60" r="' + tr + '" fill="none" stroke-width="3" stroke-dasharray="1 ' + (TC / n - 1).toFixed(2) + '"/>' +
+    '<circle class="track" cx="60" cy="60" r="' + r + '" fill="none" stroke-width="5"/><circle class="val" cx="60" cy="60" r="' + r + '" fill="none" stroke-width="5" stroke-linecap="round" stroke-dasharray="' + C.toFixed(1) + '" stroke-dashoffset="' + (C * (1 - f)).toFixed(1) + '"/></svg>' +
+    '<div class="ring-label"><b class="num">' + min + "</b><small>de " + goal + " min</small></div></div>";
+}
+
+// this calendar week, Monday first: a dot per day, filled when you studied
+function weekRibbon(dayMap, t){
+  const mon = mondayOf(new Date());
+  let h = '<ol class="ribbon" aria-label="Dias estudados nesta semana">';
+  for (let i = 0; i < 7; i++){
+    const d = addDays(mon, i), on = dayMap.get(d) > 0, cls = (on ? "on" : "") + (d === t ? " today" : "") + (d > t ? " fut" : "");
+    h += '<li class="' + cls.trim() + '"><i></i><span>' + DIAS[(i + 1) % 7].charAt(0).toUpperCase() + '</span><span class="sr">' + (on ? "estudou" : "não estudou") + "</span></li>";
+  }
+  return h + "</ol>";
 }
 
 function nextStep(deck, list){
@@ -66,9 +82,10 @@ function nextStep(deck, list){
   return {eyebrow: "Dia completo", title: "Tudo feito por hoje. Muito bem!", sub: "Descanse, ou adiante uma tarefa da semana se estiver com energia.", btn: icon("plus", 18) + "Adiantar uma tarefa", act: "plan-more", tone: "sage"};
 }
 
+const ORNAMENT = '<svg class="plate-ornament" viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><circle cx="100" cy="100" r="92"/><circle cx="100" cy="100" r="70" stroke-dasharray="2 5"/><path d="M100 14v172M14 100h172M39 39l122 122M161 39 39 161" stroke-width=".6"/><path d="M100 24 86 100l14 76 14-76z" fill="currentColor" stroke="none"/></svg>';
 function heroHTML(n){
   const btn = !n.btn ? "" : n.href ? '<a class="btn" href="' + n.href + '">' + n.btn + "</a>" : '<button class="btn" type="button" data-act="' + n.act + '"' + (n.task ? ' data-task="' + esc(n.task) + '"' : "") + ">" + n.btn + "</button>";
-  return '<section class="card card-hero' + (n.tone === "sage" ? " card-sage" : "") + '" aria-labelledby="nextT"><p class="eyebrow">' + esc(n.eyebrow) + '</p><h2 id="nextT">' + esc(n.title) + '</h2><p class="sub">' + esc(n.sub) + "</p>" + btn + "</section>";
+  return '<section class="plate next' + (n.tone === "sage" ? " plate-done" : "") + '" aria-labelledby="nextT">' + ORNAMENT + '<p class="eyebrow">' + esc(n.eyebrow) + '</p><h2 id="nextT">' + esc(n.title) + '</h2><p class="sub">' + esc(n.sub) + "</p>" + btn + "</section>";
 }
 
 function cardsRow(deck){
@@ -89,12 +106,12 @@ function dailyWordsRow(){
 
 function manualForm(){
   const chips = SKILL_ORDER.map(k => '<label class="chip c-' + SKILLS[k].c + '"><input type="radio" name="logSkill" value="' + k + '"' + (k === lastSkill ? " checked" : "") + ' data-change="pick-skill"><span>' + SKILLS[k].n + "</span></label>").join("");
-  return '<details class="disc" data-det="manual-log"' + (isOpen("manual-log") ? " open" : "") + '><summary>' + icon("plus", 18) + 'Registrar estudo à mão</summary><div class="disc-body"><form data-submit="log-manual">' +
+  return '<details class="quiet manual" data-det="manual-log"' + (isOpen("manual-log") ? " open" : "") + '><summary>' + icon("plus", 16) + 'Registrar estudo à mão</summary><form data-submit="log-manual">' +
     '<div class="row"><div class="field"><label for="logDate">Data</label><input type="date" id="logDate" name="date" value="' + today() + '"></div><div class="field"><label for="logMin">Minutos</label><input type="number" id="logMin" name="min" min="1" max="600" inputmode="numeric" placeholder="30"></div></div>' +
     '<div class="quick">' + [15, 20, 30, 45, 60, 90].map(m => '<button class="btn btn-ghost btn-small" type="button" data-act="quick-min" data-min="' + m + '">' + m + " min</button>").join("") + "</div>" +
-    '<div class="field" style="margin-top:14px"><span class="lbl">Habilidade</span><div class="chips" role="radiogroup">' + chips + "</div></div>" +
+    '<div class="field mt-m"><span class="lbl">Habilidade</span><div class="chips" role="radiogroup">' + chips + "</div></div>" +
     '<div class="field"><label for="logNote">Nota (opcional)</label><input type="text" id="logNote" name="note" maxlength="140" placeholder="Ex.: episódio 4 do podcast"></div>' +
-    '<div class="row"><button class="btn" type="submit">Registrar</button><button class="btn btn-ghost" type="button" data-act="free-timer">' + icon("play", 14) + "Cronômetro livre</button></div></form></div></details>";
+    '<div class="row"><button class="btn" type="submit">Registrar</button><button class="btn btn-ghost" type="button" data-act="free-timer">' + icon("play", 14) + "Cronômetro livre</button></div></form></details>";
 }
 
 export default {
@@ -119,23 +136,24 @@ export default {
     else if (st.days > 0) lead = "Sua sequência é de " + plural(st.days, "dia", "dias") + ". Bora manter?";
     else lead = "Um passo pequeno hoje já conta.";
 
-    let h = '<div class="hello"><div><p class="eyebrow">' + esc(longDate(t)) + "</p><h1>" + greeting() + '</h1><p class="lead">' + esc(lead) + '</p></div><span class="pace pace-' + pace.tone + '">' + icon("route", 16) + "Semana " + rw + " · " + esc(p.name) + "</span></div>";
-    h += '<div class="grid-2"><div class="stack">';
+    const greet = greeting();
+    let h = '<header class="page-head hello"><div><p class="eyebrow">' + esc(longDate(t)) + '</p><h1 class="greet">' + greet + '<span class="dot">.</span></h1><p class="lead">' + esc(lead) + "</p></div>" +
+      '<a class="spine pace-' + pace.tone + '" href="#rota" style="--pc:var(' + p.col + ')"><span class="spine-k">Semana</span><b class="num">' + rw + '</b><span class="spine-p">' + esc(p.name) + "</span></a></header>";
+    h += '<div class="desk"><div class="desk-col desk-main">';
     h += heroHTML(nextStep(deck, plan.list));
 
-    h += '<section class="card" aria-labelledby="planT"><div class="section-head"><h2 id="planT">Plano de hoje</h2><span class="muted num">' + doneN + " de " + plan.list.length + (planMin ? " · ~" + planMin + " min" : "") + "</span></div>";
-    h += '<ul class="tasks">' + cardsRow(deck) + dailyWordsRow() + plan.list.map(x => taskHTML(x, {start: true, compact: true})).join("") + "</ul>";
-    if (!plan.list.length) h += '<p class="muted" style="margin:12px 0 0">Nenhuma tarefa da rota para hoje. As da semana já estão feitas.</p>';
-    h += '<div class="row" style="margin-top:14px"><button class="btn btn-ghost btn-small" type="button" data-act="plan-more">' + icon("plus", 14) + 'Puxar mais uma tarefa</button><a class="btn btn-ghost btn-small" href="#rota">Ver a semana inteira' + icon("arrow", 14) + "</a></div></section>";
-    h += manualForm();
+    h += '<section class="card notebook" aria-labelledby="planT"><div class="card-head"><h2 id="planT">Plano de hoje</h2><span class="muted num t-sm">' + doneN + " de " + plan.list.length + (planMin ? " · ~" + planMin + " min" : "") + "</span></div>";
+    h += '<ul class="tasks numbered">' + cardsRow(deck) + dailyWordsRow() + plan.list.map(x => taskHTML(x, {start: true, compact: true})).join("") + "</ul>";
+    if (!plan.list.length) h += '<p class="muted mt-s">Nenhuma tarefa da rota para hoje. As da semana já estão feitas.</p>';
+    h += '<div class="card-foot"><button class="more-link" type="button" data-act="plan-more">' + icon("plus", 15) + 'Puxar mais uma tarefa</button><a class="more-link" href="#rota">Ver a semana inteira' + icon("arrow", 15) + "</a></div></section>";
     h += "</div>";
 
-    h += '<div class="today-side">';
-    h += '<section class="card"><div class="ring-card">' + ring(minToday, goalDay) + '<div><div class="streak' + (st.days ? "" : " cold") + '">' + icon("flame", 22) + '<span class="num">' + plural(st.days, "dia seguido", "dias seguidos") + '</span></div><p class="streak-sub">' + (!st.days ? (st.studiedToday ? "Começou hoje. Volte amanhã para somar." : "Estude hoje para começar uma sequência.") + " Você tem 1 folga por semana." : st.restThisWeek ? "Folga desta semana já usada." : "Você tem 1 folga por semana sem perder a sequência.") + "</p></div></div></section>";
+    h += '<div class="desk-col desk-side">';
+    h += '<section class="card daycard" aria-label="Seu dia"><div class="day-top">' + ring(minToday, goalDay) + '<div class="day-txt"><div class="streak' + (st.days ? "" : " cold") + '">' + icon("flame", 18) + '<span class="num">' + plural(st.days, "dia seguido", "dias seguidos") + '</span></div><p class="streak-sub">' + (!st.days ? (st.studiedToday ? "Começou hoje. Volte amanhã para somar." : "Estude hoje para começar uma sequência.") + " Você tem 1 folga por semana." : st.restThisWeek ? "Folga desta semana já usada." : "Você tem 1 folga por semana sem perder a sequência.") + "</p></div></div>" + weekRibbon(dayMap, t) + "</section>";
     if (ph){
-      h += '<section class="card" aria-labelledby="phT"><p class="eyebrow" id="phT">Frase do dia</p><p class="phrase">' + highlight(ph.ex.en, ph.card.term) + '</p><details class="phrase-pt"><summary>Ver tradução</summary><p style="margin:6px 0 0">' + esc(ph.ex.pt) + '</p></details><div class="row" style="margin-top:10px">' + speakBtn(ph.ex.en, "Ouvir a frase") + '<span class="muted" style="font-size:14px">' + esc(ph.card.term) + (ph.card.translation ? " · " + esc(ph.card.translation) : "") + "</span></div></section>";
+      h += '<section class="card bookmark" aria-labelledby="phT"><p class="eyebrow" id="phT">Frase do dia</p><blockquote class="phrase">' + highlight(ph.ex.en, ph.card.term) + '</blockquote><details class="phrase-pt"><summary>Ver tradução</summary><p>' + esc(ph.ex.pt) + '</p></details><div class="phrase-foot">' + speakBtn(ph.ex.en, "Ouvir a frase") + '<span class="phrase-term"><b>' + esc(ph.card.term) + "</b>" + (ph.card.translation ? " · " + esc(ph.card.translation) : "") + "</span></div></section>";
     }
-    h += '<section class="card" aria-labelledby="logT"><h2 id="logT" style="font-size:19px">Hoje você registrou</h2>' + (logsToday.length ? '<ul class="loglist">' + logsToday.map(logLi).join("") + "</ul>" : '<p class="muted" style="margin:0">Nada ainda. Use “Começar” numa tarefa e o tempo entra aqui sozinho.</p>') + "</section>";
+    h += '<section class="card diary" aria-labelledby="logT"><div class="card-head"><h2 id="logT">Diário de hoje</h2>' + (logsToday.length ? '<span class="muted num t-sm">' + plural(logsToday.length, "registro", "registros") + "</span>" : "") + "</div>" + (logsToday.length ? '<ul class="loglist">' + logsToday.map(logLi).join("") + "</ul>" : '<p class="muted diary-empty">Nada ainda. Use “Começar” numa tarefa e o tempo entra aqui sozinho.</p>') + '<div class="card-foot">' + manualForm() + "</div></section>";
     h += "</div></div>";
     return h;
   },

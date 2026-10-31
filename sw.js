@@ -1,6 +1,6 @@
 // Offline support: network first (so a new version shows on the next reload), cache as fallback.
 // The page sends the list of files it loaded (see js/app/service-worker.js), so there is no precache list to maintain.
-const CACHE = "nb-v3";
+const CACHE = "nb-v4";
 const FONTS = /^https:\/\/fonts\.(googleapis|gstatic)\.com\//;
 
 self.addEventListener("install", e => {
