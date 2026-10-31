@@ -3,6 +3,7 @@
 import { addDays } from "../core/date.js";
 import { CHECKPOINTS, CHECKPOINT_SKILLS } from "../data/checkpoints.js";
 import { efLevel } from "./efset.js";
+import { speakMeasures } from "./speaking.js";
 
 const ISO = /^\d{4}-\d{2}-\d{2}$/;
 export const LEVEL_SCALE = ["pré-A1", "A1", "A2", "A2+", "B1", "B1+", "B2", "B2+", "C1", "C2"];
@@ -10,7 +11,9 @@ export const levelRank = l => LEVEL_SCALE.indexOf(String(l || "").trim());
 
 /* Where evidence comes from: `skills` it counts for, `strong` when it is independent of the study itself.
    With `pick`, a result's own `skill` wins (and "outro" counts only once it has one). ChatGPT is never strong.
-   Extension point: a new test type, like the periodic speaking test, only needs an entry here. */
+   `prefer`: among weak results, this one beats newer ones from other sources.
+   The speaking test is weak too (its level is ChatGPT's estimate from a transcript), but it is the fixed,
+   recorded format, so it is preferred over a Diário conversation. */
 export const SOURCES = {
   efset: {name: "EF SET", skills: ["list", "read"], strong: true},
   bc: {name: "British Council", skills: ["list", "read"], strong: true},
@@ -18,7 +21,8 @@ export const SOURCES = {
   outro: {name: "Outro", skills: [], pick: true, strong: true},
   gpt: {name: "ChatGPT examinador", skills: ["speak"], pick: true, strong: false},
   "diario-conv": {name: "Diário (conversa)", skills: ["speak"], strong: false},
-  "diario-writ": {name: "Diário (texto)", skills: ["writ"], strong: false}
+  "diario-writ": {name: "Diário (texto)", skills: ["writ"], strong: false},
+  fala: {name: "Teste de fala", skills: ["speak"], strong: false, prefer: true}
 };
 // the skills a test result counts for
 export function skillsOf(t){
@@ -27,8 +31,9 @@ export function skillsOf(t){
   return src.pick && CHECKPOINT_SKILLS.includes(t.skill) ? [t.skill] : src.skills;
 }
 
-// tests (Níveis) and Diário sessions as one evidence list: {skill, date, level, score, src, strong, ord}
-export function evidenceFrom(tests, feedback){
+/* tests (Níveis), Diário sessions and speaking tests as one evidence list: {skill, date, level, score, src, strong, ord}.
+   A speaking test counts once it has a CEFR estimate; `note` carries its measures. */
+export function evidenceFrom(tests, feedback, speak){
   const out = [];
   (tests || []).forEach((t, i) => {
     if (!t || !ISO.test(t.date) || !SOURCES[t.type]) return;
@@ -42,6 +47,13 @@ export function evidenceFrom(tests, feedback){
     const src = SOURCES["diario-" + (e && e.kind)];
     if (!src || !ISO.test(e.date) || levelRank(e.level) < 0) return;
     src.skills.forEach(skill => out.push({skill, date: e.date, level: e.level, score: null, src: "diario-" + e.kind, strong: false, ord: base + i}));
+  });
+  const base2 = out.length;
+  (speak || []).forEach((e, i) => {
+    if (!e || !ISO.test(e.date) || levelRank(e.cefr) < 0) return;
+    const m = speakMeasures(e);
+    const note = [m.readPct != null ? "leitura " + m.readPct + "%" : "", m.wpm != null ? m.wpm + " palavras/min" : ""].filter(Boolean).join(", ");
+    out.push({skill: "speak", date: e.date, level: e.cefr, score: null, src: "fala", strong: false, ord: base2 + i, note});
   });
   return out;
 }
@@ -61,14 +73,14 @@ export function meets(ev, target){
 const latestFirst = (a, b) => a.date < b.date ? 1 : a.date > b.date ? -1 : b.ord - a.ord;
 
 /* One row per skill: the latest independent result in the window around the anchor (a weak one only when
-   there is none), its status (met, below or none) and whether it is weak. Proven: all four met, none weak. */
+   there is none, a preferred source first), its status (met, below or none) and whether it is weak. Proven: all four met, none weak. */
 export function checkpointReport(cp, evidence, anchor){
   const from = addDays(anchor, -WINDOW.before), to = addDays(anchor, WINDOW.after);
   const near = evidence.filter(e => e.date >= from && e.date <= to);
   const rows = CHECKPOINT_SKILLS.map(skill => {
     const target = cp.targets[skill];
     const mine = near.filter(e => e.skill === skill).sort(latestFirst);
-    const ev = mine.find(e => e.strong) || mine[0] || null;
+    const ev = mine.find(e => e.strong) || mine.find(e => SOURCES[e.src].prefer) || mine[0] || null;
     return {skill, target, ev, weak: !!ev && !ev.strong, status: !ev ? "none" : meets(ev, target) ? "met" : "below"};
   });
   const met = rows.filter(r => r.status === "met" && !r.weak).length;
