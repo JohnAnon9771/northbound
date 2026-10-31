@@ -9,6 +9,7 @@ import { scoreFor, setScore } from "../domain/lesson-scores.js";
 import { currentRoadmapWeek } from "../domain/pace.js";
 import { taskByKey } from "./task-item.js";
 import { confetti } from "./confetti.js";
+import { reportFor } from "./checkpoint-card.js";
 
 export function logTask(task, min, note){
   const parts = task.mix ? splitMix(task.mix, min) : [[task.s, min]];
@@ -30,8 +31,10 @@ export function setDone(key, on, el){
   const after = currentRoadmapWeek();
   if (on && after > before){
     const ph = phaseOf(after) > phaseOf(before);
+    // a closed checkpoint week finished the content; the level may still lack evidence
+    const r = reportFor(before), gap = r && !r.proven ? " Conteúdo concluído, mas o " + r.level + " ainda não foi comprovado (" + r.met + " de 4 habilidades): veja o boletim." : "";
     confetti(null, true);
-    toast(ph ? "Começa a fase " + phaseOf(after) + ": " + PHASES[phaseOf(after)].name + "." : "Rumo à semana " + after + ".", [], {title: ph ? "Fase " + phaseOf(before) + " concluída!" : "Semana " + before + " fechada!", tone: "warm", ms: 6000});
+    toast((ph ? "Começa a fase " + phaseOf(after) + ": " + PHASES[phaseOf(after)].name + "." : "Rumo à semana " + after + ".") + gap, gap ? [{label: "Ver boletim", fn: () => { location.hash = "#niveis"; }}] : [], {title: ph ? "Fase " + phaseOf(before) + " concluída!" : "Semana " + before + " fechada!", tone: "warm", ms: 6000});
     return true;
   }
   if (on && el) confetti(el);
