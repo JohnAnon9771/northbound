@@ -2,8 +2,9 @@
 // (prompts 2, 3 and 4) and turns the logged sessions into progress. Pure, so it runs under node --test.
 import { CRIT } from "../state/schema.js";
 
-export const CRIT_NAMES = {flu: "Fluência", gram: "Gramática", voc: "Vocabulário", ta: "Tarefa", org: "Organização"};
-const CRIT_WORDS = [[/fluen/i, "flu"], [/grammar/i, "gram"], [/vocab|lexi/i, "voc"], [/task/i, "ta"], [/organi[sz]|coheren/i, "org"]];
+export const CRIT_NAMES = {flu: "Fluência", gram: "Gramática", voc: "Vocabulário", ta: "Tarefa", org: "Organização", coh: "Coerência", pron: "Pronúncia"};
+// "coherence" is organisation in a text and coherence in speech: only the kind's own keys are tried
+const CRIT_WORDS = [[/fluen/i, "flu"], [/grammar/i, "gram"], [/vocab|lexi/i, "voc"], [/task/i, "ta"], [/organi[sz]|coheren/i, "org"], [/coheren|argument|discourse/i, "coh"], [/pronunc/i, "pron"]];
 const ARROW = /\s*(?:→|->|=>|⟶|➔|➜)\s*/;
 const HEAD = /^(?:\d+[.)]\s*)?(?:errors?|mistakes?|corrections?)\b[^:]{0,30}:?\s*$/i;
 // a section title: bold or markdown heading, or a line ending in ":" (and no correction in it)
@@ -36,8 +37,8 @@ export function parseFeedback(text, kind){
     const re = /([A-Za-z][A-Za-z &]{1,40}?)\s*[:=\-–]?\s*(\d(?:[.,]5)?)\s*\/\s*5/g;
     let m;
     while ((m = re.exec(l.replace(/\*\*/g, "")))){
-      const w = CRIT_WORDS.find(c => c[0].test(m[1]));
-      if (w && keys.indexOf(w[1]) > -1 && out.crit[w[1]] == null) out.crit[w[1]] = Number(m[2].replace(",", "."));
+      const w = CRIT_WORDS.find(c => keys.indexOf(c[1]) > -1 && c[0].test(m[1]));
+      if (w && out.crit[w[1]] == null) out.crit[w[1]] = Number(m[2].replace(",", "."));
     }
   });
   const g = lines.map(l => l.replace(/\*\*/g, "").match(/^\W*grammar point(?: to review)?\s*[:\-–]\s*(.+)$/i)).find(Boolean);

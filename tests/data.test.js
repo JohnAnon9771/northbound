@@ -8,9 +8,11 @@ import { SKILLS, SKILL_ORDER, CATEGORY_NAMES, WEEK_SPLIT, skillOf } from "../js/
 import { CAN_DO } from "../js/data/can-do.js";
 import { PROMPTS } from "../js/data/prompts.js";
 import { ACHIEVEMENTS } from "../js/domain/achievements.js";
+import { RUBRIC, READ_TEXTS, TOPICS } from "../js/data/speaking-test.js";
+import { CRIT } from "../js/state/schema.js";
 
 // screen ids plus the old aliases the router still accepts (#roteiro, #semana, #flashcards)
-const ROUTES = ["hoje", "palavras", "estudo", "rota", "progresso", "mais", "niveis", "rotinas", "ajustes", "roteiro", "semana", "flashcards"];
+const ROUTES = ["hoje", "palavras", "estudo", "rota", "progresso", "mais", "niveis", "rotinas", "ajustes", "fala", "roteiro", "semana", "flashcards"];
 const okUrl = u => u == null || /^https:\/\/\S+$/.test(u) || (u[0] === "#" && ROUTES.includes(u.slice(1)));
 
 test("every lesson has a known skill, level index and https link", () => {
@@ -89,4 +91,19 @@ test("can-do items, prompts and achievements have unique ids", () => {
   assert.match(PROMPTS[6][1], /\[\.\.\.\]/);   // filled with your recurring errors
   const ach = ACHIEVEMENTS.map(a => a.id);
   assert.equal(new Set(ach).size, ach.length);
+});
+
+test("speaking test: the rubric covers the test's criteria and every level has a text and topics", () => {
+  assert.deepEqual(RUBRIC.map(r => r.k), CRIT.spk);
+  RUBRIC.forEach(r => { assert.ok(r.n); assert.equal(r.d.length, 3); });
+  assert.deepEqual(Object.keys(READ_TEXTS), ["A2", "B1", "B2", "C1"]);
+  assert.deepEqual(Object.keys(TOPICS), ["A2", "B1", "B2", "C1"]);
+  // read texts are spoken word by word: no digits or hyphens, which recognition writes differently
+  Object.values(READ_TEXTS).forEach(t => { assert.doesNotMatch(t, /[\d-]/); const n = t.split(/\s+/).length; assert.ok(n >= 80 && n <= 115, n + " words"); });
+  const keys = Object.values(TOPICS).flat().map(t => t.k);
+  assert.equal(new Set(keys).size, keys.length);
+  Object.values(TOPICS).forEach(list => {
+    assert.ok(list.length >= 3);
+    list.forEach(t => { assert.ok(t.t); assert.equal(t.q.length, 2); assert.equal(t.hints.length, 3); });
+  });
 });

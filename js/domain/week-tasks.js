@@ -3,12 +3,15 @@ import { S } from "../state/store.js";
 import { cached } from "../state/memo.js";
 import { LESSONS, LINKS, LESSON_INDEXES } from "../data/lessons.js";
 import { PHASES, phaseOf } from "../data/phases.js";
-import { task, lessonTask, PHASE_EXTRAS, WEEKS, TASK_NOTES, levelTestTask, writeImproveTask, efsetTask, canDoTask } from "../data/weeks.js";
+import { task, lessonTask, PHASE_EXTRAS, WEEKS, TASK_NOTES, levelTestTask, writeImproveTask, efsetTask, canDoTask, speakTestTask } from "../data/weeks.js";
+import { isSpeakWeek } from "./speaking.js";
 import { skillOf } from "../data/skills.js";
 
 /* Weeks before revFrom keep the task list they had when the review upgrade arrived,
    so weeks already counted as done never lose that status. */
 const revFromOf = route => route.revFrom == null ? 9999 : route.revFrom;
+// same for the speaking test: it only joins weeks from spFrom on, so closed weeks don't reopen
+const speakOn = (n, route) => n >= (route.spFrom == null ? 9999 : route.spFrom) && isSpeakWeek(n);
 const gramOf = m => (WEEKS[m] ? WEEKS[m].items : []).filter(i => typeof i === "string" && LESSONS[i].s === "gram");
 const listOf = m => (WEEKS[m] ? WEEKS[m].items : []).filter(i => typeof i === "string" && LESSONS[i].s === "list");
 function prevWeeks(n, skip){ const out = []; for (let m = n - 1; m >= 1 && out.length < 4; m--){ if (!skip[m]) out.push(m); } return out; }
@@ -29,6 +32,7 @@ export function buildWeek(n, route){
       task(k+"-in","input","Input livre: série, podcast ou YouTube sem legenda em português",70,null,"",{vol:true})
     ];
     if ((n - 52) % 12 === 0) tasks.push(task(k+"-ef","test","EF SET 50 min, meta 61 a 70 (C1)",60,LINKS.efset,"",{ms:true}));
+    if (speakOn(n, route)) tasks.push(speakTestTask(n));
     return tasks;
   }
   const d = WEEKS[n], p = phaseOf(n), px = PHASE_EXTRAS[p];
@@ -74,6 +78,7 @@ export function buildWeek(n, route){
     else if (m.indexOf("ef:") === 0) tasks.push(efsetTask(n, m.slice(3)));
     else if (m.indexOf("cd:") === 0) tasks.push(canDoTask(n, m.slice(3)));
   });
+  if (speakOn(n, route)) tasks.push(speakTestTask(n));
   return tasks;
 }
 

@@ -352,3 +352,46 @@ h1 .of{font-style:italic;font-weight:300;color:var(--muted)}
 .fb-hist details{margin-top:8px;font-size:var(--fs-sm)}
 .fb-hist summary{cursor:pointer;color:var(--accent-text);font-size:var(--fs-xs);font-weight:600;width:max-content}
 .fb-raw{font-size:var(--fs-sm);margin-top:8px;white-space:pre-line}
+
+/* ================= Fala: the 4-weekly speaking test ================= */
+.sp-steps{margin:4px 0 16px;padding-left:20px;font-size:var(--fs-sm);color:var(--ink-2)}
+.sp-steps li{margin:0 0 6px}
+.sp-next .note,.sp-flow .note{margin:0 0 16px}
+.sp-flow h3{margin:8px 0 6px}
+.sp-text{font-family:var(--font-display);font-size:var(--fs-lg);line-height:1.7;background:var(--surface-2);border-radius:var(--r);padding:14px 18px;margin:10px 0 14px;max-width:none}
+.sp-miss{background:transparent;color:inherit;text-decoration:underline wavy var(--danger);text-underline-offset:4px}
+.sp-score{margin:6px 0 0;font-size:var(--fs-sm);color:var(--muted)}
+.sp-score b{font-family:var(--font-display);font-size:32px;font-weight:400;color:var(--ink);margin-right:6px}
+.sp-topic{font-family:var(--font-display);font-size:var(--fs-xl);line-height:1.35;margin:6px 0 8px}
+.sp-q{align-items:center;flex-wrap:nowrap}
+.sp-q .sp-topic{flex:1;margin:0}
+.sp-hints{margin:0 0 14px;padding-left:20px;color:var(--muted);font-size:var(--fs-sm)}
+.sp-rec{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:12px 14px;border-radius:var(--r);background:var(--accent-soft);margin:12px 0 0}
+.sp-rec b{font-size:var(--fs-xl);font-variant-numeric:tabular-nums}
+.sp-rec .btn{margin-left:auto}
+.sp-dot{width:10px;height:10px;border-radius:50%;background:var(--danger);animation:sp-pulse 1.2s ease-in-out infinite}
+@keyframes sp-pulse{50%{opacity:.3}}
+@media (prefers-reduced-motion:reduce){ .sp-dot{animation:none} }
+.sp-live{font-size:var(--fs-sm);color:var(--muted);min-height:1.6em;margin:8px 0 0;max-width:none}
+.sp-measures{margin:4px 0 16px}
+.sp-review details{margin:0 0 12px;font-size:var(--fs-sm)}
+.sp-review summary,.sp-rubric summary{cursor:pointer;color:var(--accent-text);font-size:var(--fs-xs);font-weight:600;width:max-content;max-width:100%}
+.sp-rubric dl{margin:10px 0 0;font-size:var(--fs-sm)}
+.sp-rubric dt{font-weight:600;margin:10px 0 2px}
+.sp-rubric dd{margin:0 0 2px;color:var(--ink-2)}
+.sp-rubric dd b{display:inline-block;width:16px;color:var(--accent-text)}
+.sp-review audio,.sp-players audio,.sp-cmp audio{width:100%;max-width:340px;height:36px;display:block}
+.sp-review .field audio{margin-bottom:6px}
+.sp-noaudio{font-size:var(--fs-xs)}
+.sp-cmp{display:grid;grid-template-columns:max-content minmax(0,1fr) minmax(0,1fr);gap:10px 16px;align-items:center}
+.sp-cmp-head{display:flex;flex-direction:column;gap:4px;font-size:var(--fs-xs)}
+.sp-cmp-label{font-size:var(--fs-xs);font-weight:600;color:var(--muted)}
+.sp-cmp-cell{min-width:0;font-size:var(--fs-xs)}
+@media (max-width:640px){
+  .sp-cmp{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .sp-cmp > :nth-child(3n+1){grid-column:1 / -1}
+  .sp-cmp > .sp-cmp-head:first-child{display:none}
+}
+.sp-hist-acts{margin-top:10px;gap:8px}
+.sp-players{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px 16px;margin-top:12px}
+.sp-players .lbl{display:block;margin-bottom:4px}

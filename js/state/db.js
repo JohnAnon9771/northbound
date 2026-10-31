@@ -3,7 +3,8 @@
 //   logs     study sessions, keyPath id, index date
 //   cards    flashcards, keyPath id, index due
 //   reviews  one row per answer, autoIncrement id, indexes cardId and date
-const NAME = "northbound", VERSION = 1;
+//   audio    speaking test recordings {id, testId, part, mime, sec, blob}, keyPath id (v2)
+const NAME = "northbound", VERSION = 2;
 let dbp = null;
 
 export function open(){
@@ -20,6 +21,7 @@ export function open(){
         const r = db.createObjectStore("reviews", {keyPath: "id", autoIncrement: true});
         r.createIndex("cardId", "cardId"); r.createIndex("date", "date");
       }
+      if (e.oldVersion < 2) db.createObjectStore("audio", {keyPath: "id"});
     };
     req.onsuccess = () => resolve(req.result);
     req.onerror = () => reject(req.error);

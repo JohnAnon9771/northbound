@@ -19,12 +19,13 @@ import levels from "../views/levels.js";
 import routines from "../views/routines.js";
 import settings from "../views/settings.js";
 import journal from "../views/journal.js";
+import speaking from "../views/speaking.js";
 
-const VIEWS = [today, words, study, route, progress, more, levels, routines, settings, journal];
+const VIEWS = [today, words, study, route, progress, more, levels, routines, settings, journal, speaking];
 const NAV = [["hoje", "Hoje", "home"], ["palavras", "Palavras", "cards"], ["rota", "Rota", "route"], ["progresso", "Progresso", "chart"], ["mais", "Mais", "more"]];
 // old links from the single-page version and task links
 const ALIAS = {"": "hoje", semana: "rota", roteiro: "rota", flashcards: "palavras"};
-const PARENT = {niveis: "mais", rotinas: "mais", ajustes: "mais", diario: "mais", estudo: "palavras"};
+const PARENT = {niveis: "mais", rotinas: "mais", ajustes: "mais", diario: "mais", fala: "mais", estudo: "palavras"};
 
 export const root = $("#app");
 let view = null, enterT = 0;

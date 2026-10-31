@@ -1,4 +1,6 @@
 // Backup file format: what "Baixar backup" writes and what "Restaurar" accepts.
+// The speaking test recordings go in a file of their own (see toAudioBackup): about 1 MB per test,
+// which would make the everyday backup tens of times bigger.
 import { normalizeState, normalizeLog } from "./schema.js";
 
 const APP = "northbound", VERSION = 2;
@@ -23,4 +25,17 @@ export function fromBackup(o){
   const logs = [];
   Object.keys(o.logs || {}).forEach(m => { (Array.isArray(o.logs[m]) ? o.logs[m] : []).forEach(e => { const n = normalizeLog(e); if (n) logs.push(n); }); });
   return {state: normalizeState(o), logs, cards: [], reviews: []};
+}
+
+/* Recordings file. rows: {id, testId, part, mime, sec, data}, data being the audio in base64
+   (the browser side converts to and from Blob). Restoring it adds recordings and replaces none of the rest. */
+const AUDIO_APP = "northbound-audio";
+export const isAudioBackup = o => !!o && o.app === AUDIO_APP;
+export function toAudioBackup(rows){
+  return {app: AUDIO_APP, v: 1, exported: new Date().toISOString(), audio: rows.map(r => ({id: r.id, testId: r.testId, part: r.part, mime: r.mime, sec: r.sec, data: r.data}))};
+}
+export function fromAudioBackup(o){
+  if (!isAudioBackup(o) || !Array.isArray(o.audio)) throw new Error("invalid");
+  return o.audio.filter(r => r && typeof r.id === "string" && typeof r.data === "string" && /^audio\//.test(r.mime || ""))
+    .map(r => ({id: r.id, testId: String(r.testId || ""), part: String(r.part || ""), mime: r.mime, sec: Number(r.sec) || 0, data: r.data}));
 }

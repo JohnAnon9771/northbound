@@ -12,7 +12,7 @@ export function blankState(){
     v: STATE_VERSION,
     settings: {start: mondayOf(new Date()), goalH: 18, targetWeeks: 52, accent: "en-GB", newPerDay: null, mmEmail: "", claudeModel: "claude-haiku-5-5"},
     done: {}, skip: {}, cando: {}, errors: [], tests: [], scores: {}, revFrom: null,
-    achievements: {}, lastBackup: null, dayPlan: null, wl: blankWl(), feedback: []
+    achievements: {}, lastBackup: null, dayPlan: null, wl: blankWl(), feedback: [], speak: [], spFrom: null
   };
 }
 
@@ -32,7 +32,7 @@ export function normalizeState(o){
     const arr = Array.isArray(o.scores[id]) ? o.scores[id].filter(e => e && e.k && ISO.test(e.d) && e.p >= 0 && e.p <= 100).map(e => ({k: String(e.k), d: e.d, p: Math.round(Number(e.p))})) : [];
     if (arr.length) scores[id] = arr;
   });
-  const rf = Number(o.revFrom);
+  const rf = Number(o.revFrom), sf = Number(o.spFrom);
   const plan = o.dayPlan && ISO.test(o.dayPlan.date) && Array.isArray(o.dayPlan.keys) ? {date: o.dayPlan.date, keys: o.dayPlan.keys.map(String)} : null;
   return {
     v: STATE_VERSION, settings: s,
@@ -44,16 +44,20 @@ export function normalizeState(o){
     lastBackup: typeof o.lastBackup === "string" ? o.lastBackup : null,
     dayPlan: plan,
     wl: normalizeWl(o.wl),
-    feedback: Array.isArray(o.feedback) ? o.feedback.map(normalizeFeedback).filter(Boolean) : []
+    feedback: Array.isArray(o.feedback) ? o.feedback.map(normalizeFeedback).filter(Boolean) : [],
+    speak: Array.isArray(o.speak) ? o.speak.map(normalizeSpeak).filter(Boolean) : [],
+    spFrom: o.spFrom != null && sf >= 1 && sf < 1000 ? Math.floor(sf) : null
   };
 }
 
 // One ChatGPT session in the Diário: a conversation ("conv") or a corrected text ("writ").
-export const CRIT = {conv: ["flu", "gram", "voc"], writ: ["ta", "org", "gram", "voc"]};
+// "coh" (coherence and argument) came later, so older conversations simply lack it.
+// "spk" is the 4-weekly speaking test (see normalizeSpeak), not a Diário kind.
+export const CRIT = {conv: ["flu", "gram", "voc", "coh"], writ: ["ta", "org", "gram", "voc"], spk: ["flu", "pron", "voc", "gram", "coh"]};
 const LEVEL = /^[ABC][12]\+?$/;
 const str = (v, n) => typeof v === "string" ? v.trim().slice(0, n) : "";
 export function normalizeFeedback(e){
-  if (!e || !CRIT[e.kind] || !ISO.test(e.date)) return null;
+  if (!e || (e.kind !== "conv" && e.kind !== "writ") || !ISO.test(e.date)) return null;
   const crit = {};
   CRIT[e.kind].forEach(k => { const v = Number(e.crit && e.crit[k]); if (e.crit && e.crit[k] != null && e.crit[k] !== "" && v >= 0 && v <= 5) crit[k] = Math.round(v * 2) / 2; });
   const feel = Math.round(Number(e.feel));
@@ -63,6 +67,34 @@ export function normalizeFeedback(e){
     feel: e.kind === "conv" && feel >= 1 && feel <= 5 ? feel : null,
     level: LEVEL.test(e.level || "") ? e.level : "",
     crit,
+    errs: Array.isArray(e.errs) ? e.errs.filter(x => x && str(x.wrong, 160) && str(x.right, 160)).slice(0, 20).map(x => ({wrong: str(x.wrong, 160), right: str(x.right, 160)})) : [],
+    grammar: str(e.grammar, 160), raw: str(e.raw, 6000), ts: Number(e.ts) || 0
+  };
+}
+
+// One speaking test: the four recorded parts (read aloud, monologue, two follow-ups) with what speech
+// recognition heard, the measures taken when it was recorded, and the rubric scores added afterwards.
+// The audio itself lives in the "audio" store; a part only keeps its id.
+export const SPEAK_PARTS = ["read", "mono", "f1", "f2"];
+const int = (v, max) => Number(v) >= 0 ? Math.min(max, Math.round(Number(v))) : 0;
+export function normalizeSpeak(e){
+  if (!e || !ISO.test(e.date) || !/^(A2|B1|B2|C1)$/.test(e.level || "")) return null;
+  const crit = {};
+  CRIT.spk.forEach(k => { const v = Number(e.crit && e.crit[k]); if (e.crit && e.crit[k] != null && e.crit[k] !== "" && v >= 0 && v <= 5) crit[k] = Math.round(v * 2) / 2; });
+  const parts = {};
+  SPEAK_PARTS.forEach(k => {
+    const p = e.parts && e.parts[k];
+    if (!p || typeof p !== "object") return;
+    // n: words recognised (null when the browser had no speech recognition)
+    const out = {sec: int(p.sec, 900), text: str(p.text, 4000), n: p.n == null ? null : int(p.n, 5000), audio: str(p.audio, 40)};
+    if (k === "read" && Number(p.total) > 0) Object.assign(out, {total: int(p.total, 1000), hit: Math.min(int(p.hit, 1000), int(p.total, 1000))});
+    parts[k] = out;
+  });
+  const wk = Number(e.week);
+  return {
+    id: String(e.id || uid()), date: e.date, week: wk >= 1 && wk < 1000 ? Math.floor(wk) : null, task: str(e.task, 40),
+    level: e.level, topic: str(e.topic, 40), parts, crit,
+    cefr: LEVEL.test(e.cefr || "") ? e.cefr : "",
     errs: Array.isArray(e.errs) ? e.errs.filter(x => x && str(x.wrong, 160) && str(x.right, 160)).slice(0, 20).map(x => ({wrong: str(x.wrong, 160), right: str(x.right, 160)})) : [],
     grammar: str(e.grammar, 160), raw: str(e.raw, 6000), ts: Number(e.ts) || 0
   };

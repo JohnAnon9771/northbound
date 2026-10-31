@@ -25,6 +25,8 @@ async function boot(){
   if (!persistent) toast("Não consegui abrir o armazenamento do navegador (modo privado?). Nada será salvo.");
   // the week you were on when this version arrived; earlier weeks keep their old task list
   if (S.state.revFrom == null) updateQuiet(s => { s.revFrom = hasContent() ? Math.min(currentRoadmapWeek(), 999) : 1; });
+  // same for the speaking test, which arrived later
+  if (S.state.spFrom == null) updateQuiet(s => { s.spFrom = hasContent() ? Math.min(currentRoadmapWeek(), 999) : 1; });
   checkAchievements(true);
   subscribe(() => {
     render();

@@ -92,3 +92,14 @@ test("repeated errors count sessions, not lines, and grammar topics are tallied"
   assert.deepEqual(grammarTop(list), [{t: "Past simple", n: 2}, {t: "Present simple", n: 1}]);
   assert.match(insights(list, {done: 3, goal: 3})[0], /Meta de conversas da semana cumprida/);
 });
+
+test("coherence: its own score in conversations, organisation in texts, absent in old entries", () => {
+  assert.deepEqual(parseFeedback("Scores: fluency 3/5, grammar 2/5, vocabulary 3/5, coherence 2.5/5", "conv").crit, {flu: 3, gram: 2, voc: 3, coh: 2.5});
+  assert.deepEqual(parseFeedback("Coherence and argument: 4/5", "conv").crit, {coh: 4});
+  assert.deepEqual(parseFeedback("Coherence and cohesion: 4/5", "writ").crit, {org: 4});
+  assert.deepEqual(parseFeedback("Pronunciation 3/5, coherence 3/5", "spk").crit, {pron: 3, coh: 3});
+  const old = s("2026-09-01", {flu: 2, gram: 2, voc: 2}), now = s("2026-09-20", {flu: 3, gram: 3, voc: 3, coh: 3});
+  assert.deepEqual(old.crit, {flu: 2, gram: 2, voc: 2});
+  assert.deepEqual(trend([old, now], "conv", 1).map(x => [x.k, x.now, x.before]), [["flu", 3, 2], ["gram", 3, 2], ["voc", 3, 2], ["coh", 3, null]]);
+  assert.equal(normalizeFeedback({kind: "spk", date: "2026-09-01"}), null);
+});
