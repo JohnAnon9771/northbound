@@ -8,8 +8,13 @@ import { today, shortDate } from "../core/date.js";
 import { toast } from "../core/toast.js";
 import { CAN_DO } from "../data/can-do.js";
 import { efLevel } from "../domain/efset.js";
+import { SKILLS } from "../data/skills.js";
+import { CHECKPOINTS, CHECKPOINT_SKILLS } from "../data/checkpoints.js";
+import { skillsOf } from "../domain/checkpoint-report.js";
+import { currentRoadmapWeek } from "../domain/pace.js";
+import { reportHTML } from "../ui/checkpoint-card.js";
 
-const TTYPE = {efset: "EF SET 50 min", bc: "British Council level test", wi: "Write & Improve", gpt: "ChatGPT examinador", outro: "Outro"};
+const TTYPE = {efset: "EF SET 50 min", bc: "British Council level test", wi: "Write & Improve", gpt: "ChatGPT examinador", outro: "Outro (professor, prova oficial)"};
 const LEVELS = ["A1", "A2", "A2+", "B1", "B1+", "B2", "B2+", "C1", "C2"];
 
 function efChart(ef){
@@ -31,6 +36,7 @@ function formHTML(){
     '<div class="field"><label for="tDate">Data</label><input type="date" id="tDate" name="date" value="' + today() + '"></div></div>' +
     '<div class="row"><div class="field"><label for="tScore">Pontuação</label><input type="text" id="tScore" name="score" placeholder="Ex.: 44 (EF SET, 0 a 100)"></div>' +
     '<div class="field"><label for="tLevel">Nível CEFR</label><select id="tLevel" name="level"><option value="">Automático (EF SET)</option>' + LEVELS.map(l => "<option>" + l + "</option>").join("") + "</select></div></div>" +
+    '<div class="field"><label for="tSkill">Habilidade</label><select id="tSkill" name="skill"><option value="">Automática (pelo teste)</option>' + CHECKPOINT_SKILLS.map(k => '<option value="' + k + '">' + SKILLS[k].n + "</option>").join("") + '</select><p class="hint">Em “Outro”, escolha a habilidade para o resultado entrar no boletim.</p></div>' +
     '<div class="field"><label for="tNote">Nota (opcional)</label><input type="text" id="tNote" name="note" maxlength="140" placeholder="Ex.: listening melhor que reading"></div>' +
     '<button class="btn" type="submit">Salvar resultado</button></form></section>';
 }
@@ -42,11 +48,18 @@ function testsHTML(){
   else {
     const ef = S.state.tests.filter(t => t.type === "efset" && isFinite(Number(t.score)) && String(t.score).trim() !== "").sort((a, b) => a.date < b.date ? -1 : 1);
     if (ef.length) h += '<div class="scroll">' + efChart(ef) + "</div>";
-    h += '<div class="scroll"><table class="table"><thead><tr><th>Data</th><th>Teste</th><th>Resultado</th><th>Nível</th><th>Nota</th><th><span class="sr">Ações</span></th></tr></thead><tbody>';
-    tests.forEach(t => { h += '<tr><td class="num">' + esc(shortDate(t.date)) + "</td><td>" + esc(TTYPE[t.type] || t.type) + '</td><td class="num">' + esc(t.score || "–") + "</td><td><b>" + esc(t.level || "–") + '</b></td><td class="muted">' + esc(t.note || "") + '</td><td><button class="x" type="button" data-act="test-del" data-id="' + esc(t.id) + '" aria-label="Apagar resultado">×</button></td></tr>'; });
+    h += '<div class="scroll"><table class="table"><thead><tr><th>Data</th><th>Teste</th><th>Resultado</th><th>Nível</th><th>Habilidade</th><th>Nota</th><th><span class="sr">Ações</span></th></tr></thead><tbody>';
+    tests.forEach(t => { h += '<tr><td class="num">' + esc(shortDate(t.date)) + "</td><td>" + esc(TTYPE[t.type] || t.type) + '</td><td class="num">' + esc(t.score || "–") + "</td><td><b>" + esc(t.level || "–") + "</b></td><td>" + esc(skillsOf(t).map(k => SKILLS[k].n).join(", ") || "–") + '</td><td class="muted">' + esc(t.note || "") + '</td><td><button class="x" type="button" data-act="test-del" data-id="' + esc(t.id) + '" aria-label="Apagar resultado">×</button></td></tr>'; });
     h += "</tbody></table></div>";
   }
   return h + '<p class="hint">Faixas oficiais do EF SET: A2 31 a 40, B1 41 a 50, B2 51 a 60, C1 61 a 70.</p></section>';
+}
+
+// the last checkpoint reached, else the next one with its targets
+function reportCard(){
+  const rw = currentRoadmapWeek(), ws = Object.keys(CHECKPOINTS).map(Number);
+  const n = ws.filter(w => w <= rw).pop() || ws.find(w => w > rw);
+  return '<section class="card section" aria-label="Boletim">' + reportHTML(n) + "</section>";
 }
 
 function candoHTML(){
@@ -67,19 +80,19 @@ export default {
   id: "niveis",
   title: "Níveis e testes",
   render(){
-    let h = '<header class="page-head"><div><a class="eyebrow back" href="#mais">' + icon("back", 14) + 'Mais</a><h1>Níveis e testes</h1><p class="lead">Registre cada teste para acompanhar a tendência. O EF SET e o level test do British Council medem compreensão e gramática; fala e escrita ficam com o Write & Improve, o ChatGPT e as listas “can-do”.</p></div></header>';
+    let h = '<header class="page-head"><div><a class="eyebrow back" href="#mais">' + icon("back", 14) + 'Mais</a><h1>Níveis e testes</h1><p class="lead">Registre cada teste para acompanhar a tendência. O EF SET e o level test do British Council medem compreensão e gramática, e o Write & Improve mede a escrita. A nota do ChatGPT conta como evidência fraca: para comprovar a fala, registre a avaliação de um professor ou de uma prova oficial em “Outro”.</p></div></header>' + reportCard();
     h += '<div class="grid-2">' + formHTML() + testsHTML() + "</div>";
     return h + candoHTML();
   },
   actions: {
     "test-add"(form){
       const f = new FormData(form);
-      const type = String(f.get("type")), score = String(f.get("score") || "").trim();
+      const type = String(f.get("type")), skill = String(f.get("skill") || ""), score = String(f.get("score") || "").trim();
       let level = String(f.get("level") || "");
       if (!level && type === "efset") level = efLevel(score);
       if (!score && !level){ toast("Informe a pontuação ou o nível."); return; }
-      update(s => { s.tests.push({id: uid(), type, date: String(f.get("date")) || today(), score, level, note: String(f.get("note") || "").trim()}); });
-      toast("Resultado salvo.");
+      update(s => { s.tests.push(Object.assign({id: uid(), type, date: String(f.get("date")) || today(), score, level, note: String(f.get("note") || "").trim()}, skill ? {skill} : {})); });
+      toast(type === "outro" && !skill ? "Resultado salvo. Sem a habilidade, ele não entra no boletim." : "Resultado salvo.");
     },
     "test-del"(el){
       const x = S.state.tests.find(t => t.id === el.dataset.id);

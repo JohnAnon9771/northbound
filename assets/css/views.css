@@ -395,3 +395,22 @@ h1 .of{font-style:italic;font-weight:300;color:var(--muted)}
 .sp-hist-acts{margin-top:10px;gap:8px}
 .sp-players{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px 16px;margin-top:12px}
 .sp-players .lbl{display:block;margin-bottom:4px}
+
+/* ================= Checkpoint report (boletim) ================= */
+.report{margin:14px 0 4px;padding:14px 16px;border:1px solid var(--rule);border-radius:var(--r);background:var(--surface)}
+.card > .report{margin:0;padding:0;border:0;background:none}
+.rep-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 12px}
+.rep-head h3{margin:0;font-size:var(--fs-md)}
+.rep-rows{list-style:none;margin:12px 0 0;padding:0}
+.rep-row{display:grid;grid-template-columns:minmax(80px,auto) 1fr;gap:2px 12px;align-items:baseline;padding:10px 0;border-top:1px solid var(--hairline)}
+.rep-skill{font-weight:700;font-size:var(--fs-sm)}
+.rep-badge{justify-self:start;font-size:var(--fs-2xs);font-weight:700;letter-spacing:var(--tracking-caps);text-transform:uppercase;padding:2px 8px;border-radius:var(--r-pill);background:var(--surface-2);color:var(--ink-2)}
+.rep-met .rep-badge{background:var(--moss-soft);color:var(--moss)}
+.rep-below .rep-badge{background:var(--leather-soft);color:var(--leather)}
+.rep-weak .rep-badge{background:var(--surface-2);color:var(--moss);box-shadow:inset 0 0 0 1px var(--moss-soft)}
+.rep-ev,.rep-tip{grid-column:2;font-size:var(--fs-sm);color:var(--muted)}
+.rep-tip{color:var(--ink-2)}
+.proof{display:flex;flex-wrap:wrap;gap:6px 18px;margin:10px 0 0;font-size:var(--fs-sm);color:var(--muted)}
+.proof span::before{content:"○ ";color:var(--pc)}
+.proof span.on::before{content:"● "}
+.proof span.on{color:var(--ink-2)}

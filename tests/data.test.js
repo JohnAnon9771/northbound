@@ -6,6 +6,9 @@ import { WEEKS, PHASE_EXTRAS, DEFAULT_MIN, lessonTask } from "../js/data/weeks.j
 import { PHASES, phaseOf } from "../js/data/phases.js";
 import { SKILLS, SKILL_ORDER, CATEGORY_NAMES, WEEK_SPLIT, skillOf } from "../js/data/skills.js";
 import { CAN_DO } from "../js/data/can-do.js";
+import { CHECKPOINTS, CHECKPOINT_SKILLS, REVISE } from "../js/data/checkpoints.js";
+import { levelRank } from "../js/domain/checkpoint-report.js";
+import { buildWeek } from "../js/domain/week-tasks.js";
 import { PROMPTS } from "../js/data/prompts.js";
 import { ACHIEVEMENTS } from "../js/domain/achievements.js";
 import { RUBRIC, READ_TEXTS, TOPICS } from "../js/data/speaking-test.js";
@@ -105,5 +108,15 @@ test("speaking test: the rubric covers the test's criteria and every level has a
   Object.values(TOPICS).forEach(list => {
     assert.ok(list.length >= 3);
     list.forEach(t => { assert.ok(t.t); assert.equal(t.q.length, 2); assert.equal(t.hints.length, 3); });
+  });
+});
+
+test("each checkpoint has milestone tasks and a target per skill", () => {
+  Object.keys(CHECKPOINTS).forEach(n => {
+    const cp = CHECKPOINTS[n];
+    assert.ok(buildWeek(Number(n), {revFrom: 1, skip: {}}).some(t => t.ms), "week " + n + " has a milestone");
+    assert.ok(levelRank(cp.level) > -1, "week " + n + " level");
+    CHECKPOINT_SKILLS.forEach(k => { assert.ok(levelRank(cp.targets[k].level) > -1, n + " " + k); assert.ok(REVISE[k]); });
+    assert.ok(CAN_DO[cp.level.replace("+", "")], "week " + n + " has a can-do list");
   });
 });

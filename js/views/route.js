@@ -13,6 +13,9 @@ import { weekStats, weekComplete, weekTimeUpDate, currentRoadmapWeek, calWeekOf,
 import { taskHTML } from "../ui/task-item.js";
 import { focusHTML } from "../ui/week-focus.js";
 import { openCore } from "../domain/week-close.js";
+import { lastCheckpoint } from "../domain/checkpoint-report.js";
+import { CHECKPOINTS } from "../data/checkpoints.js";
+import { reportFor, reportHTML } from "../ui/checkpoint-card.js";
 
 let viewWeek = null;
 const openWeeks = new Set();
@@ -35,7 +38,7 @@ function journey(rw){
   let s = '<svg viewBox="0 0 1000 190" role="img" aria-label="Rota do A2 ao C1. Você está na semana ' + rw + '.">';
   s += '<path class="path-bg" d="' + pathBetween(0, TOTAL) + '" fill="none" stroke-width="2" stroke-linecap="round" stroke-dasharray="1 7"/>';
   segs.forEach(g => { if (pos > g[0]) s += '<path d="' + pathBetween(g[0], Math.min(g[1], pos)) + '" fill="none" stroke="var(' + g[2] + ')" stroke-width="4" stroke-linecap="round"/>'; });
-  const stations = [[0, "A2", "início"], [12, "", "A2+"], [26, "B1", "semana 26"], [44, "B2", "semana 44"], [52, "", "B2 comprovado"], [60, "C1", "depois"]];
+  const stations = [[0, "A2", "início"], [12, "", "A2+"], [26, "B1", "semana 26"], [44, "B2", "semana 44"], [52, "", (reportFor(48) || {}).proven ? "B2 comprovado ✓" : "prova do B2"], [60, "C1", "depois"]];
   stations.forEach(([u, big, sub]) => {
     const passed = pos >= u && u > 0;
     const r = big ? 9 : 5.5;
@@ -106,7 +109,7 @@ function weekCard(rw){
   const vw = viewWeek || rw;
   const ws = weekStats(vw);
   let h = '<section class="card" aria-labelledby="wkT"><div class="card-head"><h2 id="wkT">' + (vw >= 53 ? "Semana " + vw + " (C1)" : "Semana " + vw) + '</h2><span class="muted num">' + ws.done + " de " + ws.total + '</span><span class="week-nav"><button class="btn-icon btn" type="button" data-act="week-nav" data-d="-1" aria-label="Semana anterior"' + (vw <= 1 ? " disabled" : "") + ">" + icon("back", 18) + '</button><button class="btn-icon btn" type="button" data-act="week-nav" data-d="1" aria-label="Próxima semana">' + icon("arrow", 18) + "</button></span></div>";
-  h += focusHTML(vw) + closeHint(vw, rw) + '<ul class="tasks">' + weekTasks(vw).map(t => taskHTML(t, {start: true})).join("") + "</ul>" + extrasHTML(vw);
+  h += focusHTML(vw) + reportHTML(vw) + closeHint(vw, rw) + '<ul class="tasks">' + weekTasks(vw).map(t => taskHTML(t, {start: true})).join("") + "</ul>" + extrasHTML(vw);
   if (vw !== rw) h += '<p class="mt-m"><button class="btn btn-ghost btn-small" type="button" data-act="week-go" data-n="' + rw + '">Voltar para a semana ' + rw + "</button></p>";
   return h + "</section>";
 }
@@ -115,17 +118,27 @@ function weekCard(rw){
 const ROMAN = ["", "I", "II", "III", "IV", "V", "VI", "VII"];
 const chapter = id => id === 0 ? "Prólogo" : "Capítulo " + ROMAN[id];
 const cap = t => t.charAt(0).toUpperCase() + t.slice(1);
+// content done (weeks closed or skipped) against level proven (the phase's last checkpoint reached)
+function proofHTML(p, rw){
+  if (!p.id || !p.to) return "";
+  let done = 0;
+  for (let n = p.from; n <= p.to; n++) if (S.state.skip[n] || weekComplete(n)) done++;
+  const total = p.to - p.from + 1, cpw = lastCheckpoint(p.from, p.to, rw), r = cpw && reportFor(cpw);
+  const next = Object.keys(CHECKPOINTS).map(Number).find(n => n >= p.from && n <= p.to);
+  const proof = r ? (r.proven ? r.level + " comprovado na semana " + cpw : r.level + " comprovado: " + r.met + " de 4 habilidades (semana " + cpw + ")") : p.cefr + " comprovado: checkpoint na semana " + next;
+  return '<p class="proof"><span class="' + (done === total ? "on" : "") + '">Conteúdo ' + esc(p.cefr) + ": " + done + " de " + total + (total === 1 ? " semana concluída" : " semanas concluídas") + '</span><span class="' + (r && r.proven ? "on" : "") + '">' + esc(proof) + "</span></p>";
+}
 function roadmap(rw){
   let h = "";
   PHASES.forEach(p => {
     const to = p.to || Math.max(60, rw + 4);
-    h += '<section class="phase" style="--pc:var(' + p.col + ')"><div class="phase-head"><p class="chapter">' + chapter(p.id) + '</p><h2>' + esc(cap(p.name)) + '</h2><p class="muted m0">' + (p.to ? (p.from === p.to ? "Semana " + p.from : "Semanas " + p.from + " a " + p.to) + (p.id > 0 ? ", alvo " + p.cefr : ", para descobrir o seu ponto de partida") : "Semanas " + p.from + " em diante, um modelo semanal que se repete") + '</p><dl class="phase-facts"><div><dt>Flashcards</dt><dd>' + esc(p.cards) + "</dd></div><div><dt>ChatGPT</dt><dd>" + esc(p.gpt) + "</dd></div><div><dt>Checkpoint</dt><dd>" + esc(p.check) + '</dd></div></dl></div><ol class="weeks">';
+    h += '<section class="phase" style="--pc:var(' + p.col + ')"><div class="phase-head"><p class="chapter">' + chapter(p.id) + '</p><h2>' + esc(cap(p.name)) + '</h2><p class="muted m0">' + (p.to ? (p.from === p.to ? "Semana " + p.from : "Semanas " + p.from + " a " + p.to) + (p.id > 0 ? ", alvo " + p.cefr : ", para descobrir o seu ponto de partida") : "Semanas " + p.from + " em diante, um modelo semanal que se repete") + '</p>' + proofHTML(p, rw) + '<dl class="phase-facts"><div><dt>Flashcards</dt><dd>' + esc(p.cards) + "</dd></div><div><dt>ChatGPT</dt><dd>" + esc(p.gpt) + "</dd></div><div><dt>Checkpoint</dt><dd>" + esc(p.check) + '</dd></div></dl></div><ol class="weeks">';
     for (let n = p.from; n <= to; n++){
       const st = weekStats(n), open = openWeeks.has(n);
       const cls = ["wk"]; if (n === rw) cls.push("current"); if (S.state.skip[n]) cls.push("skipped"); else if (weekComplete(n)) cls.push("complete");
       h += '<li class="' + cls.join(" ") + '" id="wk-' + n + '"><button class="wk-row" type="button" data-act="week-toggle" data-n="' + n + '" data-fk="wk-' + n + '" aria-expanded="' + open + '"><span class="wk-n">Semana ' + n + '</span><span class="wk-sum">' + esc(weekLabel(n)) + '</span><span class="leader" aria-hidden="true"></span><span class="wk-prog">' + (S.state.skip[n] ? "pulada" : st.done + "/" + st.total) + "</span></button>";
       h += '<div class="wk-body"' + (open ? "" : " hidden") + ">";
-      if (open) h += focusHTML(n) + '<ul class="tasks">' + weekTasks(n).map(t => taskHTML(t)).join("") + "</ul>" + extrasHTML(n) + '<div class="wk-actions"><button class="btn btn-ghost btn-small" type="button" data-act="week-skip" data-n="' + n + '">' + (S.state.skip[n] ? "Desfazer pular" : "Pular semana") + '</button><button class="btn btn-ghost btn-small" type="button" data-act="week-go" data-n="' + n + '">Mostrar no topo</button></div>';
+      if (open) h += focusHTML(n) + reportHTML(n) + '<ul class="tasks">' + weekTasks(n).map(t => taskHTML(t)).join("") + "</ul>" + extrasHTML(n) + '<div class="wk-actions"><button class="btn btn-ghost btn-small" type="button" data-act="week-skip" data-n="' + n + '">' + (S.state.skip[n] ? "Desfazer pular" : "Pular semana") + '</button><button class="btn btn-ghost btn-small" type="button" data-act="week-go" data-n="' + n + '">Mostrar no topo</button></div>';
       h += "</div></li>";
     }
     h += "</ol></section>";
