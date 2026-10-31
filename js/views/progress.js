@@ -9,7 +9,10 @@ import { LESSONS } from "../data/lessons.js";
 import { allLogs, minutesBy } from "../state/selectors.js";
 import { calWeekOf, currentRoadmapWeek } from "../domain/pace.js";
 import { weekTasks } from "../domain/week-tasks.js";
-import { countForTask, latestLevel, insights } from "../domain/gpt-feedback.js";
+import { countForTask, latestLevel, insights, CRIT_NAMES } from "../domain/gpt-feedback.js";
+import { speakSorted, speakMeasures, rubricAvg, nextSpeakWeek } from "../domain/speaking.js";
+import { CRIT } from "../state/schema.js";
+import { lineChart, CRIT_COLORS } from "../ui/score-chart.js";
 import { planSplit } from "../domain/goal-extras.js";
 import { latestScore, lowLessons } from "../domain/lesson-scores.js";
 import { minutesByDate, streak, heatmap, heatLevel, knownCount, learnedCount, knownTimeline, weekSummary } from "../domain/stats.js";
@@ -155,6 +158,28 @@ function journalHTML(){
   return h + (tip ? '<p class="hint">' + esc(tip) + "</p>" : "") + "</section>";
 }
 
+// the speaking test: latest scores and measures against the test before, and the scores over time
+function speakHTML(){
+  const list = speakSorted(S.state.speak);
+  let h = '<section class="card section"><div class="card-head"><h2>Teste de fala</h2><a class="btn btn-ghost btn-small" href="#fala">Abrir o teste</a></div>';
+  if (!list.length) return h + '<p class="muted">A cada 4 semanas, o mesmo teste gravado: leitura, monólogo de 2 minutos e duas perguntas. O próximo da rota é na semana ' + nextSpeakWeek(currentRoadmapWeek(), S.state.spFrom) + ". Aqui aparecem as notas, a inteligibilidade e as palavras por minuto de um teste para o outro.</p></section>";
+  // compare tests that have something to show (scores or measures); a test still waiting for its assessment gets a hint
+  const shown = list.filter(e => Object.keys(e.crit).length || speakMeasures(e).readPct != null || speakMeasures(e).wpm != null);
+  const last = list[list.length - 1];
+  if (!shown.length) return h + '<p class="muted">Último teste em ' + esc(shortDate(last.date)) + ', ainda sem avaliação nem medidas. <a href="#fala">Completar a avaliação</a></p></section>';
+  const cur = shown[shown.length - 1], prev = shown[shown.length - 2], m = speakMeasures(cur), pm = prev ? speakMeasures(prev) : {};
+  const arrow = (a, b, step) => a == null || b == null ? "" : a - b >= step ? " ↑" : a - b <= -step ? " ↓" : " =";
+  h += '<p class="muted">Último teste em ' + esc(shortDate(cur.date)) + ", nível " + esc(cur.level) + (prev ? ", comparado com o de " + esc(shortDate(prev.date)) : "") + ".</p>";
+  h += '<div class="summary-line">' + CRIT.spk.filter(k => cur.crit[k] != null).map(k => '<span class="pill">' + CRIT_NAMES[k] + " " + cur.crit[k].toLocaleString("pt-BR") + arrow(cur.crit[k], prev && prev.crit[k], 0.5) + "</span>").join("") +
+    (m.readPct != null ? '<span class="pill pill-blue">leitura ' + m.readPct + "%" + (prev && prev.level === cur.level ? arrow(m.readPct, pm.readPct, 3) : "") + "</span>" : "") +
+    (m.wpm != null ? '<span class="pill pill-blue">' + m.wpm + " palavras/min" + arrow(m.wpm, pm.wpm, 8) + "</span>" : "") +
+    (cur.cefr ? '<span class="pill pill-accent">estimado ' + esc(cur.cefr) + "</span>" : "") + "</div>";
+  if (!Object.keys(last.crit).length) h += '<p class="hint">O teste de ' + esc(shortDate(last.date)) + ' ainda está sem avaliação. <a href="#fala">Completar</a></p>';
+  const scored = list.filter(e => Object.keys(e.crit).length);
+  if (scored.length > 1) h += lineChart(scored, CRIT.spk.map(k => ({k, name: CRIT_NAMES[k], color: CRIT_COLORS[k]})), "Notas dos testes de fala", {H: 140});
+  return h + '<p class="hint">Leitura e palavras por minuto são medidas aproximadas do reconhecimento de fala do navegador' + (rubricAvg(cur.crit) != null ? "; a média das 5 notas agora é " + rubricAvg(cur.crit).toLocaleString("pt-BR") : "") + ".</p></section>";
+}
+
 function historyHTML(){
   const by = new Map();
   allLogs().forEach(e => { const m = e.date.slice(0, 7); if (!by.has(m)) by.set(m, []); by.get(m).push(e); });
@@ -187,6 +212,7 @@ export default {
     h += "</section>";
     h += skillsHTML();
     h += journalHTML();
+    h += speakHTML();
     h += scoresHTML();
     h += historyHTML();
     return h;

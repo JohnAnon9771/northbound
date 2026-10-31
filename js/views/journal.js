@@ -12,10 +12,10 @@ import { weekTasks } from "../domain/week-tasks.js";
 import { currentRoadmapWeek } from "../domain/pace.js";
 import { parseFeedback, errKey, CRIT_NAMES, countForTask, sessionsFor, trend, latestLevel, repeatErrors, grammarTop, insights } from "../domain/gpt-feedback.js";
 import { setDone } from "../ui/task-actions.js";
+import { lineChart, CRIT_COLORS as COLORS } from "../ui/score-chart.js";
 
 const LEVELS = ["A1", "A1+", "A2", "A2+", "B1", "B1+", "B2", "B2+", "C1", "C1+", "C2"];
 const KIND = {conv: "Conversa", writ: "Writing"};
-const COLORS = {flu: "var(--sky)", gram: "var(--accent)", voc: "var(--sage)", ta: "var(--plum)", org: "var(--leather)"};
 const nf = v => v.toLocaleString("pt-BR", {maximumFractionDigits: 1});
 // time is added to the study log unless the task's timer logged it after the last Diário entry
 // (the Diário's own logs carry no task key, so they never count here)
@@ -86,7 +86,7 @@ function formHTML(){
     '<div class="field"><label for="fbMin">Minutos</label><input type="number" id="fbMin" name="min" min="0" max="600" inputmode="numeric" data-input="fb-field" data-fk="fbMin" value="' + esc(String(d.min)) + '"></div></div>';
   h += '<div class="field"><label for="fbTopic">' + (conv ? "Tema da conversa" : "Texto sobre") + '</label><input type="text" id="fbTopic" name="topic" data-input="fb-field" data-fk="fbTopic" maxlength="120" value="' + esc(d.topic) + '" placeholder="' + (conv ? "Minha rotina, o fim de semana passado…" : "E-mail para um amigo…") + '"></div>';
   if (conv) h += feelHTML();
-  h += '<div class="field"><label for="fbRaw">Cole o feedback do ChatGPT</label><textarea id="fbRaw" name="raw" data-input="fb-raw" data-fk="fbRaw" rows="6" placeholder="Level: A2+&#10;Scores: fluency 3/5, grammar 2/5, vocabulary 3/5&#10;Errors:&#10;I go to the beach yesterday → I went to the beach yesterday&#10;Grammar point: past simple">' + esc(d.raw) + '</textarea><p class="hint">Use o prompt ' + (conv ? "2 ou 3" : "4") + ' de <a href="#rotinas">Rotinas</a>: ele termina com um bloco pronto para colar aqui. O que der para ler vira nível, notas e erros abaixo, e dá para corrigir à mão.</p></div>';
+  h += '<div class="field"><label for="fbRaw">Cole o feedback do ChatGPT</label><textarea id="fbRaw" name="raw" data-input="fb-raw" data-fk="fbRaw" rows="6" placeholder="Level: A2+&#10;Scores: fluency 3/5, grammar 2/5, vocabulary 3/5, coherence 3/5&#10;Errors:&#10;I go to the beach yesterday → I went to the beach yesterday&#10;Grammar point: past simple">' + esc(d.raw) + '</textarea><p class="hint">Use o prompt ' + (conv ? "2 ou 3" : "4") + ' de <a href="#rotinas">Rotinas</a>: ele termina com um bloco pronto para colar aqui. O que der para ler vira nível, notas e erros abaixo, e dá para corrigir à mão.</p></div>';
   h += previewHTML();
   const min = Number(d.min) || 0;
   if (min > 0) h += '<label class="fb-chk log"><input type="checkbox" data-change="fb-log" data-fk="fb-log"' + (logTime() ? " checked" : "") + "> Somar " + min + " min de " + (conv ? "Conversa" : "Writing") + " ao tempo de estudo</label>";
@@ -107,24 +107,11 @@ function weekHTML(){
   return h + "</div></section>";
 }
 
-function scoreChart(sessions, keys, label){
-  const pts = sessions.slice(-12), W = 600, H = 170, padL = 28, padR = 12, top = 12, padB = 22;
-  const x = i => pts.length === 1 ? (padL + W - padR) / 2 : padL + 10 + i * (W - padL - padR - 20) / (pts.length - 1), y = v => top + (H - padB - top) * (1 - v / 5);
-  let s = '<svg class="chart" viewBox="0 0 ' + W + " " + H + '" width="100%" role="img" aria-label="' + esc(label) + '">';
-  [0, 1, 2, 3, 4, 5].forEach(v => { s += '<line x1="' + padL + '" x2="' + W + '" y1="' + y(v) + '" y2="' + y(v) + '" stroke="var(--rule)"/><text x="' + (padL - 6) + '" y="' + (y(v) + 4) + '" text-anchor="end">' + v + "</text>"; });
-  keys.forEach(k => {
-    const p = pts.map((e, i) => e.crit[k] == null ? null : [x(i), y(e.crit[k])]).filter(Boolean);
-    if (p.length > 1) s += '<polyline points="' + p.map(q => q.join(",")).join(" ") + '" fill="none" stroke="' + COLORS[k] + '" stroke-width="2.5" stroke-linejoin="round"/>';
-    p.forEach(q => { s += '<circle cx="' + q[0] + '" cy="' + q[1] + '" r="3.5" fill="' + COLORS[k] + '"/>'; });
-  });
-  pts.forEach((e, i) => { if (pts.length <= 6 || i % 2 === 0 || i === pts.length - 1) s += '<text x="' + x(i) + '" y="' + (H - 6) + '" text-anchor="middle">' + esc(shortDate(e.date)) + "</text>"; });
-  return s + '</svg><ul class="legend">' + keys.map(k => '<li style="--lc:' + COLORS[k] + '">' + CRIT_NAMES[k] + "</li>").join("") + "</ul>";
-}
 function kindBlock(kind, title){
   const ss = sessionsFor(S.state.feedback, kind), lv = latestLevel(S.state.feedback, kind);
   let h = '<div class="fb-kind"><div class="card-head"><h3>' + title + '</h3><span class="muted">' + ss.length + (ss.length === 1 ? " registro" : " registros") + (lv ? ' · nível mais recente <b>' + esc(lv.level) + "</b>" : "") + "</span></div>";
   if (!ss.some(e => Object.keys(e.crit).length)) return h + '<p class="muted">As notas de 0 a 5 aparecem aqui quando o feedback colado trouxer a linha “Scores”.</p></div>';
-  h += scoreChart(ss.filter(e => Object.keys(e.crit).length), CRIT[kind], "Notas de " + title.toLowerCase() + " ao longo do tempo");
+  h += lineChart(ss.filter(e => Object.keys(e.crit).length), CRIT[kind].map(k => ({k, name: CRIT_NAMES[k], color: COLORS[k]})), "Notas de " + title.toLowerCase() + " ao longo do tempo");
   const t = trend(S.state.feedback, kind);
   h += '<div class="summary-line">' + t.map(x => '<span class="pill">' + CRIT_NAMES[x.k] + " " + nf(x.now) + (x.before == null ? "" : x.now - x.before >= 0.25 ? " ↑" : x.now - x.before <= -0.25 ? " ↓" : " =") + "</span>").join("") + "</div>";
   return h + "</div>";
@@ -174,7 +161,7 @@ export default {
   enter(){ d = fromHash(); },
   render(){
     if (!d) d = fromHash();
-    return '<header class="page-head"><div><a class="eyebrow back" href="#mais">' + icon("back", 14) + 'Mais</a><h1>Diário de conversas e textos</h1><p class="lead">Cada conversa e cada texto corrigido no ChatGPT, com o feedback do fim. É aqui que dá para ver se a fala e a escrita estão subindo.</p></div></header>' +
+    return '<header class="page-head"><div><a class="eyebrow back" href="#mais">' + icon("back", 14) + 'Mais</a><h1>Diário de conversas e textos</h1><p class="lead">Cada conversa e cada texto corrigido no ChatGPT, com o feedback do fim. É aqui que dá para ver se a fala e a escrita estão subindo. Para uma medida da fala comparável no tempo, use o <a href="#fala">teste de fala</a>.</p></div></header>' +
       '<div class="grid-2">' + formHTML() + weekHTML() + "</div>" + progressHTML() + historyHTML();
   },
   actions: {

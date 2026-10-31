@@ -106,6 +106,19 @@ export function setSecret(key, value){
   emit();
 }
 
+/* ---- speaking test audio: loaded on demand, never in S nor in the main backup ---- */
+// without IndexedDB the recordings live only until the page closes
+const memAudio = new Map();
+export const putAudio = row => persistent ? db.put("audio", row) : Promise.resolve(memAudio.set(row.id, row));
+export const putAudios = rows => persistent ? db.putMany("audio", rows) : Promise.resolve(rows.forEach(r => memAudio.set(r.id, r)));
+export const getAudio = id => persistent ? db.get("audio", id) : Promise.resolve(memAudio.get(id));
+export const allAudio = () => persistent ? db.getAll("audio") : Promise.resolve(Array.from(memAudio.values()));
+export function deleteAudio(ids){
+  ids = ids.filter(Boolean);
+  if (!persistent){ ids.forEach(id => memAudio.delete(id)); return Promise.resolve(); }
+  return Promise.all(ids.map(id => db.del("audio", id))).catch(fail);
+}
+
 /* ---- backup ---- */
 export const exportAll = () => toBackup(S);
 export async function importAll(json){
@@ -116,8 +129,8 @@ export async function importAll(json){
 }
 export async function resetAll(){
   const start = S.state.settings.start;
-  S.state = blankState(); S.state.settings.start = start; S.state.revFrom = 1;
-  S.logs = []; S.cards = []; S.reviews = [];
-  if (persistent) await db.replace({meta: {state: S.state, secrets: S.secrets}, logs: [], cards: [], reviews: []});
+  S.state = blankState(); S.state.settings.start = start; S.state.revFrom = 1; S.state.spFrom = 1;
+  S.logs = []; S.cards = []; S.reviews = []; memAudio.clear();
+  if (persistent) await db.replace({meta: {state: S.state, secrets: S.secrets}, logs: [], cards: [], reviews: [], audio: []});
   emit();
 }

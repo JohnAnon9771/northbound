@@ -15,5 +15,5 @@ export const REVISE = {
   list: "reouça sem transcrição as lições de listening da fase e refaça o teste em 2 a 4 semanas.",
   read: "volte às lições de reading com nota abaixo de 80% e leia 1 história por dia antes de refazer o teste.",
   writ: "reescreva 2 textos com o prompt 4 e mande um texto novo ao Write & Improve.",
-  speak: "faça 2 conversas a mais com o prompt 2 e refaça a avaliação de fala."
+  speak: "faça 2 conversas a mais com o prompt 2 e refaça o teste de fala."
 };

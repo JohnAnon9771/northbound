@@ -13,10 +13,12 @@ import { extraTasks, planSplit, extraPlan } from "../js/domain/goal-extras.js";
 
 const FIXTURE = new URL("./fixtures/route-snapshot.json", import.meta.url);
 const STATES = {
-  base: {settings: {goalH: 13.5}, revFrom: 1},
-  goal18: {settings: {goalH: 18}, revFrom: 1},
-  legacy: {settings: {goalH: 18}, revFrom: 10},
-  skipped: {settings: {goalH: 22}, revFrom: 1, skip: {5: true, 6: true}}
+  base: {settings: {goalH: 13.5}, revFrom: 1, spFrom: 1},
+  goal18: {settings: {goalH: 18}, revFrom: 1, spFrom: 1},
+  legacy: {settings: {goalH: 18}, revFrom: 10, spFrom: 30},
+  skipped: {settings: {goalH: 22}, revFrom: 1, spFrom: 1, skip: {5: true, 6: true}},
+  // from before the speaking test: the route must stay exactly as it was
+  noSpeak: {settings: {goalH: 18}, revFrom: 1}
 };
 
 const hash = v => createHash("sha256").update(JSON.stringify(v)).digest("hex").slice(0, 16);

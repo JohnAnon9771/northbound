@@ -16,7 +16,7 @@ export function reportFor(n){
   if (!cp || n > currentRoadmapWeek()) return null;
   return cached("cp" + n + today(), () => {
     const ms = weekTasks(n).filter(t => t.ms).map(t => t.k);
-    return checkpointReport(cp, evidenceFrom(S.state.tests, S.state.feedback), anchorFor(ms, S.state.done, today()));
+    return checkpointReport(cp, evidenceFrom(S.state.tests, S.state.feedback, S.state.speak), anchorFor(ms, S.state.done, today()));
   });
 }
 
@@ -32,11 +32,11 @@ const BADGE = {met: "Atingido", weak: "Atingido, evidência fraca", below: "Abai
 
 function rowHTML(r){
   const key = r.status === "met" && r.weak ? "weak" : r.status;
-  const ev = r.ev ? esc(SOURCES[r.ev.src].name + " " + (r.ev.score != null ? r.ev.score + " (" + r.ev.level + ")" : r.ev.level)) + ", " + esc(shortDate(r.ev.date)) : "nenhum resultado";
+  const ev = r.ev ? esc(SOURCES[r.ev.src].name + " " + (r.ev.score != null ? r.ev.score + " (" + r.ev.level + ")" : r.ev.level) + (r.ev.note ? " (" + r.ev.note + ")" : "")) + ", " + esc(shortDate(r.ev.date)) : "nenhum resultado";
   let tip = "";
   if (r.status === "below") tip = "Revise: " + REVISE[r.skill];
-  else if (r.weak) tip = r.skill === "speak" ? "Nota do ChatGPT é evidência fraca. Para comprovar, registre em Níveis uma avaliação de professor ou prova oficial (Outro, Speaking)." : "Nota do ChatGPT é evidência fraca. Confirme com o Write & Improve.";
-  else if (r.status === "none") tip = "Registre um resultado em Níveis.";
+  else if (r.weak) tip = r.skill === "speak" ? (r.ev.src === "fala" ? "O nível do teste de fala é estimado pelo ChatGPT a partir da transcrição, então é evidência fraca." : "Nota do ChatGPT é evidência fraca.") + " Para comprovar, registre em Níveis uma avaliação de professor ou prova oficial (Outro, Speaking)." : "Nota do ChatGPT é evidência fraca. Confirme com o Write & Improve.";
+  else if (r.status === "none") tip = r.skill === "speak" ? "Faça o teste de fala (em Mais) e complete a avaliação com o nível estimado, ou registre um resultado em Níveis." : "Registre um resultado em Níveis.";
   const cd = candoHint(r.skill, r.target.level);
   return '<li class="rep-row rep-' + key + '"><span class="rep-skill">' + SKILLS[r.skill].n + '</span><span class="rep-badge">' + BADGE[key] + '</span><span class="rep-ev">' + ev + " · meta " + esc(targetText(r.target)) + "</span>" +
     (tip || cd ? '<span class="rep-tip">' + esc([tip, cd].filter(Boolean).join(" ")) + "</span>" : "") + "</li>";

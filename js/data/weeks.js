@@ -27,6 +27,7 @@ export const levelTestTask = n => task("w"+n+"-bc","test","British Council level
 export const writeImproveTask = n => task("w"+n+"-wi","writ","Write & Improve: 1 texto, anote a nota CEFR",40,LINKS.wi,"",{ms:true});
 export const efsetTask = (n, meta) => task("w"+n+"-ef","test","EF SET 50 min, meta "+meta,60,LINKS.efset,"Registre a pontuação em Níveis.",{ms:true});
 export const canDoTask = (n, l) => task("w"+n+"-cd","test","Reavaliar a lista “can-do” "+l,20,"#niveis","",{ms:true});
+export const speakTestTask = n => task("w"+n+"-sp","speak","Teste de fala: leitura em voz alta, monólogo de 2 min e 2 perguntas",30,"#fala","Gravado no app, sempre no mesmo formato, para comparar com os testes anteriores.",{ms:true});
 
 W(1,[
   task("w1-bc","test","British Council level test (resultado aproximado)",30,LINKS.levelTest,"Exige conta gratuita. Anote o resultado em Níveis.",{ms:true}),

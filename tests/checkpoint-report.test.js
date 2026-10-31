@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { CHECKPOINTS } from "../js/data/checkpoints.js";
+import { normalizeSpeak } from "../js/state/schema.js";
 import { levelRank, evidenceFrom, anchorFor, checkpointReport, meets, skillsOf, lastCheckpoint } from "../js/domain/checkpoint-report.js";
 
 const A2P = CHECKPOINTS[12], B1 = CHECKPOINTS[24];
@@ -87,4 +88,27 @@ test("the last checkpoint reached in a phase", () => {
   assert.equal(lastCheckpoint(13, 26, 25), 24);
   assert.equal(lastCheckpoint(13, 26, 30), 26);
   assert.equal(lastCheckpoint(27, 44, 40), 36);
+});
+
+const sp = (date, cefr, parts) => normalizeSpeak({date, level: "A2", topic: "a2-day", cefr, parts: parts || {}});
+
+test("speaking test: counts once it has a CEFR estimate, weak, with its measures", () => {
+  const ev = evidenceFrom([], [], [sp("2026-03-20", "B1", {read: {sec: 50, n: 90, hit: 90, total: 100}, mono: {sec: 120, n: 200}}), sp("2026-03-21", ""), {date: "x", cefr: "B1"}]);
+  assert.deepEqual(ev.map(e => [e.src, e.skill, e.level, e.strong, e.note]), [["fala", "speak", "B1", false, "leitura 90%, 100 palavras/min"]]);
+  assert.equal(evidenceFrom([], [], [sp("2026-03-20", "B1")])[0].note, "");
+  assert.deepEqual(evidenceFrom([], []), []);
+});
+
+test("speaking test beats a newer conversation, an independent result beats both", () => {
+  const conv = [{kind: "conv", date: "2026-03-31", level: "A2"}];
+  const r = checkpointReport(A2P, evidenceFrom(BASE, conv, [sp("2026-03-25", "A2+")]), "2026-04-01");
+  assert.equal(row(r, "speak").ev.src, "fala");
+  assert.equal(row(r, "speak").status, "met");
+  assert.equal(row(r, "speak").weak, true);
+  assert.equal(r.proven, false);
+  const below = checkpointReport(A2P, evidenceFrom(BASE, conv, [sp("2026-03-25", "A2")]), "2026-04-01");
+  assert.equal(row(below, "speak").status, "below");
+  const strong = checkpointReport(A2P, evidenceFrom(BASE.concat(t("outro", "2026-03-10", {skill: "speak", level: "B1"})), conv, [sp("2026-03-25", "A2")]), "2026-04-01");
+  assert.equal(row(strong, "speak").ev.src, "outro");
+  assert.equal(strong.proven, true);
 });

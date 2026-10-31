@@ -9,11 +9,11 @@ import { PHASES } from "../data/phases.js";
 import { phaseNow } from "../domain/pace.js";
 import { CLAUDE_MODELS } from "../flashcards/providers/claude.js";
 import { enrichMessage } from "../flashcards/enrich.js";
-import { downloadBackup, restoreBackup, daysSinceBackup } from "../ui/backup.js";
+import { downloadBackup, restoreBackup, daysSinceBackup, downloadAudio, audioBytes, readJSON, isAudioFile, restoreAudio } from "../ui/backup.js";
 import { dailyWordsSettingsHTML } from "../ui/daily-words-card.js";
 import { isFront } from "../flashcards/card.js";
 
-const ui = {resetArmed: false, testing: false, keyDraft: "", persisted: null};
+const ui = {resetArmed: false, testing: false, keyDraft: "", persisted: null, audioBytes: null};
 let resetTimer = null;
 
 const opt = (v, label, cur) => '<option value="' + esc(v) + '"' + (String(cur) === String(v) ? " selected" : "") + ">" + esc(label) + "</option>";
@@ -62,16 +62,22 @@ function dataHTML(){
   return '<section class="card section" aria-labelledby="hData"><h2 id="hData">Seus dados</h2><p class="muted">' + where + "</p>" +
     "<p>" + (d == null ? "Você ainda não baixou um backup." : d === 0 ? "Último backup: hoje." : "Último backup: há " + d + (d === 1 ? " dia." : " dias.")) + " " + S.cards.filter(isFront).length + " cartões, " + S.logs.length + " registros.</p>" +
     '<div class="row mb-s"><button class="btn btn-soft" type="button" data-act="backup">Baixar backup (JSON)</button><label class="btn btn-ghost" for="impFile">Restaurar de um arquivo</label><input type="file" id="impFile" data-change="restore" accept=".json,application/json" class="sr"></div>' +
-    '<p class="hint">Aceita backups deste site e da página antiga (rota-ingles). Restaurar substitui tudo o que está aqui, exceto a chave da Claude API.</p>' +
+    '<p class="hint">Aceita backups deste site e da página antiga (rota-ingles). Restaurar substitui tudo o que está aqui, exceto a chave da Claude API e as gravações.</p>' +
+    '<h3>Gravações do teste de fala</h3><p class="muted">O áudio fica fora do backup acima: cada teste tem cerca de 1 MB, e com ele o backup de todo dia ficaria dezenas de vezes maior. As notas, as medidas e as transcrições já vão no backup normal. ' + (ui.audioBytes == null ? "" : ui.audioBytes ? "Agora: " + mb(ui.audioBytes) + " de áudio." : "Nenhuma gravação ainda.") + '</p>' +
+    '<div class="row mb-s"><button class="btn btn-ghost" type="button" data-act="backup-audio"' + (ui.audioBytes === 0 ? " disabled" : "") + '>Baixar gravações' + (ui.audioBytes ? " (≈ " + mb(ui.audioBytes * 1.37) + ")" : "") + '</button></div>' +
+    '<p class="hint">Para restaurar as gravações, use o mesmo “Restaurar de um arquivo”: o arquivo de gravações só acrescenta o áudio e não mexe no resto.</p>' +
     '<h3 class="danger-h">Apagar tudo</h3><p class="muted">Remove registros, tarefas marcadas, cartões, testes, erros e listas. Não dá para desfazer; baixe um backup antes.</p>' +
     '<button class="btn btn-danger" type="button" data-act="reset">' + (ui.resetArmed ? "Toque de novo para confirmar" : "Apagar tudo") + "</button></section>";
 }
+
+const mb = b => (b / 1048576).toLocaleString("pt-BR", {maximumFractionDigits: 1}) + " MB";
 
 export default {
   id: "ajustes",
   title: "Ajustes",
   enter(){
     ui.resetArmed = false;
+    audioBytes().then(b => { ui.audioBytes = b; rerender(); }).catch(() => {});
     if (ui.persisted == null && navigator.storage && navigator.storage.persisted) navigator.storage.persisted().then(v => { ui.persisted = v; rerender(); }).catch(() => {});
   },
   render(){
@@ -119,9 +125,17 @@ export default {
     },
     theme(el){ setTheme(el.dataset.t); rerender(); },
     backup(){ downloadBackup(); },
+    "backup-audio"(){ downloadAudio(); },
     async restore(el){
       const f = el.files && el.files[0];
       if (!f) return;
+      const json = await readJSON(f).catch(() => null);
+      if (json && isAudioFile(json)){
+        await restoreAudio(json);
+        el.value = "";
+        audioBytes().then(b => { ui.audioBytes = b; rerender(); }).catch(() => {});
+        return;
+      }
       if (!confirm("Restaurar substitui todos os dados deste navegador pelos do arquivo. Continuar?")){ el.value = ""; return; }
       await restoreBackup(f);
       el.value = "";
@@ -135,7 +149,9 @@ export default {
       }
       clearTimeout(resetTimer);
       ui.resetArmed = false;
+    audioBytes().then(b => { ui.audioBytes = b; rerender(); }).catch(() => {});
       await resetAll();
+      ui.audioBytes = 0;
       toast("Tudo apagado. Começando do zero.");
     }
   }
