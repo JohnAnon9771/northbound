@@ -6,6 +6,7 @@ import * as timer from "../core/study-timer.js";
 import { LESSONS, LESSON_INDEXES } from "../data/lessons.js";
 import { skillOf } from "../data/skills.js";
 import { scoreFor, latestScore, lowLessons } from "../domain/lesson-scores.js";
+import { countForTask } from "../domain/gpt-feedback.js";
 
 // every task rendered in the current view, by key, for the actions below
 const TASKS = new Map();
@@ -25,7 +26,20 @@ export function taskHTML(t, opts){
   if (t.bc) meta.push("<span>" + esc(t.k) + "</span>");
   if (t.idx) meta.push('<a href="' + LESSON_INDEXES[t.idx][1] + '" target="_blank" rel="noopener">' + LESSON_INDEXES[t.idx][0] + "</a>");
   const start = o.start && !done && t.m ? '<button class="btn btn-small ' + (isRunning ? "btn-soft" : "btn-ghost") + ' task-start" type="button" data-act="task-start" data-task="' + esc(t.k) + '"' + (isRunning ? " disabled" : "") + ">" + (isRunning ? "Em andamento" : icon("play", 14) + "Começar") + "</button>" : "";
-  return '<li class="task' + (done ? " done" : "") + (t.ms ? " milestone" : "") + (isRunning ? " running" : "") + '"><input type="checkbox" class="chk" data-change="task-toggle" data-task="' + esc(t.k) + '" data-fk="task-' + esc(t.k) + '"' + (done ? " checked" : "") + ' aria-label="Concluir: ' + esc(t.t) + '"><div class="task-body">' + title + '<div class="task-meta">' + meta.join("") + "</div>" + (t.n && !o.compact ? '<p class="task-note">' + esc(t.n) + "</p>" : "") + revHTML(t) + scoreHTML(t) + "</div>" + start + "</li>";
+  return '<li class="task' + (done ? " done" : "") + (t.ms ? " milestone" : "") + (isRunning ? " running" : "") + '"><input type="checkbox" class="chk" data-change="task-toggle" data-task="' + esc(t.k) + '" data-fk="task-' + esc(t.k) + '"' + (done ? " checked" : "") + ' aria-label="Concluir: ' + esc(t.t) + '"><div class="task-body">' + title + '<div class="task-meta">' + meta.join("") + "</div>" + (t.n && !o.compact ? '<p class="task-note">' + esc(t.n) + "</p>" : "") + revHTML(t) + scoreHTML(t) + fbHTML(t) + "</div>" + start + "</li>";
+}
+
+// conversations logged in the Diário for this task ("2 de 3"), or the text's correction
+function fbHTML(t){
+  if (!t.fb) return "";
+  const fb = S.state.feedback.filter(e => e.task === t.k), href = "#diario?task=" + encodeURIComponent(t.k);
+  if (t.fb.kind === "conv"){
+    const n = countForTask(fb, t.k), goal = t.fb.n || 1;
+    const dots = Array.from({length: Math.max(goal, n)}, (_, i) => '<i class="' + (i < n ? "on" : "") + '"></i>').join("");
+    return '<div class="fb-line"><span class="fb-dots" aria-hidden="true">' + dots + '</span><span>' + n + " de " + goal + (goal === 1 ? " conversa registrada" : " conversas registradas") + '</span><a class="btn btn-ghost btn-small" href="' + href + '">Registrar conversa</a></div>';
+  }
+  const last = fb[fb.length - 1];
+  return '<div class="fb-line"><span>' + (last ? "Correção registrada" + (last.level ? " (" + esc(last.level) + ")" : "") : "Sem correção registrada") + '</span><a class="btn btn-ghost btn-small" href="' + href + '">' + (last ? "Ver no Diário" : "Registrar correção") + "</a></div>";
 }
 
 const openDetails = new Set();

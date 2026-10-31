@@ -75,7 +75,7 @@ function errorsHTML(){
 }
 
 function promptsHTML(){
-  return '<section class="section" aria-labelledby="hPrompts"><h2 id="hPrompts">Prompts para o ChatGPT</h2><p class="muted">Em inglês de propósito. Troque o que está entre colchetes. Escreva sempre primeiro sem ajuda e só depois peça a correção; use o Write & Improve como segunda opinião, porque o ChatGPT pode superestimar o seu nível.</p>' +
+  return '<section class="section" aria-labelledby="hPrompts"><h2 id="hPrompts">Prompts para o ChatGPT</h2><p class="muted">Em inglês de propósito. Troque o que está entre colchetes. Escreva sempre primeiro sem ajuda e só depois peça a correção; use o Write & Improve como segunda opinião, porque o ChatGPT pode superestimar o seu nível. Os prompts 2, 3 e 4 terminam com um bloco de feedback: cole no <a href="#diario">Diário</a> para contar as conversas da semana e acompanhar as notas.</p>' +
     PROMPTS.map((p, i) => '<div class="prompt"><div class="prompt-head"><h3>' + (i + 1) + ". " + esc(p[0]) + '</h3><button class="btn btn-ghost btn-small" type="button" data-act="copy" data-i="' + i + '">' + (i === 6 ? "Copiar com os meus erros" : "Copiar") + '</button></div><p class="prompt-text" id="pt-' + i + '">' + esc(p[1]) + "</p></div>").join("") + "</section>";
 }
 

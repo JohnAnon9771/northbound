@@ -10,191 +10,191 @@
   "weeks": {
    "1": {
     "keys": "w1-bc w1-ef w1-wi w1-cd w1-duo w1-gpt w1-gt1 w1-pod",
-    "hash": "7b5da3da37621688"
+    "hash": "096d93904a26cbb3"
    },
    "2": {
     "keys": "GA01 GA02 LA01 RA01 WA01 SA04 w2-conv w2-er w2-pod w2-sto w2-vo w2-in",
-    "hash": "308667581680ef23"
+    "hash": "475d6cbaa2c99b08"
    },
    "3": {
     "keys": "GA04 GA03 LA02 RA02 WA12 w3-conv w3-rt w3-rl w3-er w3-pod w3-sto w3-vo w3-in",
-    "hash": "e75bdbc66bbcba31"
+    "hash": "4ce788da035f7a3d"
    },
    "4": {
     "keys": "GA05 GA06 LA03 RA03 WA11 SA05 w4-conv w4-rt w4-rl w4-er w4-pod w4-sto w4-vo w4-in w4-bc w4-wi",
-    "hash": "50669dab5f3043d9"
+    "hash": "95159dfcf0898a75"
    },
    "5": {
     "keys": "GA07 GA08 LA04 RA04 WA10 w5-conv w5-rt w5-rl w5-er w5-pod w5-sto w5-vo w5-in",
-    "hash": "8b684a92c31db7d0"
+    "hash": "81d8399fb2b6bfe6"
    },
    "6": {
     "keys": "GA09 GA10 LA05 RA05 WA02 SA03 w6-conv w6-rt w6-rt4 w6-rl w6-er w6-pod w6-sto w6-vo w6-in",
-    "hash": "adaa39bf3280cf96"
+    "hash": "36244e312301e35b"
    },
    "7": {
     "keys": "GA11 GA12 LA06 RA06 WA08 w7-conv w7-rt w7-rt4 w7-rl w7-er w7-pod w7-sto w7-vo w7-in",
-    "hash": "f995ac925d67f448"
+    "hash": "b561ded88c3d0f20"
    },
    "8": {
     "keys": "GA13 LA07 RA07 WA05 SA01 w8-conv w8-rt w8-rt4 w8-rl w8-er w8-pod w8-sto w8-vo w8-in w8-bc w8-wi",
-    "hash": "a675818c39c2cc1f"
+    "hash": "2f779bfa89fb6e3e"
    },
    "9": {
     "keys": "GA14 GA15 LA08 RA08 WA06 w9-conv w9-rt w9-rt4 w9-rl w9-er w9-pod w9-sto w9-vo w9-in",
-    "hash": "a5edeef65c8c53c9"
+    "hash": "e0b4cf2a3cdf022b"
    },
    "10": {
     "keys": "GA16 GA17 LA09 RA09 WA09 SA02 w10-conv w10-rt w10-rt4 w10-rl w10-er w10-pod w10-sto w10-vo w10-in",
-    "hash": "9c1b1fcc68291078"
+    "hash": "bdb9ce7ba1de9c56"
    },
    "11": {
     "keys": "GA18 GB01 LA10 RA10 WA03 w11-conv w11-rt w11-rt4 w11-rl w11-er w11-pod w11-sto w11-vo w11-in",
-    "hash": "907c611c13643b99"
+    "hash": "5c9378ef88b8f30f"
    },
    "12": {
     "keys": "GB02 w12-rev w12-blk LA11 LA12 w12-pod w12-sto WA04 WA07 w12-conv w12-rt w12-rl w12-in w12-ef w12-cd",
-    "hash": "9ca18ebb86593dc7"
+    "hash": "6a639a1dfe0a8612"
    },
    "13": {
     "keys": "GB03 LB08 RB03 WB01 SB04 w13-conv w13-rt w13-rt4 w13-rl w13-er w13-in",
-    "hash": "79cd2d323a810d86"
+    "hash": "df5d92d8acf255d0"
    },
    "14": {
     "keys": "GB04 GB05 LB11 RB02 WB05 w14-conv w14-rt w14-rt4 w14-rl w14-er w14-aud w14-mag w14-vo w14-in",
-    "hash": "4d64cdabcb3ae5a2"
+    "hash": "88540998f15e333e"
    },
    "15": {
     "keys": "GB06 LB09 RB04 WB06 SB03 w15-conv w15-rt w15-rt4 w15-rl w15-er w15-aud w15-mag w15-vo w15-in",
-    "hash": "b71e00792474cc4e"
+    "hash": "b32159b2be017555"
    },
    "16": {
     "keys": "GB07 LB07 RB01 WB04 w16-conv w16-rt w16-rt4 w16-rl w16-er w16-aud w16-mag w16-vo w16-in w16-bc w16-wi",
-    "hash": "e6a8a80a0162425e"
+    "hash": "fc76f51bec618c0f"
    },
    "17": {
     "keys": "GB08 GB09 LB01 RB05 WB07 SB05 w17-conv w17-rt w17-rt4 w17-rl w17-er w17-aud w17-mag w17-vo w17-in",
-    "hash": "22fcdc12a2c56214"
+    "hash": "7240f741ebc9732f"
    },
    "18": {
     "keys": "GB10 LB04 RB06 WB02 w18-conv w18-rt w18-rt4 w18-rl w18-er w18-aud w18-mag w18-vo w18-in",
-    "hash": "cf977117be80b05f"
+    "hash": "46d4fc7df7c7b699"
    },
    "19": {
     "keys": "GB11 LB10 RB12 WB11 SB02 w19-conv w19-rt w19-rt4 w19-rl w19-er w19-aud w19-mag w19-vo w19-in",
-    "hash": "5dc31d52fad52fea"
+    "hash": "3eb73a11471a3669"
    },
    "20": {
     "keys": "GB12 GB13 LB02 RB13 WB08 w20-conv w20-rt w20-rt4 w20-rl w20-er w20-aud w20-mag w20-vo w20-in w20-bc w20-wi",
-    "hash": "d1a8917e1ab1c9d7"
+    "hash": "005efa0a4e616944"
    },
    "21": {
     "keys": "GB14 GB15 LB05 RB07 WB03 SB01 w21-conv w21-rt w21-rt4 w21-rl w21-er w21-aud w21-mag w21-vo w21-in",
-    "hash": "48f3d042804027b4"
+    "hash": "d5ceba12c7fe8e73"
    },
    "22": {
     "keys": "GB16 GB17 LB06 RB11 WB09 w22-conv w22-rt w22-rt4 w22-rl w22-er w22-aud w22-mag w22-vo w22-in",
-    "hash": "55bf803e46cefe4a"
+    "hash": "728395d3bea4d759"
    },
    "23": {
     "keys": "GB18 GB19 LB03 RB10 WB10 w23-conv w23-rt w23-rt4 w23-rl w23-er w23-aud w23-mag w23-vo w23-in",
-    "hash": "66e69620a7f2e11e"
+    "hash": "8102467e85c635d3"
    },
    "24": {
     "keys": "GB20 GB21 LB12 RB08 WB12 w24-conv w24-rt w24-rt4 w24-rl w24-er w24-aud w24-mag w24-vo w24-in w24-ef",
-    "hash": "5c62bcf411053e7e"
+    "hash": "0d5c7e5f48105788"
    },
    "25": {
     "keys": "w25-rev w25-blk w25-wh RB09 w25-sto w25-op w25-mock w25-conv w25-rt w25-rl w25-in",
-    "hash": "fe008229e76a5ace"
+    "hash": "2e97572651969f0f"
    },
    "26": {
     "keys": "w26-bcsw w26-mag w26-rew w26-conv w26-rt4 w26-er w26-in w26-cd",
-    "hash": "5ac1ad878f0cde3c"
+    "hash": "6c7401217db1efe5"
    },
    "27": {
     "keys": "GB22 L2-10 R2-06 W2-09 S2-04 w27-conv w27-rt4 w27-er w27-aud w27-mag w27-in",
-    "hash": "f54500132007b8b9"
+    "hash": "f100d9dcacc95634"
    },
    "28": {
     "keys": "GB23 L2-09 R2-03 W2-07 w28-conv w28-rt w28-rt4 w28-rl w28-er w28-aud w28-mag w28-in",
-    "hash": "2f19b5bde55769ac"
+    "hash": "51d086101143d594"
    },
    "29": {
     "keys": "GB24 L2-08 R2-01 W2-06 S2-02 w29-conv w29-rt w29-rl w29-er w29-aud w29-mag w29-in",
-    "hash": "f436325b36eb2f91"
+    "hash": "56612e0eb2d5c842"
    },
    "30": {
     "keys": "GB25 L2-07 R2-02 W2-08 w30-conv w30-rt w30-rl w30-er w30-aud w30-mag w30-in",
-    "hash": "742e6a628732cb9e"
+    "hash": "db5b3dde9745c90f"
    },
    "31": {
     "keys": "GB26 L2-11 R2-10 W2-03 S2-03 w31-conv w31-rt w31-rt4 w31-rl w31-er w31-aud w31-mag w31-in w31-bc w31-wi",
-    "hash": "08648e09c9745968"
+    "hash": "522709556b2c0e3a"
    },
    "32": {
     "keys": "GB27 L2-12 R2-09 W2-12 w32-conv w32-rt w32-rt4 w32-rl w32-er w32-aud w32-mag w32-in",
-    "hash": "b33646e9cea8bffe"
+    "hash": "f586101fc6b0c252"
    },
    "33": {
     "keys": "GB28 L2-03 R2-07 W2-01 S2-05 w33-conv w33-rt w33-rt4 w33-rl w33-er w33-aud w33-mag w33-in",
-    "hash": "96d13dbeba18487e"
+    "hash": "145ce5123c2d58e8"
    },
    "34": {
     "keys": "GB29 L2-05 R2-05 W2-02 w34-conv w34-rt w34-rt4 w34-rl w34-er w34-aud w34-mag w34-in",
-    "hash": "fa3de214b2cc95f2"
+    "hash": "b0ad3033b9d4752a"
    },
    "35": {
     "keys": "GB30 L2-01 R2-08 W2-10 S2-01 w35-conv w35-rt w35-rt4 w35-rl w35-er w35-aud w35-mag w35-in w35-bc w35-wi",
-    "hash": "0ba3b39b81b214ea"
+    "hash": "09da957c3c1dd7d1"
    },
    "36": {
     "keys": "GB31 L2-02 R2-04 W2-05 w36-conv w36-rt w36-rt4 w36-rl w36-er w36-aud w36-mag w36-in w36-ef",
-    "hash": "dba140fe098a1b53"
+    "hash": "1f2c591f07f07385"
    },
    "37": {
     "keys": "GB32 L2-04 R2-11 W2-11 w37-conv w37-rt w37-rt4 w37-rl w37-er w37-aud w37-mag w37-in",
-    "hash": "85a02975e3731788"
+    "hash": "8c2cddace104a734"
    },
    "38": {
     "keys": "GB33 w38-pp w38-mag W2-04 w38-conv w38-rt w38-rt4 w38-rl w38-er w38-in",
-    "hash": "6daf29854c4f6df8"
+    "hash": "164789001aeff139"
    },
    "39": {
     "keys": "GB34 w39-az w39-bm w39-es w39-conv w39-rt w39-rt4 w39-er w39-in w39-bc w39-wi",
-    "hash": "dad585c6288969c7"
+    "hash": "3712d57f3533842e"
    },
    "40": {
     "keys": "GB35 w40-vz w40-st w40-rp w40-conv w40-rt w40-rt4 w40-er w40-in",
-    "hash": "fe021ffa284f4e55"
+    "hash": "f9b5ff1727ce4379"
    },
    "41": {
     "keys": "GB36 w41-ws w41-st w41-lc w41-conv w41-rt w41-rt4 w41-er w41-in",
-    "hash": "db61d10319740884"
+    "hash": "570f4f60612b6dfb"
    },
    "42": {
     "keys": "w42-rev w42-az w42-mag w42-es w42-mk w42-conv w42-rt w42-er w42-in",
-    "hash": "72173bf208bd1edc"
+    "hash": "0ec2c2d91a2c0630"
    },
    "43": {
     "keys": "w43-rev w43-pp w43-bm w43-rw w43-conv w43-rt4 w43-in w43-bc w43-wi",
-    "hash": "42485388b8e9a9f8"
+    "hash": "c9e4709701fa1a91"
    },
    "44": {
     "keys": "w44-se w44-bk w44-di w44-conv w44-rt4 w44-er w44-in w44-cd",
-    "hash": "37a8a986181e89aa"
+    "hash": "09ec15a46750b6d4"
    },
    "45": {
     "keys": "w45-es w45-ml w45-ex w45-rev w45-az w45-mag w45-conv w45-rt4 w45-in",
-    "hash": "e2c902861c60e193"
+    "hash": "18774e3f9a20bf00"
    },
    "46": {
     "keys": "w46-rp w46-lc w46-ex w46-gr w46-pp w46-st w46-conv w46-er w46-in",
-    "hash": "0f8b6bec64cd12d0"
+    "hash": "da64be08c3d4deea"
    },
    "47": {
     "keys": "w47-full w47-ex w47-vz w47-bm w47-rev w47-conv w47-in",
-    "hash": "100d47e32008d11e"
+    "hash": "029d51d2685c427b"
    },
    "48": {
     "keys": "w48-wi w48-ex w48-az w48-st w48-er w48-in w48-ef w48-bc w48-cd",
@@ -202,51 +202,51 @@
    },
    "49": {
     "keys": "w49-redo w49-c1g w49-c1l w49-b2f w49-conv w49-er w49-in",
-    "hash": "ed0dbb704ee1d469"
+    "hash": "293a49870d6939a4"
    },
    "50": {
     "keys": "w50-redo w50-c1r w50-c1w w50-az w50-conv w50-er w50-in",
-    "hash": "446dbd3588d74a56"
+    "hash": "884e979ec66b158f"
    },
    "51": {
     "keys": "w51-c1g w51-c1l w51-c1r w51-c1w w51-conv w51-er w51-in",
-    "hash": "11da62f32fcbb1f3"
+    "hash": "2753a6cbe0c10808"
    },
    "52": {
     "keys": "w52-retro w52-plan w52-az w52-st w52-conv w52-er w52-in",
-    "hash": "7fa31b0a1107ca87"
+    "hash": "95b5a2b33ca93bd5"
    },
    "53": {
     "keys": "c53-g c53-l c53-r c53-w c53-me c53-cv c53-in",
-    "hash": "2829be76cd51cb62"
+    "hash": "3313cfbd3cf46e72"
    },
    "54": {
     "keys": "c54-g c54-l c54-r c54-w c54-me c54-cv c54-in",
-    "hash": "c72c8302c1cd9595"
+    "hash": "33f93dc79c696caf"
    },
    "55": {
     "keys": "c55-g c55-l c55-r c55-w c55-me c55-cv c55-in",
-    "hash": "5651fe3970ba1797"
+    "hash": "ed1f7f1e9ac5c0ac"
    },
    "56": {
     "keys": "c56-g c56-l c56-r c56-w c56-me c56-cv c56-in",
-    "hash": "f055b9e2bc3ee023"
+    "hash": "825f3b25d7fe9a9e"
    },
    "57": {
     "keys": "c57-g c57-l c57-r c57-w c57-me c57-cv c57-in",
-    "hash": "13f3525bd7de5e34"
+    "hash": "b325c2146677a069"
    },
    "58": {
     "keys": "c58-g c58-l c58-r c58-w c58-me c58-cv c58-in",
-    "hash": "2bb3710091fe8d9f"
+    "hash": "059ab7cafc7c4cad"
    },
    "59": {
     "keys": "c59-g c59-l c59-r c59-w c59-me c59-cv c59-in",
-    "hash": "916204d45461fc0a"
+    "hash": "d62484303646a009"
    },
    "60": {
     "keys": "c60-g c60-l c60-r c60-w c60-me c60-cv c60-in",
-    "hash": "5a819b1b64e55038"
+    "hash": "26f6d28d812eec8b"
    }
   }
  },
@@ -261,191 +261,191 @@
   "weeks": {
    "1": {
     "keys": "w1-bc w1-ef w1-wi w1-cd w1-duo w1-gpt w1-gt1 w1-pod x1-eer x1-nil",
-    "hash": "e5ae4bfc1455fe0f"
+    "hash": "23fb0df8ad93f51a"
    },
    "2": {
     "keys": "GA01 GA02 LA01 RA01 WA01 SA04 w2-conv w2-er w2-pod w2-sto w2-vo w2-in x2-eer x2-nil x2-cv",
-    "hash": "1956b6145bf56b90"
+    "hash": "0c9dc78e7e20dbc8"
    },
    "3": {
     "keys": "GA04 GA03 LA02 RA02 WA12 w3-conv w3-rt w3-rl w3-er w3-pod w3-sto w3-vo w3-in x3-eer x3-nil x3-cv",
-    "hash": "e94cc47db5099c4b"
+    "hash": "dfba6e7cf40d7f83"
    },
    "4": {
     "keys": "GA05 GA06 LA03 RA03 WA11 SA05 w4-conv w4-rt w4-rl w4-er w4-pod w4-sto w4-vo w4-in w4-bc w4-wi x4-eer x4-nil x4-cv",
-    "hash": "e86969432d2158b5"
+    "hash": "54b82b62853c23bc"
    },
    "5": {
     "keys": "GA07 GA08 LA04 RA04 WA10 w5-conv w5-rt w5-rl w5-er w5-pod w5-sto w5-vo w5-in x5-eer x5-nil x5-cv",
-    "hash": "19f4bc8995f68d6e"
+    "hash": "b7fa2541224e04fc"
    },
    "6": {
     "keys": "GA09 GA10 LA05 RA05 WA02 SA03 w6-conv w6-rt w6-rt4 w6-rl w6-er w6-pod w6-sto w6-vo w6-in x6-eer x6-nil x6-cv",
-    "hash": "236283b88e2dace5"
+    "hash": "f87d3144a51d8129"
    },
    "7": {
     "keys": "GA11 GA12 LA06 RA06 WA08 w7-conv w7-rt w7-rt4 w7-rl w7-er w7-pod w7-sto w7-vo w7-in x7-eer x7-nil x7-cv",
-    "hash": "3baedf403f0e85cc"
+    "hash": "1ae64ece6e4350f8"
    },
    "8": {
     "keys": "GA13 LA07 RA07 WA05 SA01 w8-conv w8-rt w8-rt4 w8-rl w8-er w8-pod w8-sto w8-vo w8-in w8-bc w8-wi x8-eer x8-nil x8-cv",
-    "hash": "f223310524e41ab7"
+    "hash": "72bef3526626e283"
    },
    "9": {
     "keys": "GA14 GA15 LA08 RA08 WA06 w9-conv w9-rt w9-rt4 w9-rl w9-er w9-pod w9-sto w9-vo w9-in x9-eer x9-nil x9-cv",
-    "hash": "ccc60923b9f8eed3"
+    "hash": "1d82d560f96d435f"
    },
    "10": {
     "keys": "GA16 GA17 LA09 RA09 WA09 SA02 w10-conv w10-rt w10-rt4 w10-rl w10-er w10-pod w10-sto w10-vo w10-in x10-eer x10-nil x10-cv",
-    "hash": "bed0197b3d331233"
+    "hash": "75e201a419f87c01"
    },
    "11": {
     "keys": "GA18 GB01 LA10 RA10 WA03 w11-conv w11-rt w11-rt4 w11-rl w11-er w11-pod w11-sto w11-vo w11-in x11-eer x11-nil x11-cv",
-    "hash": "af190f7733c6aa19"
+    "hash": "7fdc380907ed03e5"
    },
    "12": {
     "keys": "GB02 w12-rev w12-blk LA11 LA12 w12-pod w12-sto WA04 WA07 w12-conv w12-rt w12-rl w12-in w12-ef w12-cd x12-eer x12-nil x12-cv",
-    "hash": "4a9462738f7f093a"
+    "hash": "35753873eab8cafb"
    },
    "13": {
     "keys": "GB03 LB08 RB03 WB01 SB04 w13-conv w13-rt w13-rt4 w13-rl w13-er w13-in x13-eer",
-    "hash": "a89827a605113dcc"
+    "hash": "ae81f5cb95552914"
    },
    "14": {
     "keys": "GB04 GB05 LB11 RB02 WB05 w14-conv w14-rt w14-rt4 w14-rl w14-er w14-aud w14-mag w14-vo w14-in x14-eer x14-nil x14-cv",
-    "hash": "7d855f89571ae076"
+    "hash": "1c99406ec9721e98"
    },
    "15": {
     "keys": "GB06 LB09 RB04 WB06 SB03 w15-conv w15-rt w15-rt4 w15-rl w15-er w15-aud w15-mag w15-vo w15-in x15-eer x15-nil x15-cv",
-    "hash": "5249b879120ac657"
+    "hash": "9d7a8e80161c76d0"
    },
    "16": {
     "keys": "GB07 LB07 RB01 WB04 w16-conv w16-rt w16-rt4 w16-rl w16-er w16-aud w16-mag w16-vo w16-in w16-bc w16-wi x16-eer x16-nil x16-cv",
-    "hash": "fa34f2e86105fa88"
+    "hash": "f599cd66d1453773"
    },
    "17": {
     "keys": "GB08 GB09 LB01 RB05 WB07 SB05 w17-conv w17-rt w17-rt4 w17-rl w17-er w17-aud w17-mag w17-vo w17-in x17-eer x17-nil x17-cv",
-    "hash": "a044be9a710a4c92"
+    "hash": "529ad7c7a230103d"
    },
    "18": {
     "keys": "GB10 LB04 RB06 WB02 w18-conv w18-rt w18-rt4 w18-rl w18-er w18-aud w18-mag w18-vo w18-in x18-eer x18-nil x18-cv",
-    "hash": "3bbdf12377454c75"
+    "hash": "4ecdb3bde9c08326"
    },
    "19": {
     "keys": "GB11 LB10 RB12 WB11 SB02 w19-conv w19-rt w19-rt4 w19-rl w19-er w19-aud w19-mag w19-vo w19-in x19-eer x19-nil x19-cv",
-    "hash": "bc8026e128aefb75"
+    "hash": "1edebc0fc1eb6675"
    },
    "20": {
     "keys": "GB12 GB13 LB02 RB13 WB08 w20-conv w20-rt w20-rt4 w20-rl w20-er w20-aud w20-mag w20-vo w20-in w20-bc w20-wi x20-eer x20-nil x20-cv",
-    "hash": "983b6abc8f9f81b1"
+    "hash": "5f19d478f37dd427"
    },
    "21": {
     "keys": "GB14 GB15 LB05 RB07 WB03 SB01 w21-conv w21-rt w21-rt4 w21-rl w21-er w21-aud w21-mag w21-vo w21-in x21-eer x21-nil x21-cv",
-    "hash": "d023df9f6e45f81a"
+    "hash": "767800ea43b13ad0"
    },
    "22": {
     "keys": "GB16 GB17 LB06 RB11 WB09 w22-conv w22-rt w22-rt4 w22-rl w22-er w22-aud w22-mag w22-vo w22-in x22-eer x22-nil x22-cv",
-    "hash": "7e739aac4dc5c673"
+    "hash": "bbbfb6be782a40de"
    },
    "23": {
     "keys": "GB18 GB19 LB03 RB10 WB10 w23-conv w23-rt w23-rt4 w23-rl w23-er w23-aud w23-mag w23-vo w23-in x23-eer x23-nil x23-cv",
-    "hash": "3679ec00b1af91a9"
+    "hash": "34a6ea8659e60770"
    },
    "24": {
     "keys": "GB20 GB21 LB12 RB08 WB12 w24-conv w24-rt w24-rt4 w24-rl w24-er w24-aud w24-mag w24-vo w24-in w24-ef x24-eer x24-nil x24-cv",
-    "hash": "19800b66192563ea"
+    "hash": "0b7dfdab09bd17d4"
    },
    "25": {
     "keys": "w25-rev w25-blk w25-wh RB09 w25-sto w25-op w25-mock w25-conv w25-rt w25-rl w25-in x25-eer x25-nil x25-cv",
-    "hash": "b1198b6a4cd6ff98"
+    "hash": "50c7c558e7d2b787"
    },
    "26": {
     "keys": "w26-bcsw w26-mag w26-rew w26-conv w26-rt4 w26-er w26-in w26-cd x26-eer",
-    "hash": "da50ca351be5e861"
+    "hash": "312f60d82e3a5c8c"
    },
    "27": {
     "keys": "GB22 L2-10 R2-06 W2-09 S2-04 w27-conv w27-rt4 w27-er w27-aud w27-mag w27-in x27-eer x27-cv",
-    "hash": "c60f46960daffa24"
+    "hash": "9a54e0fee94cecf4"
    },
    "28": {
     "keys": "GB23 L2-09 R2-03 W2-07 w28-conv w28-rt w28-rt4 w28-rl w28-er w28-aud w28-mag w28-in x28-eer x28-cv",
-    "hash": "eb0c88ba30a3a67a"
+    "hash": "d4c9a04f57067dab"
    },
    "29": {
     "keys": "GB24 L2-08 R2-01 W2-06 S2-02 w29-conv w29-rt w29-rl w29-er w29-aud w29-mag w29-in x29-eer x29-cv",
-    "hash": "8f3c99a3d7a28e95"
+    "hash": "cbbf0c5d42dc624f"
    },
    "30": {
     "keys": "GB25 L2-07 R2-02 W2-08 w30-conv w30-rt w30-rl w30-er w30-aud w30-mag w30-in x30-eer x30-cv",
-    "hash": "128fbefccf1fe834"
+    "hash": "3aa8109ed5156774"
    },
    "31": {
     "keys": "GB26 L2-11 R2-10 W2-03 S2-03 w31-conv w31-rt w31-rt4 w31-rl w31-er w31-aud w31-mag w31-in w31-bc w31-wi x31-eer x31-cv",
-    "hash": "023901a3e0fdc03b"
+    "hash": "ee0cd6e9f4cedee4"
    },
    "32": {
     "keys": "GB27 L2-12 R2-09 W2-12 w32-conv w32-rt w32-rt4 w32-rl w32-er w32-aud w32-mag w32-in x32-eer x32-cv",
-    "hash": "7252f66eb001d85a"
+    "hash": "77d2576ef8ff29ab"
    },
    "33": {
     "keys": "GB28 L2-03 R2-07 W2-01 S2-05 w33-conv w33-rt w33-rt4 w33-rl w33-er w33-aud w33-mag w33-in x33-eer x33-cv",
-    "hash": "7f8f9ca1934e90dc"
+    "hash": "b6d9c67b6817a25c"
    },
    "34": {
     "keys": "GB29 L2-05 R2-05 W2-02 w34-conv w34-rt w34-rt4 w34-rl w34-er w34-aud w34-mag w34-in x34-eer x34-cv",
-    "hash": "f3c8c8eac4f1c2fa"
+    "hash": "1af3bca2d2a258e2"
    },
    "35": {
     "keys": "GB30 L2-01 R2-08 W2-10 S2-01 w35-conv w35-rt w35-rt4 w35-rl w35-er w35-aud w35-mag w35-in w35-bc w35-wi x35-eer x35-cv",
-    "hash": "d427b15d394552f2"
+    "hash": "2a533887160e3cb4"
    },
    "36": {
     "keys": "GB31 L2-02 R2-04 W2-05 w36-conv w36-rt w36-rt4 w36-rl w36-er w36-aud w36-mag w36-in w36-ef x36-eer x36-cv",
-    "hash": "06657efc0a75a01f"
+    "hash": "d11226387986ad12"
    },
    "37": {
     "keys": "GB32 L2-04 R2-11 W2-11 w37-conv w37-rt w37-rt4 w37-rl w37-er w37-aud w37-mag w37-in x37-eer x37-cv",
-    "hash": "8c04e1d3a08993c7"
+    "hash": "71a0d4f58930c0c8"
    },
    "38": {
     "keys": "GB33 w38-pp w38-mag W2-04 w38-conv w38-rt w38-rt4 w38-rl w38-er w38-in x38-eer x38-cv",
-    "hash": "45be85a5db7e3061"
+    "hash": "e29859c1547158b6"
    },
    "39": {
     "keys": "GB34 w39-az w39-bm w39-es w39-conv w39-rt w39-rt4 w39-er w39-in w39-bc w39-wi x39-eer x39-cv",
-    "hash": "a5c32bf6a62f150a"
+    "hash": "b9cc435db50240e1"
    },
    "40": {
     "keys": "GB35 w40-vz w40-st w40-rp w40-conv w40-rt w40-rt4 w40-er w40-in x40-eer x40-cv",
-    "hash": "ec2a4e7625b56847"
+    "hash": "849a71fc11508804"
    },
    "41": {
     "keys": "GB36 w41-ws w41-st w41-lc w41-conv w41-rt w41-rt4 w41-er w41-in x41-eer x41-cv",
-    "hash": "3a05b78a024321e9"
+    "hash": "ff95af31f90ed451"
    },
    "42": {
     "keys": "w42-rev w42-az w42-mag w42-es w42-mk w42-conv w42-rt w42-er w42-in x42-eer x42-cv",
-    "hash": "8fd3bccab7d2b310"
+    "hash": "96cae58bc0d1bf57"
    },
    "43": {
     "keys": "w43-rev w43-pp w43-bm w43-rw w43-conv w43-rt4 w43-in w43-bc w43-wi x43-eer x43-cv",
-    "hash": "c7a037c3ee28141b"
+    "hash": "e9ba856a11d642fd"
    },
    "44": {
     "keys": "w44-se w44-bk w44-di w44-conv w44-rt4 w44-er w44-in w44-cd x44-eer",
-    "hash": "47eccd8ef21af98b"
+    "hash": "67edde41b18fec04"
    },
    "45": {
     "keys": "w45-es w45-ml w45-ex w45-rev w45-az w45-mag w45-conv w45-rt4 w45-in x45-eer x45-cv",
-    "hash": "193f511ec2be7c55"
+    "hash": "022129e60ab1c63a"
    },
    "46": {
     "keys": "w46-rp w46-lc w46-ex w46-gr w46-pp w46-st w46-conv w46-er w46-in x46-eer x46-cv",
-    "hash": "304ad9ebd8fc2711"
+    "hash": "7cd517701c17a08b"
    },
    "47": {
     "keys": "w47-full w47-ex w47-vz w47-bm w47-rev w47-conv w47-in x47-eer x47-cv",
-    "hash": "a5a284102ac82c31"
+    "hash": "d260635ee77db710"
    },
    "48": {
     "keys": "w48-wi w48-ex w48-az w48-st w48-er w48-in w48-ef w48-bc w48-cd x48-eer x48-cv",
@@ -453,51 +453,51 @@
    },
    "49": {
     "keys": "w49-redo w49-c1g w49-c1l w49-b2f w49-conv w49-er w49-in x49-eer x49-cv",
-    "hash": "11d5eac24fd64151"
+    "hash": "a8cdb55b73df1fba"
    },
    "50": {
     "keys": "w50-redo w50-c1r w50-c1w w50-az w50-conv w50-er w50-in x50-eer x50-cv",
-    "hash": "165e5c867073aa86"
+    "hash": "ccab826dab9d54f0"
    },
    "51": {
     "keys": "w51-c1g w51-c1l w51-c1r w51-c1w w51-conv w51-er w51-in x51-eer x51-cv",
-    "hash": "1bdb2b938c182b9f"
+    "hash": "b8ab6f76345a6d82"
    },
    "52": {
     "keys": "w52-retro w52-plan w52-az w52-st w52-conv w52-er w52-in x52-eer x52-cv",
-    "hash": "5d1a28afc1e9933d"
+    "hash": "28e82346ca14a2e9"
    },
    "53": {
     "keys": "c53-g c53-l c53-r c53-w c53-me c53-cv c53-in x53-eer x53-cv",
-    "hash": "c322408e500b6523"
+    "hash": "bcf754726aeb3ed0"
    },
    "54": {
     "keys": "c54-g c54-l c54-r c54-w c54-me c54-cv c54-in x54-eer x54-cv",
-    "hash": "7eb410fef0550659"
+    "hash": "807e7d2e1d3a1b21"
    },
    "55": {
     "keys": "c55-g c55-l c55-r c55-w c55-me c55-cv c55-in x55-eer x55-cv",
-    "hash": "87d658049c0acf06"
+    "hash": "5ed8a50840c4d557"
    },
    "56": {
     "keys": "c56-g c56-l c56-r c56-w c56-me c56-cv c56-in x56-eer x56-cv",
-    "hash": "11634bab800c6bce"
+    "hash": "aa1ce4c6ae033549"
    },
    "57": {
     "keys": "c57-g c57-l c57-r c57-w c57-me c57-cv c57-in x57-eer x57-cv",
-    "hash": "0f146d0147430fe0"
+    "hash": "08341b631fb3b02f"
    },
    "58": {
     "keys": "c58-g c58-l c58-r c58-w c58-me c58-cv c58-in x58-eer x58-cv",
-    "hash": "4b9c4ea74d1706f0"
+    "hash": "8d051606f1b7c0f4"
    },
    "59": {
     "keys": "c59-g c59-l c59-r c59-w c59-me c59-cv c59-in x59-eer x59-cv",
-    "hash": "bf7e8b0e19e47e01"
+    "hash": "3f47c42a39eec566"
    },
    "60": {
     "keys": "c60-g c60-l c60-r c60-w c60-me c60-cv c60-in x60-eer x60-cv",
-    "hash": "8692a6022ee635f9"
+    "hash": "97a47687bdd98666"
    }
   }
  },
@@ -512,191 +512,191 @@
   "weeks": {
    "1": {
     "keys": "w1-bc w1-ef w1-wi w1-cd w1-duo w1-gpt w1-gt1 w1-pod x1-eer x1-nil",
-    "hash": "e5ae4bfc1455fe0f"
+    "hash": "23fb0df8ad93f51a"
    },
    "2": {
     "keys": "GA01 GA02 LA01 RA01 WA01 SA04 w2-conv w2-pod w2-sto w2-vo w2-in x2-eer x2-nil x2-cv",
-    "hash": "22be3c7fe22cce4b"
+    "hash": "3f7c182c97ab6ea0"
    },
    "3": {
     "keys": "GA04 GA03 LA02 RA02 WA12 w3-conv w3-rt w3-pod w3-sto w3-vo w3-in x3-eer x3-nil x3-cv",
-    "hash": "e8d35019c72473a2"
+    "hash": "bd3cefa6c0cbd6e5"
    },
    "4": {
     "keys": "GA05 GA06 LA03 RA03 WA11 SA05 w4-conv w4-rt w4-pod w4-sto w4-vo w4-in w4-bc w4-wi x4-eer x4-nil x4-cv",
-    "hash": "aa7c9642ceb5a6b0"
+    "hash": "c7c961bffd75d4ad"
    },
    "5": {
     "keys": "GA07 GA08 LA04 RA04 WA10 w5-conv w5-rt w5-pod w5-sto w5-vo w5-in x5-eer x5-nil x5-cv",
-    "hash": "96911de2a26290a1"
+    "hash": "728c3122ce429dab"
    },
    "6": {
     "keys": "GA09 GA10 LA05 RA05 WA02 SA03 w6-conv w6-rt w6-pod w6-sto w6-vo w6-in x6-eer x6-nil x6-cv",
-    "hash": "9c41dbafc1390d01"
+    "hash": "4417b83ad62c3d27"
    },
    "7": {
     "keys": "GA11 GA12 LA06 RA06 WA08 w7-conv w7-rt w7-pod w7-sto w7-vo w7-in x7-eer x7-nil x7-cv",
-    "hash": "a9e16a5c2ce8cad5"
+    "hash": "bbd2efd4c9a59e3f"
    },
    "8": {
     "keys": "GA13 LA07 RA07 WA05 SA01 w8-conv w8-rt w8-pod w8-sto w8-vo w8-in w8-bc w8-wi x8-eer x8-nil x8-cv",
-    "hash": "e0dfa4a32ca4dd22"
+    "hash": "72d6435a7997da8f"
    },
    "9": {
     "keys": "GA14 GA15 LA08 RA08 WA06 w9-conv w9-rt w9-pod w9-sto w9-vo w9-in x9-eer x9-nil x9-cv",
-    "hash": "f49b4685b100dff3"
+    "hash": "c0e8912a0b2a9c29"
    },
    "10": {
     "keys": "GA16 GA17 LA09 RA09 WA09 SA02 w10-conv w10-rt w10-rt4 w10-rl w10-er w10-pod w10-sto w10-vo w10-in x10-eer x10-nil x10-cv",
-    "hash": "bed0197b3d331233"
+    "hash": "75e201a419f87c01"
    },
    "11": {
     "keys": "GA18 GB01 LA10 RA10 WA03 w11-conv w11-rt w11-rt4 w11-rl w11-er w11-pod w11-sto w11-vo w11-in x11-eer x11-nil x11-cv",
-    "hash": "af190f7733c6aa19"
+    "hash": "7fdc380907ed03e5"
    },
    "12": {
     "keys": "GB02 w12-rev w12-blk LA11 LA12 w12-pod w12-sto WA04 WA07 w12-conv w12-rt w12-rl w12-in w12-ef w12-cd x12-eer x12-nil x12-cv",
-    "hash": "4a9462738f7f093a"
+    "hash": "35753873eab8cafb"
    },
    "13": {
     "keys": "GB03 LB08 RB03 WB01 SB04 w13-conv w13-rt w13-rt4 w13-rl w13-er w13-in x13-eer",
-    "hash": "a89827a605113dcc"
+    "hash": "ae81f5cb95552914"
    },
    "14": {
     "keys": "GB04 GB05 LB11 RB02 WB05 w14-conv w14-rt w14-rt4 w14-rl w14-er w14-aud w14-mag w14-vo w14-in x14-eer x14-nil x14-cv",
-    "hash": "7d855f89571ae076"
+    "hash": "1c99406ec9721e98"
    },
    "15": {
     "keys": "GB06 LB09 RB04 WB06 SB03 w15-conv w15-rt w15-rt4 w15-rl w15-er w15-aud w15-mag w15-vo w15-in x15-eer x15-nil x15-cv",
-    "hash": "5249b879120ac657"
+    "hash": "9d7a8e80161c76d0"
    },
    "16": {
     "keys": "GB07 LB07 RB01 WB04 w16-conv w16-rt w16-rt4 w16-rl w16-er w16-aud w16-mag w16-vo w16-in w16-bc w16-wi x16-eer x16-nil x16-cv",
-    "hash": "fa34f2e86105fa88"
+    "hash": "f599cd66d1453773"
    },
    "17": {
     "keys": "GB08 GB09 LB01 RB05 WB07 SB05 w17-conv w17-rt w17-rt4 w17-rl w17-er w17-aud w17-mag w17-vo w17-in x17-eer x17-nil x17-cv",
-    "hash": "a044be9a710a4c92"
+    "hash": "529ad7c7a230103d"
    },
    "18": {
     "keys": "GB10 LB04 RB06 WB02 w18-conv w18-rt w18-rt4 w18-rl w18-er w18-aud w18-mag w18-vo w18-in x18-eer x18-nil x18-cv",
-    "hash": "3bbdf12377454c75"
+    "hash": "4ecdb3bde9c08326"
    },
    "19": {
     "keys": "GB11 LB10 RB12 WB11 SB02 w19-conv w19-rt w19-rt4 w19-rl w19-er w19-aud w19-mag w19-vo w19-in x19-eer x19-nil x19-cv",
-    "hash": "bc8026e128aefb75"
+    "hash": "1edebc0fc1eb6675"
    },
    "20": {
     "keys": "GB12 GB13 LB02 RB13 WB08 w20-conv w20-rt w20-rt4 w20-rl w20-er w20-aud w20-mag w20-vo w20-in w20-bc w20-wi x20-eer x20-nil x20-cv",
-    "hash": "983b6abc8f9f81b1"
+    "hash": "5f19d478f37dd427"
    },
    "21": {
     "keys": "GB14 GB15 LB05 RB07 WB03 SB01 w21-conv w21-rt w21-rt4 w21-rl w21-er w21-aud w21-mag w21-vo w21-in x21-eer x21-nil x21-cv",
-    "hash": "d023df9f6e45f81a"
+    "hash": "767800ea43b13ad0"
    },
    "22": {
     "keys": "GB16 GB17 LB06 RB11 WB09 w22-conv w22-rt w22-rt4 w22-rl w22-er w22-aud w22-mag w22-vo w22-in x22-eer x22-nil x22-cv",
-    "hash": "7e739aac4dc5c673"
+    "hash": "bbbfb6be782a40de"
    },
    "23": {
     "keys": "GB18 GB19 LB03 RB10 WB10 w23-conv w23-rt w23-rt4 w23-rl w23-er w23-aud w23-mag w23-vo w23-in x23-eer x23-nil x23-cv",
-    "hash": "3679ec00b1af91a9"
+    "hash": "34a6ea8659e60770"
    },
    "24": {
     "keys": "GB20 GB21 LB12 RB08 WB12 w24-conv w24-rt w24-rt4 w24-rl w24-er w24-aud w24-mag w24-vo w24-in w24-ef x24-eer x24-nil x24-cv",
-    "hash": "19800b66192563ea"
+    "hash": "0b7dfdab09bd17d4"
    },
    "25": {
     "keys": "w25-rev w25-blk w25-wh RB09 w25-sto w25-op w25-mock w25-conv w25-rt w25-rl w25-in x25-eer x25-nil x25-cv",
-    "hash": "b1198b6a4cd6ff98"
+    "hash": "50c7c558e7d2b787"
    },
    "26": {
     "keys": "w26-bcsw w26-mag w26-rew w26-conv w26-rt4 w26-er w26-in w26-cd x26-eer",
-    "hash": "da50ca351be5e861"
+    "hash": "312f60d82e3a5c8c"
    },
    "27": {
     "keys": "GB22 L2-10 R2-06 W2-09 S2-04 w27-conv w27-rt4 w27-er w27-aud w27-mag w27-in x27-eer x27-cv",
-    "hash": "c60f46960daffa24"
+    "hash": "9a54e0fee94cecf4"
    },
    "28": {
     "keys": "GB23 L2-09 R2-03 W2-07 w28-conv w28-rt w28-rt4 w28-rl w28-er w28-aud w28-mag w28-in x28-eer x28-cv",
-    "hash": "eb0c88ba30a3a67a"
+    "hash": "d4c9a04f57067dab"
    },
    "29": {
     "keys": "GB24 L2-08 R2-01 W2-06 S2-02 w29-conv w29-rt w29-rl w29-er w29-aud w29-mag w29-in x29-eer x29-cv",
-    "hash": "8f3c99a3d7a28e95"
+    "hash": "cbbf0c5d42dc624f"
    },
    "30": {
     "keys": "GB25 L2-07 R2-02 W2-08 w30-conv w30-rt w30-rl w30-er w30-aud w30-mag w30-in x30-eer x30-cv",
-    "hash": "128fbefccf1fe834"
+    "hash": "3aa8109ed5156774"
    },
    "31": {
     "keys": "GB26 L2-11 R2-10 W2-03 S2-03 w31-conv w31-rt w31-rt4 w31-rl w31-er w31-aud w31-mag w31-in w31-bc w31-wi x31-eer x31-cv",
-    "hash": "023901a3e0fdc03b"
+    "hash": "ee0cd6e9f4cedee4"
    },
    "32": {
     "keys": "GB27 L2-12 R2-09 W2-12 w32-conv w32-rt w32-rt4 w32-rl w32-er w32-aud w32-mag w32-in x32-eer x32-cv",
-    "hash": "7252f66eb001d85a"
+    "hash": "77d2576ef8ff29ab"
    },
    "33": {
     "keys": "GB28 L2-03 R2-07 W2-01 S2-05 w33-conv w33-rt w33-rt4 w33-rl w33-er w33-aud w33-mag w33-in x33-eer x33-cv",
-    "hash": "7f8f9ca1934e90dc"
+    "hash": "b6d9c67b6817a25c"
    },
    "34": {
     "keys": "GB29 L2-05 R2-05 W2-02 w34-conv w34-rt w34-rt4 w34-rl w34-er w34-aud w34-mag w34-in x34-eer x34-cv",
-    "hash": "f3c8c8eac4f1c2fa"
+    "hash": "1af3bca2d2a258e2"
    },
    "35": {
     "keys": "GB30 L2-01 R2-08 W2-10 S2-01 w35-conv w35-rt w35-rt4 w35-rl w35-er w35-aud w35-mag w35-in w35-bc w35-wi x35-eer x35-cv",
-    "hash": "d427b15d394552f2"
+    "hash": "2a533887160e3cb4"
    },
    "36": {
     "keys": "GB31 L2-02 R2-04 W2-05 w36-conv w36-rt w36-rt4 w36-rl w36-er w36-aud w36-mag w36-in w36-ef x36-eer x36-cv",
-    "hash": "06657efc0a75a01f"
+    "hash": "d11226387986ad12"
    },
    "37": {
     "keys": "GB32 L2-04 R2-11 W2-11 w37-conv w37-rt w37-rt4 w37-rl w37-er w37-aud w37-mag w37-in x37-eer x37-cv",
-    "hash": "8c04e1d3a08993c7"
+    "hash": "71a0d4f58930c0c8"
    },
    "38": {
     "keys": "GB33 w38-pp w38-mag W2-04 w38-conv w38-rt w38-rt4 w38-rl w38-er w38-in x38-eer x38-cv",
-    "hash": "45be85a5db7e3061"
+    "hash": "e29859c1547158b6"
    },
    "39": {
     "keys": "GB34 w39-az w39-bm w39-es w39-conv w39-rt w39-rt4 w39-er w39-in w39-bc w39-wi x39-eer x39-cv",
-    "hash": "a5c32bf6a62f150a"
+    "hash": "b9cc435db50240e1"
    },
    "40": {
     "keys": "GB35 w40-vz w40-st w40-rp w40-conv w40-rt w40-rt4 w40-er w40-in x40-eer x40-cv",
-    "hash": "ec2a4e7625b56847"
+    "hash": "849a71fc11508804"
    },
    "41": {
     "keys": "GB36 w41-ws w41-st w41-lc w41-conv w41-rt w41-rt4 w41-er w41-in x41-eer x41-cv",
-    "hash": "3a05b78a024321e9"
+    "hash": "ff95af31f90ed451"
    },
    "42": {
     "keys": "w42-rev w42-az w42-mag w42-es w42-mk w42-conv w42-rt w42-er w42-in x42-eer x42-cv",
-    "hash": "8fd3bccab7d2b310"
+    "hash": "96cae58bc0d1bf57"
    },
    "43": {
     "keys": "w43-rev w43-pp w43-bm w43-rw w43-conv w43-rt4 w43-in w43-bc w43-wi x43-eer x43-cv",
-    "hash": "c7a037c3ee28141b"
+    "hash": "e9ba856a11d642fd"
    },
    "44": {
     "keys": "w44-se w44-bk w44-di w44-conv w44-rt4 w44-er w44-in w44-cd x44-eer",
-    "hash": "47eccd8ef21af98b"
+    "hash": "67edde41b18fec04"
    },
    "45": {
     "keys": "w45-es w45-ml w45-ex w45-rev w45-az w45-mag w45-conv w45-rt4 w45-in x45-eer x45-cv",
-    "hash": "193f511ec2be7c55"
+    "hash": "022129e60ab1c63a"
    },
    "46": {
     "keys": "w46-rp w46-lc w46-ex w46-gr w46-pp w46-st w46-conv w46-er w46-in x46-eer x46-cv",
-    "hash": "304ad9ebd8fc2711"
+    "hash": "7cd517701c17a08b"
    },
    "47": {
     "keys": "w47-full w47-ex w47-vz w47-bm w47-rev w47-conv w47-in x47-eer x47-cv",
-    "hash": "a5a284102ac82c31"
+    "hash": "d260635ee77db710"
    },
    "48": {
     "keys": "w48-wi w48-ex w48-az w48-st w48-er w48-in w48-ef w48-bc w48-cd x48-eer x48-cv",
@@ -704,51 +704,51 @@
    },
    "49": {
     "keys": "w49-redo w49-c1g w49-c1l w49-b2f w49-conv w49-er w49-in x49-eer x49-cv",
-    "hash": "11d5eac24fd64151"
+    "hash": "a8cdb55b73df1fba"
    },
    "50": {
     "keys": "w50-redo w50-c1r w50-c1w w50-az w50-conv w50-er w50-in x50-eer x50-cv",
-    "hash": "165e5c867073aa86"
+    "hash": "ccab826dab9d54f0"
    },
    "51": {
     "keys": "w51-c1g w51-c1l w51-c1r w51-c1w w51-conv w51-er w51-in x51-eer x51-cv",
-    "hash": "1bdb2b938c182b9f"
+    "hash": "b8ab6f76345a6d82"
    },
    "52": {
     "keys": "w52-retro w52-plan w52-az w52-st w52-conv w52-er w52-in x52-eer x52-cv",
-    "hash": "5d1a28afc1e9933d"
+    "hash": "28e82346ca14a2e9"
    },
    "53": {
     "keys": "c53-g c53-l c53-r c53-w c53-me c53-cv c53-in x53-eer x53-cv",
-    "hash": "c322408e500b6523"
+    "hash": "bcf754726aeb3ed0"
    },
    "54": {
     "keys": "c54-g c54-l c54-r c54-w c54-me c54-cv c54-in x54-eer x54-cv",
-    "hash": "7eb410fef0550659"
+    "hash": "807e7d2e1d3a1b21"
    },
    "55": {
     "keys": "c55-g c55-l c55-r c55-w c55-me c55-cv c55-in x55-eer x55-cv",
-    "hash": "87d658049c0acf06"
+    "hash": "5ed8a50840c4d557"
    },
    "56": {
     "keys": "c56-g c56-l c56-r c56-w c56-me c56-cv c56-in x56-eer x56-cv",
-    "hash": "11634bab800c6bce"
+    "hash": "aa1ce4c6ae033549"
    },
    "57": {
     "keys": "c57-g c57-l c57-r c57-w c57-me c57-cv c57-in x57-eer x57-cv",
-    "hash": "0f146d0147430fe0"
+    "hash": "08341b631fb3b02f"
    },
    "58": {
     "keys": "c58-g c58-l c58-r c58-w c58-me c58-cv c58-in x58-eer x58-cv",
-    "hash": "4b9c4ea74d1706f0"
+    "hash": "8d051606f1b7c0f4"
    },
    "59": {
     "keys": "c59-g c59-l c59-r c59-w c59-me c59-cv c59-in x59-eer x59-cv",
-    "hash": "bf7e8b0e19e47e01"
+    "hash": "3f47c42a39eec566"
    },
    "60": {
     "keys": "c60-g c60-l c60-r c60-w c60-me c60-cv c60-in x60-eer x60-cv",
-    "hash": "8692a6022ee635f9"
+    "hash": "97a47687bdd98666"
    }
   }
  },
@@ -763,191 +763,191 @@
   "weeks": {
    "1": {
     "keys": "w1-bc w1-ef w1-wi w1-cd w1-duo w1-gpt w1-gt1 w1-pod x1-eer x1-nil",
-    "hash": "6890e14fb4d97155"
+    "hash": "16affe568a8ae47d"
    },
    "2": {
     "keys": "GA01 GA02 LA01 RA01 WA01 SA04 w2-conv w2-er w2-pod w2-sto w2-vo w2-in x2-eer x2-nil x2-cv",
-    "hash": "2a96a7fc67a158db"
+    "hash": "55ffd9c258120bb7"
    },
    "3": {
     "keys": "GA04 GA03 LA02 RA02 WA12 w3-conv w3-rt w3-rl w3-er w3-pod w3-sto w3-vo w3-in x3-eer x3-nil x3-cv",
-    "hash": "4ebf89d00f3d5388"
+    "hash": "7afc00eb637c97fe"
    },
    "4": {
     "keys": "GA05 GA06 LA03 RA03 WA11 SA05 w4-conv w4-rt w4-rl w4-er w4-pod w4-sto w4-vo w4-in w4-bc w4-wi x4-eer x4-nil x4-cv",
-    "hash": "10e9c5657c6d7dcd"
+    "hash": "feaacbc296f02927"
    },
    "5": {
     "keys": "GA07 GA08 LA04 RA04 WA10 w5-conv w5-rt w5-rl w5-er w5-pod w5-sto w5-vo w5-in x5-eer x5-nil x5-cv",
-    "hash": "023a9342669e144c"
+    "hash": "8aa7887928d65c72"
    },
    "6": {
     "keys": "GA09 GA10 LA05 RA05 WA02 SA03 w6-conv w6-rt w6-rl w6-er w6-pod w6-sto w6-vo w6-in x6-eer x6-nil x6-cv",
-    "hash": "c1f4b953a58cb4a9"
+    "hash": "5120693f62bccb51"
    },
    "7": {
     "keys": "GA11 GA12 LA06 RA06 WA08 w7-conv w7-rt w7-rl w7-er w7-pod w7-sto w7-vo w7-in x7-eer x7-nil x7-cv",
-    "hash": "82b6d276362fb0ea"
+    "hash": "b2c7f7be51cf8705"
    },
    "8": {
     "keys": "GA13 LA07 RA07 WA05 SA01 w8-conv w8-rt w8-rt4 w8-rl w8-er w8-pod w8-sto w8-vo w8-in w8-bc w8-wi x8-eer x8-nil x8-cv",
-    "hash": "3ee13ec4ff324a50"
+    "hash": "281b0bf1c6a03ef8"
    },
    "9": {
     "keys": "GA14 GA15 LA08 RA08 WA06 w9-conv w9-rt w9-rt4 w9-rl w9-er w9-pod w9-sto w9-vo w9-in x9-eer x9-nil x9-cv",
-    "hash": "1f47cca3002fc38a"
+    "hash": "f8d8ab8cfae9fd83"
    },
    "10": {
     "keys": "GA16 GA17 LA09 RA09 WA09 SA02 w10-conv w10-rt w10-rt4 w10-rl w10-er w10-pod w10-sto w10-vo w10-in x10-eer x10-nil x10-cv",
-    "hash": "2010dbaa40eade90"
+    "hash": "c03d41eb57cfd466"
    },
    "11": {
     "keys": "GA18 GB01 LA10 RA10 WA03 w11-conv w11-rt w11-rt4 w11-rl w11-er w11-pod w11-sto w11-vo w11-in x11-eer x11-nil x11-cv",
-    "hash": "02d273bb32845009"
+    "hash": "6eaf21ea9adb2336"
    },
    "12": {
     "keys": "GB02 w12-rev w12-blk LA11 LA12 w12-pod w12-sto WA04 WA07 w12-conv w12-rt w12-rl w12-in w12-ef w12-cd x12-eer x12-nil x12-cv",
-    "hash": "e11df345207ad484"
+    "hash": "0edc6c36eb31715f"
    },
    "13": {
     "keys": "GB03 LB08 RB03 WB01 SB04 w13-conv w13-rt w13-rt4 w13-rl w13-er w13-in x13-eer",
-    "hash": "a3b3a4d6814410a3"
+    "hash": "492b30a2068f72c6"
    },
    "14": {
     "keys": "GB04 GB05 LB11 RB02 WB05 w14-conv w14-rt w14-rt4 w14-rl w14-er w14-aud w14-mag w14-vo w14-in x14-eer x14-nil x14-cv",
-    "hash": "76263a3a828a896a"
+    "hash": "609270d0636ef52d"
    },
    "15": {
     "keys": "GB06 LB09 RB04 WB06 SB03 w15-conv w15-rt w15-rt4 w15-rl w15-er w15-aud w15-mag w15-vo w15-in x15-eer x15-nil x15-cv",
-    "hash": "a1f03e0de42d0bd2"
+    "hash": "a04ab21ed976a1f6"
    },
    "16": {
     "keys": "GB07 LB07 RB01 WB04 w16-conv w16-rt w16-rt4 w16-rl w16-er w16-aud w16-mag w16-vo w16-in w16-bc w16-wi x16-eer x16-nil x16-cv",
-    "hash": "18a3137f67a6af2e"
+    "hash": "e3de5b0c390b912e"
    },
    "17": {
     "keys": "GB08 GB09 LB01 RB05 WB07 SB05 w17-conv w17-rt w17-rt4 w17-rl w17-er w17-aud w17-mag w17-vo w17-in x17-eer x17-nil x17-cv",
-    "hash": "0b13a2f2c337bae7"
+    "hash": "25aabd4a413793b8"
    },
    "18": {
     "keys": "GB10 LB04 RB06 WB02 w18-conv w18-rt w18-rt4 w18-rl w18-er w18-aud w18-mag w18-vo w18-in x18-eer x18-nil x18-cv",
-    "hash": "ccbeb624926e74c2"
+    "hash": "270ffa55e3471e16"
    },
    "19": {
     "keys": "GB11 LB10 RB12 WB11 SB02 w19-conv w19-rt w19-rt4 w19-rl w19-er w19-aud w19-mag w19-vo w19-in x19-eer x19-nil x19-cv",
-    "hash": "87af6b61346c56d4"
+    "hash": "5fd2e39e88d42710"
    },
    "20": {
     "keys": "GB12 GB13 LB02 RB13 WB08 w20-conv w20-rt w20-rt4 w20-rl w20-er w20-aud w20-mag w20-vo w20-in w20-bc w20-wi x20-eer x20-nil x20-cv",
-    "hash": "5ac8e8e46253ab1d"
+    "hash": "109851c4ab14185b"
    },
    "21": {
     "keys": "GB14 GB15 LB05 RB07 WB03 SB01 w21-conv w21-rt w21-rt4 w21-rl w21-er w21-aud w21-mag w21-vo w21-in x21-eer x21-nil x21-cv",
-    "hash": "a27fec4472c93d3f"
+    "hash": "a4234b4db97cb4fc"
    },
    "22": {
     "keys": "GB16 GB17 LB06 RB11 WB09 w22-conv w22-rt w22-rt4 w22-rl w22-er w22-aud w22-mag w22-vo w22-in x22-eer x22-nil x22-cv",
-    "hash": "f23084a81e473828"
+    "hash": "96f73ad1a068aa91"
    },
    "23": {
     "keys": "GB18 GB19 LB03 RB10 WB10 w23-conv w23-rt w23-rt4 w23-rl w23-er w23-aud w23-mag w23-vo w23-in x23-eer x23-nil x23-cv",
-    "hash": "867dd9ce808eaf22"
+    "hash": "80d39457e3e134c8"
    },
    "24": {
     "keys": "GB20 GB21 LB12 RB08 WB12 w24-conv w24-rt w24-rt4 w24-rl w24-er w24-aud w24-mag w24-vo w24-in w24-ef x24-eer x24-nil x24-cv",
-    "hash": "c36412db62f3624f"
+    "hash": "5918b48d6dcd7ffa"
    },
    "25": {
     "keys": "w25-rev w25-blk w25-wh RB09 w25-sto w25-op w25-mock w25-conv w25-rt w25-rl w25-in x25-eer x25-nil x25-cv",
-    "hash": "8bca445ab3370f23"
+    "hash": "d0f17b4d2db3013f"
    },
    "26": {
     "keys": "w26-bcsw w26-mag w26-rew w26-conv w26-rt4 w26-er w26-in w26-cd x26-eer",
-    "hash": "aa8679c7ce77b54c"
+    "hash": "a404d689e6482d52"
    },
    "27": {
     "keys": "GB22 L2-10 R2-06 W2-09 S2-04 w27-conv w27-rt4 w27-er w27-aud w27-mag w27-in x27-eer x27-cv",
-    "hash": "5fb9880d905ca789"
+    "hash": "43451f7f2cb254b4"
    },
    "28": {
     "keys": "GB23 L2-09 R2-03 W2-07 w28-conv w28-rt w28-rt4 w28-rl w28-er w28-aud w28-mag w28-in x28-eer x28-cv",
-    "hash": "d6d5a1211bb482db"
+    "hash": "9f0c9afbae84518a"
    },
    "29": {
     "keys": "GB24 L2-08 R2-01 W2-06 S2-02 w29-conv w29-rt w29-rl w29-er w29-aud w29-mag w29-in x29-eer x29-cv",
-    "hash": "6ef973f73ec088d3"
+    "hash": "f97d2cd69d6976cc"
    },
    "30": {
     "keys": "GB25 L2-07 R2-02 W2-08 w30-conv w30-rt w30-rl w30-er w30-aud w30-mag w30-in x30-eer x30-cv",
-    "hash": "63b15f19c41bb3be"
+    "hash": "982fd499717312dc"
    },
    "31": {
     "keys": "GB26 L2-11 R2-10 W2-03 S2-03 w31-conv w31-rt w31-rt4 w31-rl w31-er w31-aud w31-mag w31-in w31-bc w31-wi x31-eer x31-cv",
-    "hash": "16ddc2aa063dde9d"
+    "hash": "36c99d8a4d7928aa"
    },
    "32": {
     "keys": "GB27 L2-12 R2-09 W2-12 w32-conv w32-rt w32-rt4 w32-rl w32-er w32-aud w32-mag w32-in x32-eer x32-cv",
-    "hash": "5aee15ba42dd4a01"
+    "hash": "9825a7b6d435bad6"
    },
    "33": {
     "keys": "GB28 L2-03 R2-07 W2-01 S2-05 w33-conv w33-rt w33-rt4 w33-rl w33-er w33-aud w33-mag w33-in x33-eer x33-cv",
-    "hash": "3f5b06fbee514e97"
+    "hash": "f34cf29c32a955cc"
    },
    "34": {
     "keys": "GB29 L2-05 R2-05 W2-02 w34-conv w34-rt w34-rt4 w34-rl w34-er w34-aud w34-mag w34-in x34-eer x34-cv",
-    "hash": "213eddd0251e55b5"
+    "hash": "7496bf694062788e"
    },
    "35": {
     "keys": "GB30 L2-01 R2-08 W2-10 S2-01 w35-conv w35-rt w35-rt4 w35-rl w35-er w35-aud w35-mag w35-in w35-bc w35-wi x35-eer x35-cv",
-    "hash": "7ad7b539fa935bf7"
+    "hash": "3f307b25d181cca9"
    },
    "36": {
     "keys": "GB31 L2-02 R2-04 W2-05 w36-conv w36-rt w36-rt4 w36-rl w36-er w36-aud w36-mag w36-in w36-ef x36-eer x36-cv",
-    "hash": "7a8a1aaaabe47596"
+    "hash": "32a8fbb8feb0ef67"
    },
    "37": {
     "keys": "GB32 L2-04 R2-11 W2-11 w37-conv w37-rt w37-rt4 w37-rl w37-er w37-aud w37-mag w37-in x37-eer x37-cv",
-    "hash": "9594e65ad1127a97"
+    "hash": "c7ec7f7b3c904c81"
    },
    "38": {
     "keys": "GB33 w38-pp w38-mag W2-04 w38-conv w38-rt w38-rt4 w38-rl w38-er w38-in x38-eer x38-cv",
-    "hash": "2c8500f722181f33"
+    "hash": "346ea189b60f4e67"
    },
    "39": {
     "keys": "GB34 w39-az w39-bm w39-es w39-conv w39-rt w39-rt4 w39-er w39-in w39-bc w39-wi x39-eer x39-cv",
-    "hash": "e4a9487ff653bb9f"
+    "hash": "6bd6878c09f1eef4"
    },
    "40": {
     "keys": "GB35 w40-vz w40-st w40-rp w40-conv w40-rt w40-rt4 w40-er w40-in x40-eer x40-cv",
-    "hash": "9d2b3974891f5a57"
+    "hash": "bca584c5f3fdfab3"
    },
    "41": {
     "keys": "GB36 w41-ws w41-st w41-lc w41-conv w41-rt w41-rt4 w41-er w41-in x41-eer x41-cv",
-    "hash": "64b1c70663824c64"
+    "hash": "46cf04283d165424"
    },
    "42": {
     "keys": "w42-rev w42-az w42-mag w42-es w42-mk w42-conv w42-rt w42-er w42-in x42-eer x42-cv",
-    "hash": "d8a68a406e6ce75c"
+    "hash": "bc6fc7b2b41a0591"
    },
    "43": {
     "keys": "w43-rev w43-pp w43-bm w43-rw w43-conv w43-rt4 w43-in w43-bc w43-wi x43-eer x43-cv",
-    "hash": "7bde22253cffd555"
+    "hash": "ad358a14dfa222a2"
    },
    "44": {
     "keys": "w44-se w44-bk w44-di w44-conv w44-rt4 w44-er w44-in w44-cd x44-eer",
-    "hash": "352ec30c237b72ae"
+    "hash": "b288ed257b69d4e4"
    },
    "45": {
     "keys": "w45-es w45-ml w45-ex w45-rev w45-az w45-mag w45-conv w45-rt4 w45-in x45-eer x45-cv",
-    "hash": "8ecb544b59ff0491"
+    "hash": "d41d5eb98d226a5c"
    },
    "46": {
     "keys": "w46-rp w46-lc w46-ex w46-gr w46-pp w46-st w46-conv w46-er w46-in x46-eer x46-cv",
-    "hash": "9becb1352ed523b0"
+    "hash": "0f1dc712535a9fa9"
    },
    "47": {
     "keys": "w47-full w47-ex w47-vz w47-bm w47-rev w47-conv w47-in x47-eer x47-cv",
-    "hash": "e0712e56d99dd373"
+    "hash": "17f3450e35e41597"
    },
    "48": {
     "keys": "w48-wi w48-ex w48-az w48-st w48-er w48-in w48-ef w48-bc w48-cd x48-eer x48-cv",
@@ -955,51 +955,51 @@
    },
    "49": {
     "keys": "w49-redo w49-c1g w49-c1l w49-b2f w49-conv w49-er w49-in x49-eer x49-cv",
-    "hash": "f6abb99b904748fa"
+    "hash": "36e4dc1242ecb9ef"
    },
    "50": {
     "keys": "w50-redo w50-c1r w50-c1w w50-az w50-conv w50-er w50-in x50-eer x50-cv",
-    "hash": "cda98057465fc869"
+    "hash": "d895e3062d4a2572"
    },
    "51": {
     "keys": "w51-c1g w51-c1l w51-c1r w51-c1w w51-conv w51-er w51-in x51-eer x51-cv",
-    "hash": "d7687e83a05e594d"
+    "hash": "0fe90f5c91a21e05"
    },
    "52": {
     "keys": "w52-retro w52-plan w52-az w52-st w52-conv w52-er w52-in x52-eer x52-cv",
-    "hash": "ff0a5295b23bb8c9"
+    "hash": "4c988b8ec63c3864"
    },
    "53": {
     "keys": "c53-g c53-l c53-r c53-w c53-me c53-cv c53-in x53-eer x53-cv",
-    "hash": "e5b3ce042b9e096c"
+    "hash": "4f4eed8677363210"
    },
    "54": {
     "keys": "c54-g c54-l c54-r c54-w c54-me c54-cv c54-in x54-eer x54-cv",
-    "hash": "6990b6a74be43022"
+    "hash": "a4e5e04ba934ee9c"
    },
    "55": {
     "keys": "c55-g c55-l c55-r c55-w c55-me c55-cv c55-in x55-eer x55-cv",
-    "hash": "da91ec5546d3b855"
+    "hash": "6618d081d5c56a69"
    },
    "56": {
     "keys": "c56-g c56-l c56-r c56-w c56-me c56-cv c56-in x56-eer x56-cv",
-    "hash": "ef12e6b00621b954"
+    "hash": "73ce63f4e092fe5c"
    },
    "57": {
     "keys": "c57-g c57-l c57-r c57-w c57-me c57-cv c57-in x57-eer x57-cv",
-    "hash": "01a542beba7693d6"
+    "hash": "739a930ab391fd73"
    },
    "58": {
     "keys": "c58-g c58-l c58-r c58-w c58-me c58-cv c58-in x58-eer x58-cv",
-    "hash": "2ded74dbf0f3a85a"
+    "hash": "70462bb45f082e2d"
    },
    "59": {
     "keys": "c59-g c59-l c59-r c59-w c59-me c59-cv c59-in x59-eer x59-cv",
-    "hash": "101bd4d68623295a"
+    "hash": "5873183aed303560"
    },
    "60": {
     "keys": "c60-g c60-l c60-r c60-w c60-me c60-cv c60-in x60-eer x60-cv",
-    "hash": "44b0cfc07de29b2b"
+    "hash": "d1ecf2d99f904d57"
    }
   }
  }

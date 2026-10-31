@@ -177,6 +177,12 @@ a.task-title:hover{text-decoration-color:var(--accent)}
 .task-meta a{color:var(--muted)}
 .task-note{font-size:var(--fs-sm);color:var(--muted);margin:6px 0 0}
 .task-start{flex:0 0 auto;margin-top:-3px}
+/* ChatGPT feedback on a task: conversation dots and a link to the Diário */
+.fb-line{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;font-size:var(--fs-xs);color:var(--muted);margin-top:10px}
+.fb-line .btn{white-space:nowrap}
+.fb-dots{display:inline-flex;gap:4px}
+.fb-dots i{width:9px;height:9px;border-radius:50%;border:1.5px solid var(--rule-strong)}
+.fb-dots i.on{background:var(--moss);border-color:var(--moss)}
 .task.milestone .task-title::after{content:"checkpoint";margin-left:8px;font-size:10.5px;font-weight:700;letter-spacing:var(--tracking-caps);text-transform:uppercase;color:var(--leather);border:1px solid color-mix(in srgb,currentColor 45%,transparent);border-radius:var(--r-xs);padding:1px 6px;vertical-align:2px;text-decoration:none;display:inline-block}
 .task.running{background:var(--accent-soft);border-radius:var(--r);padding-left:12px;padding-right:12px;margin:0 -12px;border-bottom-color:transparent}
 .task-cards .chk{pointer-events:none}

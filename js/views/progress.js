@@ -7,7 +7,9 @@ import { today, addDays, mondayOf, parse, MESES, shortDate } from "../core/date.
 import { skillOf, CATEGORY_NAMES } from "../data/skills.js";
 import { LESSONS } from "../data/lessons.js";
 import { allLogs, minutesBy } from "../state/selectors.js";
-import { calWeekOf } from "../domain/pace.js";
+import { calWeekOf, currentRoadmapWeek } from "../domain/pace.js";
+import { weekTasks } from "../domain/week-tasks.js";
+import { countForTask, latestLevel, insights } from "../domain/gpt-feedback.js";
 import { planSplit } from "../domain/goal-extras.js";
 import { latestScore, lowLessons } from "../domain/lesson-scores.js";
 import { minutesByDate, streak, heatmap, heatLevel, knownCount, learnedCount, knownTimeline, weekSummary } from "../domain/stats.js";
@@ -140,6 +142,19 @@ function scoresHTML(){
   return h + "</section>";
 }
 
+function journalHTML(){
+  const fb = S.state.feedback, conv = weekTasks(currentRoadmapWeek()).find(t => t.fb && t.fb.kind === "conv");
+  const week = conv ? {done: countForTask(fb, conv.k), goal: conv.fb.n || 1} : null;
+  let h = '<section class="card section"><div class="card-head"><h2>Conversas e textos</h2><a class="btn btn-ghost btn-small" href="#diario">Abrir o Diário</a></div>';
+  if (!fb.length) return h + '<p class="muted">Depois de cada conversa ou texto corrigido no ChatGPT, cole o feedback no Diário. Aqui aparece a contagem da semana e a evolução das notas.</p></section>';
+  const lc = latestLevel(fb, "conv"), lw = latestLevel(fb, "writ");
+  h += '<div class="summary-line">' + (week ? '<span class="pill pill-accent">' + week.done + " de " + week.goal + " conversas na semana da rota</span>" : "") +
+    '<span class="pill">' + plural(fb.filter(e => e.kind === "conv").length, "conversa", "conversas") + " no total</span>" +
+    (lc ? '<span class="pill">fala ' + esc(lc.level) + "</span>" : "") + (lw ? '<span class="pill">escrita ' + esc(lw.level) + "</span>" : "") + "</div>";
+  const tip = insights(fb, null)[0];
+  return h + (tip ? '<p class="hint">' + esc(tip) + "</p>" : "") + "</section>";
+}
+
 function historyHTML(){
   const by = new Map();
   allLogs().forEach(e => { const m = e.date.slice(0, 7); if (!by.has(m)) by.set(m, []); by.get(m).push(e); });
@@ -171,6 +186,7 @@ export default {
     h += S.logs.length ? '<div class="scroll">' + weeklyChart(cw) + '</div><ul class="legend">' + ["base", "in", "out"].map(c => '<li class="c-' + c + '">' + CATEGORY_NAMES[c] + "</li>").join("") + '<li style="--lc:transparent">Linha tracejada: meta semanal</li></ul>' : '<p class="muted">Nenhum registro ainda. Comece uma tarefa em Hoje e o gráfico aparece aqui.</p>';
     h += "</section>";
     h += skillsHTML();
+    h += journalHTML();
     h += scoresHTML();
     h += historyHTML();
     return h;

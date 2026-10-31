@@ -32,6 +32,15 @@ test("lesson ids become lesson tasks and the conversation theme becomes a task",
   assert.match(byKey(w, "w2-conv").t, /^ChatGPT: /);
 });
 
+test("conversation tasks count Diário sessions against the phase goal; writing lessons take a correction", () => {
+  assert.deepEqual(byKey(buildWeek(2, NEW), "w2-conv").fb, {kind: "conv", n: 3});
+  assert.deepEqual(byKey(buildWeek(30, NEW), "w30-conv").fb, {kind: "conv", n: 4});
+  assert.deepEqual(byKey(buildWeek(1, NEW), "w1-gpt").fb, {kind: "conv", n: 1});
+  assert.deepEqual(byKey(buildWeek(2, NEW), "WA01").fb, {kind: "writ"});
+  assert.equal(byKey(buildWeek(2, NEW), "GA01").fb, undefined);
+  assert.equal(byKey(buildWeek(53, NEW), "c53-cv").fb.kind, "conv");
+});
+
 test("spaced reviews: last week's grammar after 7 days and a new test after 4 weeks", () => {
   const w6 = buildWeek(6, NEW);
   assert.deepEqual(byKey(w6, "w6-rt").sc, gramOf(5));

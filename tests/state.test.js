@@ -94,3 +94,13 @@ test("backup written by toBackup restores to the same data", () => {
   assert.equal(file.app, "northbound");
   assert.deepEqual(fromBackup(file), data);
 });
+
+test("Diário entries survive a backup round-trip and bad ones are dropped", () => {
+  const st = blankState();
+  st.feedback = [{id: "f1", kind: "conv", date: "2026-10-20", task: "w2-conv", min: 30, feel: 4, level: "A2+", crit: {flu: 3}, errs: [{wrong: "I go yesterday", right: "I went yesterday"}], ts: 1}, {kind: "conv", date: "x"}];
+  const d = fromBackup(JSON.parse(JSON.stringify(toBackup({state: st, logs: [], cards: [], reviews: []}))));
+  assert.equal(d.state.feedback.length, 1);
+  assert.deepEqual(d.state.feedback[0].crit, {flu: 3});
+  assert.equal(d.state.feedback[0].task, "w2-conv");
+  assert.deepEqual(normalizeState({}).feedback, []);
+});
