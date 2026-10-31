@@ -10,7 +10,9 @@ export const TASK_NOTES = {
 export function task(k, s, t, m, u, n, extra){ return Object.assign({k, s, t, m: m || 0, u: u || null, n: n || ""}, extra || {}); }
 export function lessonTask(id){
   const L = LESSONS[id];
-  return {k:id, s:L.s, t:L.t, u:L.u, m:DEFAULT_MIN[L.s] || 40, n:TASK_NOTES[L.s] || "", idx:L.idx, bc:true, sc:[id]};
+  const t = {k:id, s:L.s, t:L.t, u:L.u, m:DEFAULT_MIN[L.s] || 40, n:TASK_NOTES[L.s] || "", idx:L.idx, bc:true, sc:[id]};
+  if (L.s === "writ") t.fb = {kind:"writ"};
+  return t;
 }
 export const PHASE_EXTRAS = {
   1:{conv:90, extras:[["pod","list","Podcasts do British Council: 1 episódio com transcrição",60,LINKS.podcasts],["sto","read","Story zone A2–B1: 1 história",50,LINKS.storyA]], vocab:["Vocabulário do British Council: 2 a 3 temas A1–A2 que você ainda não domina",40,"va"]},
@@ -32,7 +34,7 @@ W(1,[
   task("w1-wi","writ","Write & Improve: 1 texto curto sobre você",40,LINKS.wi,"",{ms:true}),
   task("w1-cd","test","Autoavaliação das listas “can-do” A2 e B1",20,"#niveis","",{ms:true}),
   task("w1-duo","cards","Flashcards: adicionar as Palavras do dia (A2)",30,"#palavras","Em Palavras, o cartão Palavras do dia traz as mais usadas do A2. Marque as que já sabe e adicione o resto."),
-  task("w1-gpt","conv","ChatGPT: prompt 1 (diagnóstico) e salvar os 10 erros em Rotinas",40,"#rotinas"),
+  task("w1-gpt","conv","ChatGPT: prompt 1 (diagnóstico) e salvar os 10 erros em Rotinas",40,"#rotinas","",{fb:{kind:"conv",n:1}}),
   task("w1-gt1","gram","Fazer o “Grammar test 1” das 18 lições A1–A2 e anotar quais ficaram com 80% ou mais",120,LESSON_INDEXES.ga[1],"Anote a nota de cada uma abaixo. Os tópicos com 80% ou mais viram revisão rápida e liberam tempo.",{sc:GA_IDS}),
   task("w1-pod","list","Podcasts do British Council: 1 episódio para sentir o nível",40,LINKS.podcasts)
 ], null, {label:"Diagnóstico e configuração", noStd:true});

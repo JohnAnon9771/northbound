@@ -2,7 +2,7 @@
 import { S } from "../state/store.js";
 import { cached } from "../state/memo.js";
 import { LESSONS, LINKS, LESSON_INDEXES } from "../data/lessons.js";
-import { phaseOf } from "../data/phases.js";
+import { PHASES, phaseOf } from "../data/phases.js";
 import { task, lessonTask, PHASE_EXTRAS, WEEKS, TASK_NOTES, levelTestTask, writeImproveTask, efsetTask, canDoTask } from "../data/weeks.js";
 import { skillOf } from "../data/skills.js";
 
@@ -23,9 +23,9 @@ export function buildWeek(n, route){
       task(k+"-g","gram","C1 grammar: 2 tópicos",90,LINKS.c1g),
       task(k+"-l","list","Listening C1: 1 lição e Audio zone ou Video zone",80,LINKS.c1l),
       task(k+"-r","read","Reading C1: 1 lição e B2–C1 stories",80,LINKS.c1r),
-      task(k+"-w","writ","Writing C1: 1 texto argumentativo, corrigido",80,LINKS.c1w,TASK_NOTES.writ),
+      task(k+"-w","writ","Writing C1: 1 texto argumentativo, corrigido",80,LINKS.c1w,TASK_NOTES.writ,{fb:{kind:"writ"}}),
       task(k+"-me","speak","Mediação: resumir um artigo em voz alta para o ChatGPT",30,"#rotinas"),
-      task(k+"-cv","conv","ChatGPT: debates de 45 min sobre temas abstratos",180,"#rotinas","Use o prompt 2 com nível C1."),
+      task(k+"-cv","conv","ChatGPT: debates de 45 min sobre temas abstratos",180,"#rotinas","Use o prompt 2 com nível C1.",{fb:{kind:"conv",n:PHASES[5].convPerWeek}}),
       task(k+"-in","input","Input livre: série, podcast ou YouTube sem legenda em português",70,null,"",{vol:true})
     ];
     if ((n - 52) % 12 === 0) tasks.push(task(k+"-ef","test","EF SET 50 min, meta 61 a 70 (C1)",60,LINKS.efset,"",{ms:true}));
@@ -36,7 +36,7 @@ export function buildWeek(n, route){
   const light = !!(d.light || (d.soft && nv));
   const noExtras = !!(d.noExtras || (d.soft && nv));
   d.items.forEach(it => { if (typeof it === "string") tasks.push(lessonTask(it)); else if (nv || !it.nv) tasks.push(it); });
-  if (d.conv) tasks.push(task("w"+n+"-conv","conv","ChatGPT: "+d.conv, px ? px.conv : 90, "#rotinas", "Prompt 2 ou 3, no modo voz. Feedback só no fim."));
+  if (d.conv) tasks.push(task("w"+n+"-conv","conv","ChatGPT: "+d.conv, px ? px.conv : 90, "#rotinas", "Prompt 2 ou 3, no modo voz. Feedback só no fim: cole no Diário.", {fb:{kind:"conv", n:PHASES[p].convPerWeek}}));
   if (!d.noStd){
     if (!nv){
       const prev = WEEKS[n-1];
