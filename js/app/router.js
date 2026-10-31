@@ -4,6 +4,10 @@ import { $ } from "../core/dom.js";
 import { icon } from "../core/icons.js";
 import { resetTasks } from "../ui/task-item.js";
 import { deckToday } from "../flashcards/deck.js";
+import { S } from "../state/store.js";
+import { today as todayISO } from "../core/date.js";
+import { plural } from "../core/format.js";
+import { minutesByDate, streak } from "../domain/stats.js";
 
 import today from "../views/today.js";
 import words from "../views/words.js";
@@ -22,7 +26,7 @@ const ALIAS = {"": "hoje", semana: "rota", roteiro: "rota", flashcards: "palavra
 const PARENT = {niveis: "mais", rotinas: "mais", ajustes: "mais", estudo: "palavras"};
 
 export const root = $("#app");
-let view = null;
+let view = null, enterT = 0;
 export const currentView = () => view;
 
 function resolve(){
@@ -36,6 +40,8 @@ export function go(){
   if (changed && view && view.leave) view.leave();
   view = next;
   if (changed && view.enter) view.enter();
+  // the entrance animation runs only when the screen changes, not on every re-render
+  if (changed){ document.body.classList.add("entering"); clearTimeout(enterT); enterT = setTimeout(() => document.body.classList.remove("entering"), 700); }
   render();
   // move focus to the new screen for screen readers, but not on page load (nothing to announce yet)
   if (changed && !first){ window.scrollTo(0, 0); root.focus({preventScroll: true}); }
@@ -63,7 +69,17 @@ export function render(){
 function renderNav(){
   const cur = PARENT[view.id] || view.id;
   const due = deckToday().due;
-  const item = ([id, label, ic]) => '<a href="#' + id + '"' + (cur === id ? ' aria-current="page"' : "") + ">" + icon(ic, 22) + "<span>" + label + "</span>" + (id === "palavras" && due ? '<span class="badge-dot" aria-label="' + due + ' revisões">' + (due > 99 ? "99+" : due) + "</span>" : "") + "</a>";
+  const item = ([id, label, ic]) => '<a href="#' + id + '"' + (cur === id ? ' aria-current="page"' : "") + ">" + icon(ic, 21) + "<span>" + label + "</span>" + (id === "palavras" && due ? '<span class="badge-dot" aria-label="' + due + ' revisões">' + (due > 99 ? "99+" : due) + "</span>" : "") + "</a>";
   $("#nav").innerHTML = NAV.map(item).join("");
   $("#tabbar").innerHTML = NAV.map(item).join("");
+  $("#sideFoot").innerHTML = sideFoot();
+}
+
+// the sidebar's quiet footer: today's minutes against the daily goal, and the streak
+function sideFoot(){
+  const t = todayISO(), dayMap = minutesByDate(S.logs), st = streak(dayMap, t);
+  const min = dayMap.get(t) || 0, goal = Math.round(S.state.settings.goalH * 60 / 6);
+  const f = goal ? Math.min(1, min / goal) : 0;
+  return '<p class="eyebrow">Hoje</p><div class="side-min"><b class="num">' + min + '</b><span>de ' + goal + ' min</span></div><div class="side-bar' + (f >= 1 ? " full" : "") + '"><i style="width:' + Math.round(f * 100) + '%"></i></div>' +
+    '<p class="side-streak' + (st.days ? "" : " cold") + '">' + icon("flame", 15) + '<span class="num">' + plural(st.days, "dia seguido", "dias seguidos") + "</span></p>";
 }

@@ -46,7 +46,7 @@ function waitingText(d){
 export function dailyWordsHTML(){
   ensureList();
   const accent = S.state.settings.accent;
-  let h = '<section class="card section" aria-labelledby="dwT"><div class="section-head"><h2 id="dwT">Palavras do dia</h2>';
+  let h = '<section class="card daily-words section" aria-labelledby="dwT"><div class="card-head"><h2 id="dwT">Palavras do dia</h2>';
   if (!dw.list) return h + "</div>" + (dw.error ? '<p class="note">Não consegui carregar a lista de palavras. <button class="link-btn" type="button" data-act="wl-retry">Tentar de novo</button></p>' : '<div class="loading"><span class="spin"></span>Carregando a lista…</div>') + "</section>";
 
   const t = today();
@@ -61,9 +61,9 @@ export function dailyWordsHTML(){
   } else if (!t.batch.words.length){
     h += '<p class="muted">Você passou por todas as palavras a partir do ' + t.level + ". Escolha outro nível abaixo se quiser continuar.</p>";
   } else {
-    h += '<p class="muted" style="margin-top:0">As ' + plural(t.batch.words.length, "palavra mais usada", "palavras mais usadas") + " do " + t.batch.level + " que você ainda não tem. Toque em “já sei” nas que você conhece: outra entra no lugar.</p>";
+    h += '<p class="muted">As ' + plural(t.batch.words.length, "palavra mais usada", "palavras mais usadas") + " do " + t.batch.level + " que você ainda não tem. Toque em “já sei” nas que você conhece: outra entra no lugar.</p>";
     h += '<ul class="wl-list">' + t.batch.words.map(w => '<li><span class="wl-term">' + esc(displayTerm(w, accent)) + "</span>" + (w.pos ? '<span class="wl-pos">' + esc(w.pos.split("/").map(posPt).join(", ")) + "</span>" : "") + (w.level !== t.batch.level ? '<span class="pill">' + w.level + "</span>" : "") + '<button class="link-btn" type="button" data-act="wl-known" data-term="' + esc(w.term) + '" aria-label="Já sei ' + esc(w.term) + '">já sei</button></li>').join("") + "</ul>";
-    h += '<div class="row" style="margin-top:14px;align-items:center"><button class="btn" type="button" data-act="wl-add">' + icon("plus", 16) + "Adicionar ao deck (" + t.batch.words.length + ')</button><span class="hint">Leva cerca de ' + Math.max(1, Math.round(t.batch.words.length * 2.5 / 60)) + " min para buscar tudo.</span></div>";
+    h += '<div class="row center mt-m"><button class="btn" type="button" data-act="wl-add">' + icon("plus", 16) + "Adicionar ao deck (" + t.batch.words.length + ')</button><span class="hint">Leva cerca de ' + Math.max(1, Math.round(t.batch.words.length * 2.5 / 60)) + " min para buscar tudo.</span></div>";
   }
 
   const sel = S.state.wl.level || "auto";
@@ -71,7 +71,7 @@ export function dailyWordsHTML(){
   h += '<label class="wl-level"><span class="hint">Nível</span><select data-change="wl-level" aria-label="Nível das palavras do dia">' +
     '<option value="auto"' + (sel === "auto" ? " selected" : "") + ">Pela fase (" + phaseLevel(t.phase.id) + ")</option>" +
     WL_LEVELS.map(l => '<option value="' + l + '"' + (sel === l ? " selected" : "") + ">" + l + "</option>").join("") + "</select></label></div>";
-  h += '<p class="hint" style="margin:10px 0 0">Níveis do CEFR-J e do Octanove; ordem por frequência do NGSL.</p>';
+  h += '<p class="hint mt-s">Níveis do CEFR-J e do Octanove; ordem por frequência do NGSL.</p>';
   return h + "</section>";
 }
 

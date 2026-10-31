@@ -3,7 +3,7 @@ import { S, addLog } from "../state/store.js";
 import { esc } from "../core/dom.js";
 import { icon } from "../core/icons.js";
 import { plural } from "../core/format.js";
-import { endOfDay, addDays, today, parse } from "../core/date.js";
+import { endOfDay, addDays, today, parse, shortDate } from "../core/date.js";
 import { rerender } from "../core/rerender.js";
 import * as timer from "../core/study-timer.js";
 import { buildQueue, preview } from "../flashcards/srs.js";
@@ -67,8 +67,8 @@ function frontHTML(c){
   let h = '<div class="flash-kind"><span class="' + kind[1] + '">' + kind[0] + "</span>" + (!isFront(c) ? '<span class="pill">português → inglês</span>' : "") + (m ? '<span class="pill">sentido ' + (c.meanings.indexOf(m) + 1) + " de " + c.meanings.length + "</span>" : "") + "</div>";
   if (!isFront(c)){
     h += '<p class="flash-term">' + esc(m ? m.pt.join(", ") : c.translation || "(sem tradução)") + "</p>";
-    if (ex && ex.pt) h += '<p class="flash-q" style="font-size:20px">' + esc(ex.pt) + "</p>";
-    if (ex) h += '<p class="muted" style="margin:0">' + cloze(ex.en, c.term, ex.form) + "</p>";
+    if (ex && ex.pt) h += '<p class="flash-q sm">' + esc(ex.pt) + "</p>";
+    if (ex) h += '<p class="flash-cloze">' + cloze(ex.en, c.term, ex.form) + "</p>";
     h += '<p class="hint">Como se diz em inglês?</p>';
   } else if (ex){
     h += '<p class="flash-q">' + highlight(ex.en, c.term, ex.form) + "</p>";
@@ -90,9 +90,9 @@ function backHTML(c){
   const shown = exampleFor(c), m = meaningFor(c);
   // homographs sound different ("lead" /lɛd/ the metal, /ˈliːd/ to guide): the recording only fits its own sense
   const ipa = m && m.ipa ? m.ipa : c.ipa, audio = !m || !m.ipa || m.ipa === c.ipa ? c.audio : "";
-  let h = '<div class="flash-back"><div class="row" style="align-items:center;gap:10px"><span class="flash-term" style="font-size:30px">' + esc(c.term) + "</span>" + (ipa ? '<span class="muted">/' + esc(ipa) + "/</span>" : "") + speakBtn(c.term, "Ouvir " + c.term, audio) + "</div>";
-  h += '<div class="flash-tr">' + esc(m ? m.pt.join(", ") : c.translation || "—") + (c.pos && !m ? ' <span class="muted" style="font-size:14px;font-weight:700">' + esc(c.pos) + "</span>" : "") + "</div>";
-  if (m) h += '<p class="muted" style="margin:0;font-size:14px">Outros sentidos: ' + c.meanings.filter(x => x !== m).map(x => esc(x.pt[0])).join(" · ") + "</p>";
+  let h = '<div class="flash-back"><div class="flash-head"><span class="flash-term md">' + esc(c.term) + "</span>" + (ipa ? '<span class="flash-ipa">/' + esc(ipa) + "/</span>" : "") + speakBtn(c.term, "Ouvir " + c.term, audio) + "</div>";
+  h += '<div class="flash-tr">' + esc(m ? m.pt.join(", ") : c.translation || "—") + (c.pos && !m ? ' <span class="flash-pos">' + esc(c.pos) + "</span>" : "") + "</div>";
+  if (m) h += '<p class="flash-aside">Outros sentidos: ' + c.meanings.filter(x => x !== m).map(x => esc(x.pt[0])).join(" · ") + "</p>";
   // without an example the front already showed this sense's definition
   const def = m ? (m.ex ? m.def || m.gloss : "") : c.definition;
   if (def) h += '<p class="flash-def">' + esc(def) + "</p>";
@@ -101,7 +101,7 @@ function backHTML(c){
   const exs = (c.examples || []).filter(e => e.en && (!m || e.en === c.context || (c.src !== "list" && mentions(e.pt, m.pt))));
   const order = shown ? [shown].concat(exs.filter(e => e.en !== shown.en)) : exs;
   order.slice(0, 3).forEach(e => { h += '<p class="ex">' + highlight(e.en, c.term, e.form) + " " + speakBtnInline(e.en) + (e.pt ? '<span class="pt">' + esc(e.pt) + "</span>" : "") + "</p>"; });
-  if (c.collocations && c.collocations.length) h += '<p class="muted" style="margin:0;font-size:14px">Combina com: ' + c.collocations.map(esc).join(" · ") + "</p>";
+  if (c.collocations && c.collocations.length) h += '<p class="flash-aside">Combina com: ' + c.collocations.map(esc).join(" · ") + "</p>";
   if (c.notes) h += '<p class="note">' + esc(c.notes) + "</p>";
   return h + "</div>";
 }
@@ -111,13 +111,13 @@ function doneHTML(){
   const r = remaining();
   const tomorrowEnd = endOfDay(parse(addDays(today(), 1)).getTime());
   const tomorrow = S.cards.filter(c => c.state !== "new" && !c.suspended && c.due <= tomorrowEnd).length;
-  let h = '<section class="card done-card">';
+  let h = '<section class="card done-card"><span class="stamp" aria-hidden="true"><b>' + esc(shortDate(today())) + "</b>" + (ses.done ? "estudado" : "em dia") + "</span>";
   if (!ses.done){
-    h += icon("leaf", 40) + "<h2>Nada para estudar agora</h2>";
+    h += "<h2>Nada para estudar agora</h2>";
     h += '<p class="lead">' + esc(studyStatus(r.d).why) + "</p>";
     if (r.d.newWaiting) h += '<p><button class="btn btn-soft" type="button" data-act="extra">Estudar 5 novas extras</button></p>';
   } else {
-    h += icon("star", 40) + "<h2>" + (ses.good / ses.done >= 0.85 ? "Que sessão boa!" : "Sessão concluída") + "</h2>";
+    h += "<h2>" + (ses.good / ses.done >= 0.85 ? "Que sessão boa!" : "Sessão concluída") + "</h2>";
     h += '<p class="lead">Cada revisão de hoje deixa a palavra mais firme para a próxima conversa.</p>';
     h += '<div class="done-stats"><div><b>' + ses.done + "</b><span>cartões</span></div><div><b>" + Math.round(100 * ses.good / ses.done) + "%</b><span>acertos</span></div><div><b>" + (ses.ms < 60000 ? Math.round(ses.ms / 1000) + "</b><span>segundos" : Math.round(ses.ms / 60000) + "</b><span>min") + "</span></div></div>";
     if (ses.newSeen) h += "<p>" + plural(ses.newSeen, "palavra nova entrou", "palavras novas entraram") + " no seu vocabulário.</p>";
@@ -126,7 +126,7 @@ function doneHTML(){
     else if (timer.running()) h += '<p class="hint">O cronômetro está ligado, então o tempo entra por ele.</p>';
     if (r.d.newWaiting && !r.total) h += '<p><button class="btn btn-ghost btn-small" type="button" data-act="extra">Estudar 5 novas extras</button></p>';
   }
-  h += '<div class="row" style="justify-content:center;margin-top:18px"><a class="btn" href="#hoje">Voltar para Hoje</a><a class="btn btn-ghost" href="#palavras">Adicionar palavras</a></div>';
+  h += '<div class="row mid mt-l"><a class="btn" href="#hoje">Voltar para Hoje</a><a class="btn btn-ghost" href="#palavras">Adicionar palavras</a></div>';
   return h + "</section>";
 }
 
@@ -162,7 +162,7 @@ export default {
     const total = ses.done + r.total;
     let h = '<div class="study"><div class="study-top"><a class="btn btn-icon btn-ghost" href="#palavras" aria-label="Sair do estudo">' + icon("x", 20) + "</a>";
     h += '<div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="' + total + '" aria-valuenow="' + ses.done + '"><i style="width:' + (total ? Math.round(100 * ses.done / total) : 100) + '%"></i></div>';
-    h += '<div class="counts" aria-label="Novas, aprendendo, revisões"><span class="n-new" title="novas">' + r.neu + '</span><span class="n-learn" title="aprendendo">' + r.learn + '</span><span class="n-rev" title="revisões">' + r.rev + "</span></div></div>";
+    h += '<div class="counts" aria-label="Novas, aprendendo, revisões"><span class="n-new" title="novas">' + r.neu + '<span class="sr"> novas</span></span><span class="n-learn" title="aprendendo">' + r.learn + '<span class="sr"> aprendendo</span></span><span class="n-rev" title="revisões">' + r.rev + '<span class="sr"> revisões</span></span></div></div>';
     if (!c){ return h + doneHTML() + "</div>"; }
     h += '<article class="flash" id="flash" aria-live="polite">' + frontHTML(c) + (ses.flipped ? backHTML(c) : "");
     if (!ses.flipped) h += '<div class="reveal"><button class="btn btn-block" type="button" data-act="flip" id="flipBtn">Mostrar resposta</button></div>';
@@ -170,7 +170,7 @@ export default {
     if (ses.flipped){
       const pv = preview(c, Date.now());
       h += '<div class="grades" role="group" aria-label="Como foi?">' + GRADE_UI.map(([g, label, cls]) => '<button class="grade ' + cls + '" type="button" data-act="grade" data-g="' + g + '"' + (g === 3 ? ' id="goodBtn"' : "") + ">" + label + "<small>" + esc(pv[g]) + "</small><kbd>" + g + "</kbd></button>").join("") + "</div>";
-      h += '<p class="hint" style="text-align:center;margin-top:10px">No celular: arraste o cartão para a esquerda (de novo) ou para a direita (bom).</p>';
+      h += '<p class="hint t-center swipe-hint">No celular: arraste o cartão para a esquerda (de novo) ou para a direita (bom).</p>';
     }
     return h + "</div>";
   },

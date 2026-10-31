@@ -1,18 +1,18 @@
 /* Small inline icons (24px grid, stroke = currentColor). */
 const ICONS = {
-  home: '<path d="M4 11.5 12 5l8 6.5"/><path d="M6.5 10v8.5h11V10"/><path d="M10 18.5v-4.5h4v4.5"/>',
-  cards: '<rect x="4" y="6.5" width="12" height="13" rx="2.5"/><path d="M8.5 4.5h9a2.5 2.5 0 0 1 2.5 2.5v10"/>',
-  route: '<circle cx="6" cy="18" r="2.2"/><circle cx="18" cy="6" r="2.2"/><path d="M8 18h7.5a3.5 3.5 0 0 0 0-7h-7a3.5 3.5 0 0 1 0-7H16"/>',
-  chart: '<path d="M5 19.5V11"/><path d="M10 19.5V6"/><path d="M15 19.5v-6"/><path d="M20 19.5V9"/>',
-  more: '<circle cx="6" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="18" cy="12" r="1.4"/>',
-  play: '<path d="M8 5.5v13l10.5-6.5z"/>',
+  home: '<path d="M4.5 10.5 12 4.5l7.5 6"/><path d="M6.5 9v10.5h11V9"/><path d="M10 19.5v-5h4v5"/>',
+  cards: '<rect x="4" y="7" width="12" height="13" rx="2"/><path d="M8 4h10a2 2 0 0 1 2 2v11"/><path d="M7.5 11.5h5M7.5 14.5h3.5"/>',
+  route: '<circle cx="6" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M8 18h7.5a3.5 3.5 0 0 0 0-7h-7a3.5 3.5 0 0 1 0-7H16" stroke-dasharray="2.2 2.4"/>',
+  chart: '<path d="M4.5 19.5h15"/><path d="M7 16.5v-5"/><path d="M11 16.5V7"/><path d="M15 16.5v-3.5"/><path d="M19 16.5V9.5"/>',
+  more: '<path d="M5 6.5h14M5 12h14M5 17.5h9"/>',
+  play: '<path d="M8 5.8v12.4a.6.6 0 0 0 .9.5l10-6.2a.6.6 0 0 0 0-1L8.9 5.3a.6.6 0 0 0-.9.5z"/>',
   pause: '<path d="M9 6v12M15 6v12"/>',
-  stop: '<rect x="7" y="7" width="10" height="10" rx="2"/>',
+  stop: '<rect x="7" y="7" width="10" height="10" rx="1.5"/>',
   speak: '<path d="M5 9.5v5h3.5L13 18V6L8.5 9.5z"/><path d="M16 9a4 4 0 0 1 0 6"/><path d="M18.5 6.5a7.5 7.5 0 0 1 0 11"/>',
   flame: '<path d="M12 20.5c3.6 0 6-2.4 6-5.8 0-3.6-2.7-5.4-3.6-8.7-1.8 1.3-2.7 3-2.7 4.8-1-.7-1.6-1.8-1.7-3.1C8 9.4 6 11.7 6 14.7c0 3.4 2.4 5.8 6 5.8z"/>',
   leaf: '<path d="M5 19c0-8 5-13 14-14-.5 9-5.5 14-13 14z"/><path d="M5 19 13 11"/>',
   check: '<path d="m5.5 12.5 4 4 9-9"/>',
-  plus: '<path d="M12 5v14M5 12h14"/>',
+  plus: '<path d="M12 5.5v13M5.5 12h13"/>',
   search: '<circle cx="11" cy="11" r="6"/><path d="m20 20-4.5-4.5"/>',
   edit: '<path d="M5 19h3.5L19 8.5 15.5 5 5 15.5z"/>',
   trash: '<path d="M5.5 7h13"/><path d="M9.5 7V5h5v2"/><path d="M7 7l1 12.5h8L17 7"/>',
@@ -22,9 +22,14 @@ const ICONS = {
   target: '<circle cx="12" cy="12" r="7.5"/><circle cx="12" cy="12" r="3.5"/>',
   arrow: '<path d="M5 12h14"/><path d="m13 6 6 6-6 6"/>',
   back: '<path d="M19 12H5"/><path d="m11 6-6 6 6 6"/>',
-  x: '<path d="M6 6l12 12M18 6 6 18"/>'
+  chevron: '<path d="m9.5 6 6 6-6 6"/>',
+  bookmark: '<path d="M7 4h10v16l-5-3.5L7 20z"/>',
+  quote: '<path d="M10 7c-3 1-4.5 3.2-4.5 6.5V17H10v-4.5H7.5"/><path d="M18.5 7c-3 1-4.5 3.2-4.5 6.5V17h4.5v-4.5H16"/>',
+  feather: '<path d="M19.5 4.5C12 5 7 10 6 18.5"/><path d="M19.5 4.5c.5 6-3.5 10.5-11 11"/><path d="M4.5 19.5 6 18"/>',
+  seal: '<circle cx="12" cy="10" r="5.5"/><path d="m9 14.8-1.5 5.2 4.5-2 4.5 2-1.5-5.2"/>',
+  x: '<path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/>'
 };
 export function icon(name, size){
   const s = size || 20;
-  return '<svg class="ic" width="' + s + '" height="' + s + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (ICONS[name] || "") + "</svg>";
+  return '<svg class="ic" width="' + s + '" height="' + s + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (ICONS[name] || "") + "</svg>";
 }

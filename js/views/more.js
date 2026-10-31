@@ -13,10 +13,10 @@ export default {
   title: "Mais",
   render(){
     const d = daysSinceBackup();
-    let h = '<div class="page-head"><h1>Mais</h1></div><div class="hub">';
-    h += LINKS.map(l => '<a href="#' + l[0] + '"><span class="hub-ic">' + icon(l[1], 22) + "</span><span><b>" + l[2] + "</b><span>" + l[3] + "</span></span></a>").join("");
-    h += "</div>";
-    if (d == null || d >= 14) h += '<p class="note" style="margin-top:20px">' + (d == null ? "Você ainda não baixou um backup." : "Seu último backup foi há " + d + " dias.") + ' Os dados ficam só neste navegador. <a href="#ajustes">Fazer backup</a></p>';
+    let h = '<header class="page-head"><div><p class="eyebrow">Índice</p><h1>Mais</h1><p class="lead">As seções de consulta: o que você lê de vez em quando, não todo dia.</p></div></header><nav class="hub" aria-label="Mais seções">';
+    h += LINKS.map((l, i) => '<a href="#' + l[0] + '"><span class="hub-n">' + ["I", "II", "III"][i] + '</span><span class="hub-ic">' + icon(l[1], 20) + '</span><span class="hub-txt"><b>' + l[2] + "</b><span>" + l[3] + "</span></span>" + icon("chevron", 18) + "</a>").join("");
+    h += "</nav>";
+    if (d == null || d >= 14) h += '<p class="note mt-l">' + (d == null ? "Você ainda não baixou um backup." : "Seu último backup foi há " + d + " dias.") + ' Os dados ficam só neste navegador. <a href="#ajustes">Fazer backup</a></p>';
     return h;
   }
 };

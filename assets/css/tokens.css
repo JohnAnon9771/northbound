@@ -1,74 +1,124 @@
-/* Design tokens: the only place with colors, fonts, radii and shadows.
-   A redesign starts (and usually ends) here. Components only use these variables. */
+/* Design tokens: the only place with colors, fonts, sizes, radii, shadows and motion.
+   "Biblioteca à noite": moss-dark reading room, parchment ink, brass for action, leather for warmth.
+   Components only use these variables. Some older names (--sage, --honey, --sky, --plum) stay as
+   aliases because JS writes them (confetti, phase and skill colors). */
 :root{
   color-scheme: light;
-  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
-  --font-body: "Nunito", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Fraunces", "Iowan Old Style", Georgia, serif;
+  --font-body: "Hanken Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
 
-  --bg: #FBF6EE;          /* paper */
-  --bg-sunk: #F3EBDF;
-  --surface: #FFFDF9;
-  --surface-2: #F7F0E6;
-  --ink: #3A2E28;         /* warm charcoal */
-  --muted: #7A6B61;
-  --rule: #EADFCF;
-  --rule-strong: #D9CAB6;
+  /* type scale (~1.2) */
+  --fs-2xs: 11.5px; --fs-xs: 12.5px; --fs-sm: 14px; --fs-md: 15.5px; --fs-lg: 18px;
+  --fs-xl: 21px; --fs-2xl: clamp(23px, 2.8vw, 27px); --fs-3xl: clamp(30px, 4.6vw, 42px);
+  --fs-hero: clamp(34px, 6vw, 56px);
+  --tracking-caps: .09em;
 
-  --accent: #C2603A;      /* terracotta */
-  --accent-ink: #FFF8F1;
-  --accent-soft: #F7E3D7;
-  --sage: #6F8C69;
-  --sage-soft: #E4ECDD;
-  --honey: #C9922F;
-  --honey-soft: #F6E8C8;
-  --plum: #8C6A93;
-  --sky: #5B83A3;
+  /* paper: linen by day */
+  --bg: #F3EEE3;
+  --bg-sunk: #EAE3D4;
+  --surface: #FBF8F1;
+  --surface-2: #EFE8DA;
+  --ink: #1C2620;          /* green-black ink */
+  --ink-2: #3B463F;
+  --muted: #646357;
+  --faint: #8D8A7A;
+  --rule: #E1D8C5;
+  --rule-strong: #CDC1A9;
+  --hairline: rgba(28,38,32,.08);
 
-  --ok: var(--sage);
-  --warn: var(--honey);
-  --danger: #B4493C;
+  /* brass: primary action, "you are here" */
+  --accent: #B58E3F;
+  --accent-ink: #1F1A0E;   /* text on brass */
+  --accent-text: #80611F;  /* brass as text on paper */
+  --accent-soft: #F1E5C8;
+  /* leather: warmth, streaks, highlights */
+  --leather: #9C4F2D;
+  --leather-soft: #F2DDD0;
+  /* moss: done, good */
+  --moss: #3F6A4D;
+  --moss-soft: #DEE7DA;
+  --ink-blue: #3D5B75;
+  --ink-blue-soft: #DCE4EA;
+  --plum: #7A5872;
+  --danger: #A8432F;
+  --on-color: #FBF8F1;     /* text on moss/leather/ink-blue fills */
+
+  /* the bookplate: the one dark, heavy block per screen (same in both themes) */
+  --plate: #1B2A21;
+  --plate-2: #233529;
+  --plate-ink: #EFE7D5;
+  --plate-muted: #B3AC97;
+  --plate-rule: rgba(214,180,106,.35);
+  --plate-accent: #D4B066;
+  --plate-accent-hi: #DDBC75;
+  --plate-accent-ink: #1A150A;
+
+  /* legacy aliases (JS writes these names) */
+  --sage: var(--moss); --sage-soft: var(--moss-soft);
+  --honey: var(--accent); --honey-soft: var(--accent-soft);
+  --sky: var(--ink-blue);
+  --ok: var(--moss); --warn: var(--accent);
 
   /* route phases 0–5 */
-  --p0: #A3968A; --p1: #7A9A74; --p2: #5B83A3; --p3: #8C6A93; --p4: #C2603A; --p5: #C9922F;
+  --p0: #948C78; --p1: #5E8466; --p2: #4F7190; --p3: #7A5872; --p4: #A35A35; --p5: #B58E3F;
   /* skill categories: base, input, output */
-  --c-base: #A08A78; --c-in: #5B83A3; --c-out: #C2603A;
-  /* heatmap scale */
-  --heat-0: #F1E8DB; --heat-1: #DCE6D3; --heat-2: #B5CBA9; --heat-3: #87A87D; --heat-4: #5E7F57;
+  --c-base: #8C7F66; --c-in: #4F7190; --c-out: #A35A35;
+  /* heatmap: moss scale */
+  --heat-0: #E8E1D2; --heat-1: #C9D6C0; --heat-2: #9CB89A; --heat-3: #6A9372; --heat-4: #3F6A4D;
 
-  --r-sm: 10px; --r: 16px; --r-lg: 22px; --r-pill: 999px;
-  --shadow-1: 0 1px 2px rgba(74,52,38,.05), 0 6px 18px rgba(74,52,38,.06);
-  --shadow-2: 0 2px 6px rgba(74,52,38,.07), 0 18px 40px rgba(74,52,38,.12);
-  --focus: 0 0 0 3px rgba(194,96,58,.35);
+  --r-xs: 6px; --r-sm: 10px; --r: 14px; --r-lg: 20px; --r-xl: 28px; --r-pill: 999px;
+  --shadow-1: 0 1px 0 rgba(255,255,255,.7) inset, 0 1px 2px rgba(40,34,20,.05);
+  --shadow-2: 0 1px 2px rgba(40,34,20,.06), 0 10px 30px -8px rgba(40,34,20,.18);
+  --shadow-float: 0 2px 6px rgba(20,24,18,.10), 0 22px 48px -12px rgba(20,24,18,.32);
+  --focus: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
+  --grain-opacity: .045;
+
+  --ease-out: cubic-bezier(.2,.8,.2,1);
+  --ease-spring: cubic-bezier(.3,1.5,.5,1);
+  --dur-1: 120ms; --dur-2: 220ms; --dur-3: 420ms;
+
   --nav-h: 64px;
+  --side-w: 248px;
 }
 
+/* lamplight: the reading room at night */
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     color-scheme: dark;
-    --bg: #1E1916; --bg-sunk: #181412; --surface: #28211D; --surface-2: #312823;
-    --ink: #F1E6DA; --muted: #B5A595; --rule: #3B312B; --rule-strong: #4C4038;
-    --accent: #E58A62; --accent-ink: #24170F; --accent-soft: #48302A;
-    --sage: #9DB894; --sage-soft: #2F382C; --honey: #E8BE6A; --honey-soft: #423620; --plum: #C29CC9; --sky: #8FB4D2;
-    --danger: #E7826F;
-    --p0: #A89C90; --p1: #9DB894; --p2: #8FB4D2; --p3: #C29CC9; --p4: #E58A62; --p5: #E8BE6A;
-    --c-base: #C0AA96; --c-in: #8FB4D2; --c-out: #E58A62;
-    --heat-0: #2C2420; --heat-1: #3A4535; --heat-2: #55684D; --heat-3: #7C9772; --heat-4: #A8C49C;
-    --shadow-1: 0 1px 2px rgba(0,0,0,.3), 0 6px 18px rgba(0,0,0,.25);
-    --shadow-2: 0 2px 6px rgba(0,0,0,.35), 0 18px 40px rgba(0,0,0,.45);
-    --focus: 0 0 0 3px rgba(229,138,98,.45);
+    --bg: #111714; --bg-sunk: #0C110E; --surface: #18201B; --surface-2: #1F2923;
+    --ink: #ECE4D3; --ink-2: #CFC7B5; --muted: #A49D8A; --faint: #7D7868;
+    --rule: #263029; --rule-strong: #36423A; --hairline: rgba(236,228,211,.07);
+    --accent: #D4B066; --accent-ink: #1A150A; --accent-text: #DDBC75; --accent-soft: #2E2A1C;
+    --leather: #D58A5E; --leather-soft: #3A2519;
+    --moss: #8DB79A; --moss-soft: #1F3326;
+    --ink-blue: #94B4CE; --ink-blue-soft: #1D2B36;
+    --plum: #C6A2BE; --danger: #E38D74; --on-color: #111714;
+    --plate: #1E2D24; --plate-2: #26382D; --plate-ink: #F0E8D6; --plate-muted: #ABA48F; --plate-rule: rgba(212,176,102,.30);
+    --p0: #A39C88; --p1: #8DB79A; --p2: #94B4CE; --p3: #C6A2BE; --p4: #D58A5E; --p5: #D4B066;
+    --c-base: #B2A68C; --c-in: #94B4CE; --c-out: #D58A5E;
+    --heat-0: #1C2520; --heat-1: #24392B; --heat-2: #3A5E44; --heat-3: #5F8C69; --heat-4: #8DB79A;
+    --shadow-1: 0 1px 0 rgba(236,228,211,.04) inset, 0 1px 2px rgba(0,0,0,.25);
+    --shadow-2: 0 1px 2px rgba(0,0,0,.3), 0 12px 32px -8px rgba(0,0,0,.5);
+    --shadow-float: 0 2px 6px rgba(0,0,0,.35), 0 24px 56px -12px rgba(0,0,0,.7);
+    --grain-opacity: .06;
   }
 }
 :root[data-theme="dark"]{
   color-scheme: dark;
-  --bg: #1E1916; --bg-sunk: #181412; --surface: #28211D; --surface-2: #312823;
-  --ink: #F1E6DA; --muted: #B5A595; --rule: #3B312B; --rule-strong: #4C4038;
-  --accent: #E58A62; --accent-ink: #24170F; --accent-soft: #48302A;
-  --sage: #9DB894; --sage-soft: #2F382C; --honey: #E8BE6A; --honey-soft: #423620; --plum: #C29CC9; --sky: #8FB4D2;
-  --danger: #E7826F;
-  --p0: #A89C90; --p1: #9DB894; --p2: #8FB4D2; --p3: #C29CC9; --p4: #E58A62; --p5: #E8BE6A;
-  --c-base: #C0AA96; --c-in: #8FB4D2; --c-out: #E58A62;
-  --heat-0: #2C2420; --heat-1: #3A4535; --heat-2: #55684D; --heat-3: #7C9772; --heat-4: #A8C49C;
-  --shadow-1: 0 1px 2px rgba(0,0,0,.3), 0 6px 18px rgba(0,0,0,.25);
-  --shadow-2: 0 2px 6px rgba(0,0,0,.35), 0 18px 40px rgba(0,0,0,.45);
-  --focus: 0 0 0 3px rgba(229,138,98,.45);
+  --bg: #111714; --bg-sunk: #0C110E; --surface: #18201B; --surface-2: #1F2923;
+  --ink: #ECE4D3; --ink-2: #CFC7B5; --muted: #A49D8A; --faint: #7D7868;
+  --rule: #263029; --rule-strong: #36423A; --hairline: rgba(236,228,211,.07);
+  --accent: #D4B066; --accent-ink: #1A150A; --accent-text: #DDBC75; --accent-soft: #2E2A1C;
+  --leather: #D58A5E; --leather-soft: #3A2519;
+  --moss: #8DB79A; --moss-soft: #1F3326;
+  --ink-blue: #94B4CE; --ink-blue-soft: #1D2B36;
+  --plum: #C6A2BE; --danger: #E38D74; --on-color: #111714;
+  --plate: #1E2D24; --plate-2: #26382D; --plate-ink: #F0E8D6; --plate-muted: #ABA48F; --plate-rule: rgba(212,176,102,.30);
+  --p0: #A39C88; --p1: #8DB79A; --p2: #94B4CE; --p3: #C6A2BE; --p4: #D58A5E; --p5: #D4B066;
+  --c-base: #B2A68C; --c-in: #94B4CE; --c-out: #D58A5E;
+  --heat-0: #1C2520; --heat-1: #24392B; --heat-2: #3A5E44; --heat-3: #5F8C69; --heat-4: #8DB79A;
+  --shadow-1: 0 1px 0 rgba(236,228,211,.04) inset, 0 1px 2px rgba(0,0,0,.25);
+  --shadow-2: 0 1px 2px rgba(0,0,0,.3), 0 12px 32px -8px rgba(0,0,0,.5);
+  --shadow-float: 0 2px 6px rgba(0,0,0,.35), 0 24px 56px -12px rgba(0,0,0,.7);
+  --grain-opacity: .06;
 }

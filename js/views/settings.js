@@ -43,7 +43,7 @@ function claudeHTML(st){
   if (has) h += '<p><span class="pill pill-sage">' + icon("check", 14) + " Chave salva neste navegador</span> <span class=\"muted\">termina em …" + esc(S.secrets.claudeKey.slice(-4)) + "</span></p>";
   h += '<form data-submit="key-save"><div class="field"><label for="sKey">' + (has ? "Trocar a chave" : "Chave da API") + '</label><input type="password" id="sKey" name="key" data-input="key-draft" data-fk="sKey" value="' + esc(ui.keyDraft) + '" placeholder="sk-ant-…" autocomplete="off" spellcheck="false"></div>' +
     '<div class="row"><button class="btn btn-soft" type="submit">Salvar chave</button>' + (has ? '<button class="btn btn-ghost" type="button" data-act="key-test"' + (ui.testing ? " disabled" : "") + ">" + (ui.testing ? '<span class="spin"></span> Testando…' : "Testar") + '</button><button class="btn btn-ghost" type="button" data-act="key-del">Remover</button>' : "") + "</div></form>";
-  h += '<div class="field" style="margin-top:14px"><label for="sModel">Modelo</label><select id="sModel" data-change="set-model">' + CLAUDE_MODELS.map(m => opt(m[0], m[1], st.claudeModel)).join("") + "</select></div>";
+  h += '<div class="field mt-m"><label for="sModel">Modelo</label><select id="sModel" data-change="set-model">' + CLAUDE_MODELS.map(m => opt(m[0], m[1], st.claudeModel)).join("") + "</select></div>";
   h += '<p class="hint">A chave fica só no armazenamento deste navegador e nunca entra no backup. Ela é usada direto do navegador, então não use este site num computador compartilhado. Crie uma chave em <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">console.anthropic.com</a>, de preferência com limite de gasto.</p>';
   return h + "</section>";
 }
@@ -61,9 +61,9 @@ function dataHTML(){
     : "Seus dados ficam no IndexedDB deste navegador, neste aparelho." + (ui.persisted === true ? " O navegador marcou o armazenamento como persistente." : ui.persisted === false ? " O navegador pode apagar os dados se faltar espaço ou se você ficar semanas sem abrir o site (Safari: 7 dias); instalar como app ajuda." : "");
   return '<section class="card section" aria-labelledby="hData"><h2 id="hData">Seus dados</h2><p class="muted">' + where + "</p>" +
     "<p>" + (d == null ? "Você ainda não baixou um backup." : d === 0 ? "Último backup: hoje." : "Último backup: há " + d + (d === 1 ? " dia." : " dias.")) + " " + S.cards.filter(isFront).length + " cartões, " + S.logs.length + " registros.</p>" +
-    '<div class="row" style="margin-bottom:12px"><button class="btn btn-soft" type="button" data-act="backup">Baixar backup (JSON)</button><label class="btn btn-ghost" for="impFile">Restaurar de um arquivo</label><input type="file" id="impFile" data-change="restore" accept=".json,application/json" class="sr"></div>' +
+    '<div class="row mb-s"><button class="btn btn-soft" type="button" data-act="backup">Baixar backup (JSON)</button><label class="btn btn-ghost" for="impFile">Restaurar de um arquivo</label><input type="file" id="impFile" data-change="restore" accept=".json,application/json" class="sr"></div>' +
     '<p class="hint">Aceita backups deste site e da página antiga (rota-ingles). Restaurar substitui tudo o que está aqui, exceto a chave da Claude API.</p>' +
-    '<h3 style="margin-top:20px">Apagar tudo</h3><p class="muted">Remove registros, tarefas marcadas, cartões, testes, erros e listas. Não dá para desfazer; baixe um backup antes.</p>' +
+    '<h3 class="danger-h">Apagar tudo</h3><p class="muted">Remove registros, tarefas marcadas, cartões, testes, erros e listas. Não dá para desfazer; baixe um backup antes.</p>' +
     '<button class="btn btn-danger" type="button" data-act="reset">' + (ui.resetArmed ? "Toque de novo para confirmar" : "Apagar tudo") + "</button></section>";
 }
 
@@ -76,7 +76,7 @@ export default {
   },
   render(){
     const st = S.state.settings;
-    return '<div class="page-head"><a class="eyebrow" href="#mais">← Mais</a><h1>Ajustes</h1></div>' +
+    return '<header class="page-head"><div><a class="eyebrow back" href="#mais">' + icon("back", 14) + 'Mais</a><h1>Ajustes</h1><p class="lead">A ficha técnica: seu plano, a aparência, os flashcards e os seus dados.</p></div></header>' +
       '<div class="grid-2">' + '<div class="stack">' + planHTML(st) + lookHTML() + "</div>" + '<div class="stack">' + cardsHTML(st) + claudeHTML(st) + "</div></div>" + dataHTML();
   },
   actions: {

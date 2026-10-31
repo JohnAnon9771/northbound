@@ -25,13 +25,13 @@ function statTiles(dayMap){
   const inM = minutesBy(e => skillOf(e.skill).c === "in"), outM = minutesBy(e => skillOf(e.skill).c === "out");
   const bal = inM + outM ? Math.round(inM / (inM + outM) * 100) : 0;
   const st = streak(dayMap, today());
-  let h = '<div class="stats">';
-  h += '<div class="stat"><b>' + formatHours(total) + " h</b><span>estudadas no total</span></div>";
-  h += '<div class="stat"><b>' + st.days + "</b><span>" + (st.days === 1 ? "dia seguido" : "dias seguidos") + " com estudo" + (st.restThisWeek ? " (folga da semana usada)" : "") + "</span></div>";
-  h += '<div class="stat"><b>' + knownCount(S.cards) + "</b><span>palavras que você sabe · " + learnedCount(S.cards) + " em estudo</span></div>";
-  h += '<div class="stat"><b>' + formatHours(m4 / last4.length) + " h</b><span>média semanal " + (last4.length === 1 ? "nesta semana" : "nas últimas " + last4.length + " semanas") + " (meta " + formatHours(S.state.settings.goalH * 60) + " h)</span></div>";
-  h += '<div class="stat"><b>' + (inM + outM ? bal + "/" + (100 - bal) : "–") + "</b><span>entrada/produção em % (alvo 55–60/40–45)</span></div>";
-  return h + "</div>";
+  let h = '<section class="card section" aria-label="Números"><div class="ledger five">';
+  h += '<div><b class="num">' + formatHours(total) + " h</b><span>estudadas no total</span></div>";
+  h += '<div><b class="num">' + st.days + "</b><span>" + (st.days === 1 ? "dia seguido" : "dias seguidos") + " com estudo" + (st.restThisWeek ? " (folga da semana usada)" : "") + "</span></div>";
+  h += '<div><b class="num">' + knownCount(S.cards) + "</b><span>palavras que você sabe · " + learnedCount(S.cards) + " em estudo</span></div>";
+  h += '<div><b class="num">' + formatHours(m4 / last4.length) + " h</b><span>média semanal " + (last4.length === 1 ? "nesta semana" : "nas últimas " + last4.length + " semanas") + " (meta " + formatHours(S.state.settings.goalH * 60) + " h)</span></div>";
+  h += '<div><b class="num">' + (inM + outM ? bal + "/" + (100 - bal) : "–") + "</b><span>entrada/produção em % (alvo 55–60/40–45)</span></div>";
+  return h + "</div></section>";
 }
 
 function summaryCard(){
@@ -44,10 +44,10 @@ function summaryCard(){
     '<span class="pill">' + plural(s.tasks, "tarefa", "tarefas") + "</span></div></div>";
   const ctx = {logs: S.logs, reviews: S.reviews, done: S.state.done};
   const prev = weekSummary(ctx, addDays(mon, -7)), cur = weekSummary(ctx, mon);
-  let h = '<section class="card section"><h2>Resumo da semana</h2><div class="stack">' + line("Esta semana", cur);
+  let h = '<section class="card section"><h2>Resumo da semana</h2><div class="stack summary">' + line("Esta semana", cur);
   if (prev.min || prev.reviews) h += line("Semana passada", prev);
   const diff = cur.min - prev.min;
-  if (prev.min && cur.min) h += '<p class="hint" style="margin:0">' + (diff >= 0 ? "Já " + formatHours(diff) + " h acima da semana passada. Bom ritmo!" : "Faltam " + formatHours(-diff) + " h para igualar a semana passada.") + "</p>";
+  if (prev.min && cur.min) h += '<p class="hint m0">' + (diff >= 0 ? "Já " + formatHours(diff) + " h acima da semana passada. Bom ritmo!" : "Faltam " + formatHours(-diff) + " h para igualar a semana passada.") + "</p>";
   return h + "</div></section>";
 }
 
@@ -55,7 +55,7 @@ function heatHTML(dayMap){
   const t = today(), weeks = 26;
   const grid = heatmap(dayMap, t, weeks);
   const days = Array.from(dayMap.values()).filter(v => v > 0).length;
-  let h = '<section class="card section"><div class="section-head"><h2>Dias de estudo</h2><span class="muted">' + plural(days, "dia", "dias") + ' no total</span></div><div class="heat" role="img" aria-label="Mapa dos dias estudados nos últimos 6 meses">';
+  let h = '<section class="card section"><div class="card-head"><h2>Dias de estudo</h2><span class="muted">' + plural(days, "dia", "dias") + ' no total</span></div><div class="heat" role="img" aria-label="Mapa dos dias estudados nos últimos 6 meses">';
   grid.forEach(col => {
     h += '<div class="heat-col">' + col.map(c => '<i class="' + (c.future ? "fut" : "l" + heatLevel(c.min)) + (c.date === t ? " today" : "") + '" title="' + esc(shortDate(c.date)) + ": " + c.min + ' min"></i>').join("") + "</div>";
   });
@@ -160,10 +160,10 @@ export default {
   render(){
     const dayMap = minutesByDate(S.logs);
     const cw = Math.max(1, calWeekOf(today()));
-    let h = '<div class="page-head"><p class="eyebrow">Sua jornada</p><h1>Progresso</h1><p class="lead">Tudo o que você já construiu. Cada quadradinho verde é um dia em que você apareceu.</p></div>';
+    let h = '<header class="page-head"><div><p class="eyebrow">O livro-caixa</p><h1>Progresso</h1><p class="lead">Tudo o que você já construiu. Cada quadradinho verde é um dia em que você apareceu.</p></div></header>';
     h += statTiles(dayMap);
     h += '<div class="grid-2 even">' + summaryCard() + heatHTML(dayMap) + "</div>";
-    h += '<section class="card section"><div class="section-head"><h2>Palavras que você sabe</h2><span class="muted">revisão a cada 21 dias ou mais</span></div>';
+    h += '<section class="card section"><div class="card-head"><h2>Palavras que você sabe</h2><span class="muted">revisão a cada 21 dias ou mais</span></div>';
     h += S.reviews.length ? knownChart() : '<p class="muted">Quando você começar a estudar os flashcards, a curva das palavras que ficaram de vez aparece aqui. <a href="#palavras">Adicionar palavras</a></p>';
     h += "</section>";
     h += badgesHTML();

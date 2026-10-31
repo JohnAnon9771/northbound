@@ -28,22 +28,22 @@ function editorHTML(d, mode){
   const ex = d.examples.length ? d.examples : [{en: "", pt: ""}];
   let h = '<form class="editor" data-submit="' + (mode === "edit" ? "edit-save" : "add-save") + '" data-input="' + (mode === "edit" ? "edit-draft" : "add-draft") + '">';
   h += '<div class="editor-head"><span class="term">' + esc(d.term) + "</span>" + (d.ipa ? '<span class="muted">/' + esc(d.ipa) + "/</span>" : "") + speakBtn(d.term, "Ouvir a palavra", d.audio) + (d.cefr ? '<span class="pill pill-honey">' + esc(d.cefr) + "</span>" : "") + (mode === "add" && ui.source ? '<span class="pill">' + (ui.source === "list" ? "via lista revisada" : ui.source === "claude" ? "via Claude" : "via fontes gratuitas") + "</span>" : "") + "</div>";
-  h += '<div class="row"><div class="field" style="flex:2 1 220px"><label>Tradução</label><input type="text" name="translation" data-fk="' + mode + '-tr" value="' + esc(d.translation) + '" placeholder="Ex.: superar"></div><div class="field"><label>Classe</label><input type="text" name="pos" data-fk="' + mode + '-pos" value="' + esc(d.pos) + '" placeholder="verbo"></div></div>';
+  h += '<div class="row"><div class="field f-wide"><label>Tradução</label><input type="text" name="translation" data-fk="' + mode + '-tr" value="' + esc(d.translation) + '" placeholder="Ex.: superar"></div><div class="field"><label>Classe</label><input type="text" name="pos" data-fk="' + mode + '-pos" value="' + esc(d.pos) + '" placeholder="verbo"></div></div>';
   h += '<div class="field"><label>Significado (em inglês)</label><input type="text" name="definition" data-fk="' + mode + '-def" value="' + esc(d.definition) + '"></div>';
   if (d.meanings && d.meanings.length > 1){
-    h += '<div class="field"><span class="lbl">Sentidos (o cartão alterna um por revisão)</span><ul class="stack" style="gap:6px;margin:0;padding:0;list-style:none">';
-    d.meanings.forEach((m, i) => { h += '<li class="row" style="align-items:center;gap:8px;flex-wrap:nowrap"><span style="flex:1;min-width:0"><b>' + esc(m.pt.join(", ")) + "</b>" + (m.ipa ? ' <span class="muted">/' + esc(m.ipa) + "/</span>" : "") + ' <span class="muted" style="font-size:14px">' + esc(m.gloss || m.def) + '</span></span><button class="link-btn" type="button" data-act="meaning-del" data-mode="' + mode + '" data-i="' + i + '" aria-label="Tirar o sentido ' + esc(m.pt[0]) + '">×</button></li>'; });
+    h += '<div class="field"><span class="lbl">Sentidos (o cartão alterna um por revisão)</span><ul class="meanings">';
+    d.meanings.forEach((m, i) => { h += '<li class="meaning"><span class="grow"><b>' + esc(m.pt.join(", ")) + "</b>" + (m.ipa ? ' <span class="muted">/' + esc(m.ipa) + "/</span>" : "") + ' <span class="muted t-sm">' + esc(m.gloss || m.def) + '</span></span><button class="link-btn" type="button" data-act="meaning-del" data-mode="' + mode + '" data-i="' + i + '" aria-label="Tirar o sentido ' + esc(m.pt[0]) + '">×</button></li>'; });
     h += "</ul></div>";
   }
-  if (d.senses && d.senses.length > 1 && mode === "add") h += '<details><summary class="muted" style="cursor:pointer;font-size:14px">Outros sentidos no dicionário</summary><ol class="senses">' + d.senses.map(s => "<li>" + esc(s.text) + (s.pos ? " <i>(" + esc(s.pos) + ")</i>" : "") + "</li>").join("") + "</ol></details>";
-  h += '<div class="field"><span class="lbl">Exemplos de uso</span><div class="stack" style="gap:8px">';
+  if (d.senses && d.senses.length > 1 && mode === "add") h += '<details><summary class="senses-sum">Outros sentidos no dicionário</summary><ol class="senses">' + d.senses.map(s => "<li>" + esc(s.text) + (s.pos ? " <i>(" + esc(s.pos) + ")</i>" : "") + "</li>").join("") + "</ol></details>";
+  h += '<div class="field"><span class="lbl">Exemplos de uso</span><div class="stack ex-stack">';
   ex.forEach((e, i) => { h += '<div class="ex-edit"><textarea name="en' + i + '" data-fk="' + mode + "-en" + i + '" placeholder="Frase em inglês" aria-label="Exemplo ' + (i + 1) + ' em inglês">' + esc(e.en) + '</textarea><textarea name="pt' + i + '" data-fk="' + mode + "-pt" + i + '" placeholder="Tradução" aria-label="Exemplo ' + (i + 1) + ' em português">' + esc(e.pt) + '</textarea><button class="x" type="button" data-act="ex-del" data-mode="' + mode + '" data-i="' + i + '" aria-label="Remover exemplo">×</button></div>'; });
-  h += '</div><button class="link-btn" type="button" data-act="ex-add" data-mode="' + mode + '" style="margin-top:8px">+ exemplo</button></div>';
-  h += '<div class="row"><div class="field" style="flex:2 1 240px"><label>Collocations</label><input type="text" name="collocations" data-fk="' + mode + '-col" value="' + esc((d.collocations || []).join(", ")) + '" placeholder="separadas por vírgula"></div><div class="field" style="flex:0 1 110px"><label>CEFR</label><input type="text" name="cefr" data-fk="' + mode + '-cefr" value="' + esc(d.cefr) + '" maxlength="2" placeholder="B1"></div></div>';
+  h += '</div><button class="link-btn" type="button" data-act="ex-add" data-mode="' + mode + '">+ exemplo</button></div>';
+  h += '<div class="row"><div class="field f-wide"><label>Collocations</label><input type="text" name="collocations" data-fk="' + mode + '-col" value="' + esc((d.collocations || []).join(", ")) + '" placeholder="separadas por vírgula"></div><div class="field f-narrow"><label>CEFR</label><input type="text" name="cefr" data-fk="' + mode + '-cefr" value="' + esc(d.cefr) + '" maxlength="2" placeholder="B1"></div></div>';
   h += '<div class="field"><label>Nota</label><input type="text" name="notes" data-fk="' + mode + '-notes" value="' + esc(d.notes) + '" placeholder="Dica, falso cognato, onde você viu…"></div>';
   const rev = mode === "edit" ? !!twinOf(ui.editId) : ui.reverse;
   h += '<label class="check"><input type="checkbox" name="reverse"' + (rev ? " checked" : "") + "> Também treinar ao contrário (português → inglês)</label>";
-  h += '<div class="row" style="margin-top:6px"><button class="btn" type="submit">' + icon("check", 18) + (mode === "edit" ? "Salvar" : "Adicionar ao deck") + '</button><button class="btn btn-ghost" type="button" data-act="' + (mode === "edit" ? "edit-cancel" : "add-cancel") + '">Cancelar</button></div>';
+  h += '<div class="row mt-xs"><button class="btn" type="submit">' + icon("check", 18) + (mode === "edit" ? "Salvar" : "Adicionar ao deck") + '</button><button class="btn btn-ghost" type="button" data-act="' + (mode === "edit" ? "edit-cancel" : "add-cancel") + '">Cancelar</button></div>';
   return h + "</form>";
 }
 
@@ -90,21 +90,21 @@ function deckHTML(){
   h += '<ul class="deck">';
   list.slice(0, ui.limit).forEach(c => {
     const st = status(c);
-    h += '<li><div class="deck-row"><div style="min-width:0"><span class="t">' + esc(c.term) + '</span><div class="tr">' + esc(c.translation || "sem tradução") + (twinOf(c.id) ? " · ↔" : "") + '</div></div><span class="' + st[1] + '">' + esc(st[0]) + '</span><span style="display:flex"><button class="btn-icon btn" type="button" data-act="edit-open" data-id="' + esc(c.id) + '" aria-label="Editar ' + esc(c.term) + '">' + icon("edit", 18) + '</button><button class="btn-icon btn" type="button" data-act="card-del" data-id="' + esc(c.id) + '" aria-label="Apagar ' + esc(c.term) + '">' + icon("trash", 18) + "</button></span></div>";
+    h += '<li><div class="deck-row"><div class="grow"><span class="t">' + esc(c.term) + '</span><div class="tr">' + esc(c.translation || "sem tradução") + (twinOf(c.id) ? " · ↔" : "") + '</div></div><span class="' + st[1] + '">' + esc(st[0]) + '</span><span class="deck-acts"><button class="btn-icon btn" type="button" data-act="edit-open" data-id="' + esc(c.id) + '" aria-label="Editar ' + esc(c.term) + '">' + icon("edit", 18) + '</button><button class="btn-icon btn" type="button" data-act="card-del" data-id="' + esc(c.id) + '" aria-label="Apagar ' + esc(c.term) + '">' + icon("trash", 18) + "</button></span></div>";
     if (ui.editId === c.id) h += '<div class="deck-edit">' + editorHTML(ui.editDraft, "edit") + "</div>";
     h += "</li>";
   });
   h += "</ul>";
-  if (list.length > ui.limit) h += '<p style="margin-top:12px"><button class="btn btn-ghost btn-small" type="button" data-act="deck-more">Mostrar mais (' + (list.length - ui.limit) + ")</button></p>";
+  if (list.length > ui.limit) h += '<p class="mt-s"><button class="btn btn-ghost btn-small" type="button" data-act="deck-more">Mostrar mais (' + (list.length - ui.limit) + ")</button></p>";
   return h;
 }
 
 function bulkHTML(){
   const r = ui.bulkRun;
   let h = '<details class="disc"' + (r || ui.bulk ? " open" : "") + '><summary>' + icon("book", 18) + 'Importar uma lista</summary><div class="disc-body">';
-  h += '<p class="muted" style="font-size:14px">Uma palavra ou expressão por linha. Para já informar a tradução, use <code>palavra ; tradução</code>. Serve para trazer palavras do DuoCards, de outra lista ou de um texto.</p>';
+  h += '<p class="muted t-sm">Uma palavra ou expressão por linha. Para já informar a tradução, use <code>palavra ; tradução</code>. Serve para trazer palavras do DuoCards, de outra lista ou de um texto.</p>';
   h += '<form data-submit="bulk-run"><div class="field"><textarea name="bulk" data-input="bulk-text" data-fk="bulk" rows="6" placeholder="look forward to\nget over ; superar\nbank"' + (r ? " disabled" : "") + ">" + esc(ui.bulk) + "</textarea></div>";
-  h += '<label class="check" style="margin-bottom:12px"><input type="checkbox" data-change="bulk-enrich"' + (ui.bulkEnrich ? " checked" : "") + "> Buscar tradução e exemplos para cada uma (cerca de 2 s por palavra)</label>";
+  h += '<label class="check mb-s"><input type="checkbox" data-change="bulk-enrich"' + (ui.bulkEnrich ? " checked" : "") + "> Buscar tradução e exemplos para cada uma (cerca de 2 s por palavra)</label>";
   if (r) h += '<div class="loading"><span class="spin"></span>Importando ' + r.done + " de " + r.total + (r.skipped ? " · " + r.skipped + " já estavam no deck" : "") + '…</div><button class="btn btn-ghost btn-small" type="button" data-act="bulk-stop">Parar</button>';
   else h += '<button class="btn btn-soft" type="submit">Importar</button>';
   return h + "</form></div></details>";
@@ -116,23 +116,23 @@ export default {
   render(){
     const d = deckToday();
     const st = studyStatus(d);
-    let h = '<div class="hello"><div style="flex:1 1 280px"><p class="eyebrow">Flashcards</p><h1>Palavras</h1><p class="lead">Escreva uma palavra ou expressão. O site busca a tradução e exemplos reais de uso, e você ajusta antes de salvar.</p></div>' +
-      '<a class="btn' + (st.ready ? "" : " btn-soft") + '" href="#estudo">' + icon("play", 16) + "Estudar" + (st.ready ? " (" + (d.due + d.fresh) + ")" : "") + "</a></div>";
-    h += '<section class="card card-hero section"><h2 style="margin:0">' + (st.ready ? "Hoje: " + esc(st.title) : d.total ? "Tudo em dia por hoje" : "Seu deck está vazio") + '</h2><p class="sub" style="margin:4px 0 0">' + esc(st.ready ? st.why + ". Limite da fase: " + d.limit + " novas por dia, revisões sempre primeiro." : st.why) + "</p>";
-    h += '<div class="stat-strip"><div><b class="num">' + d.due + '</b><span>para revisar</span></div><div><b class="num">' + d.newWaiting + '</b><span>novas na fila</span></div><div><b class="num">' + d.total + '</b><span>no deck</span></div><div><b class="num">' + d.known + "</b><span>sabidas (21+ dias)</span></div></div></section>";
-    h += dailyWordsHTML();
+    let h = '<header class="page-head"><div><p class="eyebrow">O fichário</p><h1>Palavras</h1><p class="lead">Escreva uma palavra ou expressão. O site busca a tradução e exemplos reais de uso, e você ajusta antes de salvar.</p></div>' +
+      '<a class="btn' + (st.ready ? "" : " btn-soft") + '" href="#estudo">' + icon("play", 16) + "Estudar" + (st.ready ? " (" + (d.due + d.fresh) + ")" : "") + "</a></header>";
+    h += '<section class="card deck-status section"><p class="eyebrow">' + (st.ready ? "Hoje" : "Seu deck") + '</p><h2>' + (st.ready ? esc(st.title) : d.total ? "Tudo em dia por hoje" : "Seu deck está vazio") + '</h2><p class="muted">' + esc(st.ready ? st.why + ". Limite da fase: " + d.limit + " novas por dia, revisões sempre primeiro." : st.why) + "</p>";
+    h += '<div class="ledger"><div><b class="num">' + d.due + '</b><span>para revisar</span></div><div><b class="num">' + d.newWaiting + '</b><span>novas na fila</span></div><div><b class="num">' + d.total + '</b><span>no deck</span></div><div><b class="num">' + d.known + "</b><span>sabidas (21+ dias)</span></div></div></section>";
 
-    h += '<section class="card section" aria-labelledby="addT"><h2 id="addT">Adicionar palavra</h2><form data-submit="add-search"><div class="add-row"><div class="field"><label for="addTerm">Palavra ou expressão</label><input type="text" id="addTerm" name="term" data-input="add-term" data-fk="add-term" value="' + esc(ui.term) + '" placeholder="Ex.: look forward to" autocomplete="off" autocapitalize="off" spellcheck="false"></div><button class="btn" type="submit"' + (ui.status === "loading" ? " disabled" : "") + ">" + icon("search", 18) + 'Buscar</button></div><div class="field" style="margin-top:12px"><label for="addCtx">Frase onde você viu (opcional)</label><input type="text" id="addCtx" name="context" data-input="add-ctx" data-fk="add-ctx" value="' + esc(ui.context) + '" placeholder="Ex.: I\'m really looking forward to the trip."></div></form>';
+    h += '<section class="card catalog section" aria-labelledby="addT"><div class="card-head"><h2 id="addT">Nova ficha</h2><span class="muted t-sm">tradução e exemplos automáticos</span></div><form data-submit="add-search"><div class="add-row"><div class="field"><label for="addTerm">Palavra ou expressão</label><input type="text" id="addTerm" name="term" data-input="add-term" data-fk="add-term" value="' + esc(ui.term) + '" placeholder="look forward to" autocomplete="off" autocapitalize="off" spellcheck="false"></div><button class="btn" type="submit"' + (ui.status === "loading" ? " disabled" : "") + ">" + icon("search", 18) + 'Buscar</button></div><div class="field mt-s"><label for="addCtx">Frase onde você viu (opcional)</label><input type="text" id="addCtx" name="context" data-input="add-ctx" data-fk="add-ctx" value="' + esc(ui.context) + '" placeholder="Ex.: I\'m really looking forward to the trip."></div></form>';
     const dup = ui.term.trim() && findByTerm(ui.term);
     if (dup && ui.status !== "preview") h += '<p class="note">Você já tem “' + esc(dup.term) + "” no deck" + (dup.translation ? " (" + esc(dup.translation) + ")" : "") + '. <button class="link-btn" type="button" data-act="edit-open" data-id="' + esc(dup.id) + '">Editar</button></p>';
     if (ui.status === "loading") h += '<div class="loading"><span class="spin"></span>Buscando tradução e exemplos…</div>';
     if (ui.status === "error") h += '<p class="note">' + esc(ui.warning) + ' <button class="link-btn" type="button" data-act="add-manual">Preencher à mão</button></p>';
     if (ui.status === "preview"){
       if (ui.warning) h += '<p class="note">' + esc(ui.warning) + "</p>";
-      if (ui.draft.examples[0] && ui.draft.examples[0].en) h += '<p class="phrase" style="margin-top:14px">' + highlight(ui.draft.examples[0].en, ui.draft.term) + "</p>";
+      if (ui.draft.examples[0] && ui.draft.examples[0].en) h += '<p class="phrase mt-m">' + highlight(ui.draft.examples[0].en, ui.draft.term) + "</p>";
       h += editorHTML(ui.draft, "add");
     }
     h += "</section>";
+    h += dailyWordsHTML();
 
     h += '<section class="section" aria-labelledby="deckT"><div class="section-head"><h2 id="deckT">Seu deck</h2><span class="muted">' + plural(d.total, "palavra", "palavras") + "</span></div>" + deckHTML() + "</section>";
     h += '<section class="section">' + bulkHTML() + "</section>";

@@ -1,6 +1,7 @@
 // Níveis e testes: test results (with the EF SET chart) and the "can-do" self-assessment.
 import { S, update } from "../state/store.js";
 import { esc } from "../core/dom.js";
+import { icon } from "../core/icons.js";
 import { pct } from "../core/format.js";
 import { uid } from "../core/id.js";
 import { today, shortDate } from "../core/date.js";
@@ -66,7 +67,7 @@ export default {
   id: "niveis",
   title: "Níveis e testes",
   render(){
-    let h = '<div class="page-head"><a class="eyebrow" href="#mais">← Mais</a><h1>Níveis e testes</h1><p class="lead">Registre cada teste para acompanhar a tendência. O EF SET e o level test do British Council medem compreensão e gramática; fala e escrita ficam com o Write & Improve, o ChatGPT e as listas “can-do”.</p></div>';
+    let h = '<header class="page-head"><div><a class="eyebrow back" href="#mais">' + icon("back", 14) + 'Mais</a><h1>Níveis e testes</h1><p class="lead">Registre cada teste para acompanhar a tendência. O EF SET e o level test do British Council medem compreensão e gramática; fala e escrita ficam com o Write & Improve, o ChatGPT e as listas “can-do”.</p></div></header>';
     h += '<div class="grid-2">' + formHTML() + testsHTML() + "</div>";
     return h + candoHTML();
   },
